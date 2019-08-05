@@ -6,6 +6,7 @@
   "scripts": {
     "test": "webpack-dev-server --open --watch --progress --config webpack.test.js",
     "build": "webpack --progress --config webpack.prod.js",
+    "web": "webpack --progress --config webpack.web.js",
     "dev": "webpack --open --watch --progress --config webpack.dev.js",
     "start": "webpack-dev-server --open --watch --progress --config webpack.dev.js"
   },
