@@ -18,7 +18,8 @@ module.exports = merge(common, {
             react: 'react',
             'react-dom': 'react-dom',
             'prop-types': 'prop-types',
-            jquery: 'jquery'
+            jquery: 'jquery',
+            'rtf.js': 'rtf.js',
         }, 
         /bootstrap/,
         /summernote/

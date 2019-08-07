@@ -4,6 +4,8 @@ const merge = require('webpack-merge'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     CspHtmlWebpackPlugin = require('csp-html-webpack-plugin')
 
+    console.log('---------------------------',process.argv)
+
 module.exports = merge(common, {
     entry: './src/start.js',
     mode: 'development',

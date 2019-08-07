@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import rtf2html from '../lib/trf2html'
 import ImportCode from './ImportCode'
 
 //const randomUid = () => Math.floor(Math.random() * 100000);
@@ -23,6 +24,8 @@ class ReactSummernote extends Component {
         this.insertImage = this.insertImage.bind(this);
         this.insertNode = this.insertNode.bind(this);
         this.insertText = this.insertText.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handlePaste = this.handlePaste.bind(this);
         ReactSummernote.focus = this.focus.bind(this);
         ReactSummernote.isEmpty = this.isEmpty.bind(this);
         ReactSummernote.reset = this.reset.bind(this);
@@ -119,7 +122,6 @@ class ReactSummernote extends Component {
 
     onImageUpload(images) {
         const { onImageUpload } = this.props;
-
         if (typeof onImageUpload === 'function') {
             onImageUpload(images, this.insertImage);
         }
@@ -182,10 +184,51 @@ class ReactSummernote extends Component {
         this.editor.summernote('insertText', text);
     }
 
+    handleChange(txt) {
+        const { onChange } = this.props;
+        $('span[style*="mso-ignore"]').remove()
+        $('img[src*="file://"]').addClass('zap-img-uploading')
+        if (typeof onChange === 'function') onChange(txt)
+    }
+
+    handlePaste(e) {
+        // if have media, it will fire upload image event ,so skip paste
+        const { onPaste } = this.props;
+        const files = e.originalEvent.clipboardData.files;
+        for (let i = 0; i < files.length; i++) return e.preventDefault()
+
+        const items = e.originalEvent.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('rtf') > -1) {
+                items[i].getAsString(function (rtf) {
+                    const doc = rtf2html(rtf)
+                    doc.render().then(function (htmlElements) {
+                        var imgs = []
+                        htmlElements.forEach($html => {
+                            // collect all of base64 imgs
+                            $html.find('img[src*="data:image"]').each((i, el) => { imgs.push(el) })
+                            // append base64 img to editor
+                            setTimeout(() => {
+                                $('.zap-img-uploading').each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
+                                if (typeof onPaste === 'function') onPaste(e)
+                            }, 0)
+                        })
+                    }).catch(error => {
+                        console.error(error)
+                        if (typeof onPaste === 'function') onPaste(e)
+                    })
+                })
+                break;
+            }
+        }
+
+
+        if (typeof onPaste === 'function') onPaste(e)
+
+    }
 
     get callbacks() {
         const props = this.props;
-
         return {
             onInit: this.onInit,
             onEnter: props.onEnter,
@@ -193,8 +236,8 @@ class ReactSummernote extends Component {
             onBlur: props.onBlur,
             onKeyup: props.onKeyUp,
             onKeydown: props.onKeyDown,
-            onPaste: props.onPaste,
-            onChange: props.onChange,
+            onPaste: this.handlePaste,
+            onChange: this.handleChange,
             onImageUpload: this.onImageUpload
         };
     }
