@@ -38,7 +38,7 @@ npm install --save bootstrap popper.js summernote jquery https://github.com/LinZ
 #### 安裝 React SummerNote
 
 ```
-npm install --save http://192.168.1.136/SideProject/react-summernote.git
+npm install --save git+http://192.168.1.136/SideProject/react-summernote.git
 ```
 
 #### 設定 Webpack
