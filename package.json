@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://192.168.1.136/IQ-Support/SupportWeb.git"
+    "url": "http://192.168.1.136/SideProject/react-summernote.git"
   },
   "author": "zap",
   "license": "MIT",
