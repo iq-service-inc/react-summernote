@@ -24,6 +24,7 @@ React SummerNote 依賴以下套件
 * `popper.js`: ^1.15.0
 * `summernote`: ^0.8.12
 * `jquery`: ^3.4.1
+* `rtf.js`：git+https://github.com/LinZap/rtf.js.git
 
 
 ## Install 
@@ -31,7 +32,7 @@ React SummerNote 依賴以下套件
 #### 必要依賴安裝
 
 ```
-npm install --save bootstrap popper.js summernote jquery
+npm install --save bootstrap popper.js summernote jquery https://github.com/LinZap/rtf.js.git
 ```
 
 #### 安裝 React SummerNote
@@ -88,6 +89,40 @@ render(
 )
 ```
 
+## `options.toolbar`
+
+* Insert
+    * `picture`: open image dialog
+    * `link`: open link dialog
+    * `video`: open video dialog
+    * `table`: insert a table
+    * `hr`: insert a horizontal rule
+* Font Style
+    * `fontname`: set font family
+    * `fontsize`: set font size
+    * `color`: set foreground and background color
+    * `forecolor`: set foreground color
+    * `backcolor`: set background color
+    * `bold`: toggle font weight
+    * `italic`: toggle italic
+    * `underline`: toggle underline
+    * `strikethrough`: toggle strikethrough
+    * `superscript`: toggle superscript
+    * `subscript`: toggle subscript
+    * `clear`: clear font style
+* Paragraph style
+    * `style`: format selected block
+    * `ol`: toggle ordered list
+    * `ul`: toggle unordered list
+    * `paragraph`: dropdown for paragraph align
+    * `height`: set line height
+* Misc
+    * `fullscreen`: toggle fullscreen editing mode
+    * `codeview`: toggle wysiwyg and html editing mode
+    * `undo`: undo
+    * `redo`: redo
+    * `help`: open help dialog
+
 ## `options`
 
 設置 `options` props，即可設置客製化功能與 UI 顯示
@@ -96,6 +131,51 @@ render(
 
 更詳細的設定方式，可以參閱上面的官方說明
 
+
+## Upload Image
+
+自訂上傳圖片的方法，複製圖片(剪貼簿中)貼上編輯器時，就會觸發該方法
+
+```jsx
+import React, { Component } from 'react'
+import SummerNote from './SummerNote'
+
+function onImageUpload(file) {
+    let image = file[0]
+    SummerNote.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
+        $image.css("width", Math.floor($image.width() / 2));
+        $image.attr("title", image.name);
+    })
+}
+
+class App extends Component {
+    render() {
+        return (<SummerNote onImageUpload={onImageUpload}/>)
+    }
+}
+```
+
+## Paste from Microsoft Word
+
+貼上 Word 內容時，SummerNote 會解析剪貼簿中的 rtf 內容 (使用 [rtf.js](https://github.com/LinZap/rtf.js))，解析後會自動將 `<img>` 部分轉換成 base64 格式的圖片資源，這些 `<img>` 都會被加上 class `.zap-img-uploading`，可以在使用 jQuery 進行後續處理
+
+```jsx
+import React, { Component } from 'react'
+import SummerNote from './SummerNote'
+
+function onChange(txt) {
+    let imgs = $('.zap-img-uploading')
+    if(imgs.length>0){
+        //...
+    }
+}
+
+class App extends Component {
+    render() {
+        return (<SummerNote onChange={onChange} />)
+    }
+}
+```
 
 
 ## 自行 import 必要依賴
