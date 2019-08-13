@@ -3,11 +3,13 @@ import { render } from 'react-dom'
 import SummerNote from '../dist/main'
 
 SummerNote.ImportCode()
+import 'summernote/dist/lang/summernote-zh-TW'
+import 'summernote/dist/lang/summernote-ko-KR'
 
 render(
     <SummerNote value="Default value"
         options={{
-            lang: 'en',
+            lang: 'zh-TW',
             height: 350,
             dialogsInBody: true,
             toolbar: [

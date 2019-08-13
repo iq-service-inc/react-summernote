@@ -38,16 +38,24 @@ class ReactSummernote extends Component {
         ReactSummernote.insertText = this.insertText.bind(this);
     }
 
+    //loadModule = path => require(path)
 
     handleEditorRef = node => {
         if (!node) return;
         const options = this.props.options || {};
-        const codeview = this.props.codeview;
+        const { codeview, destroy, value } = this.props;
         options.callbacks = this.callbacks;
+        // load lang pack
+        //if (options.lang && options.lang != 'en') this.loadModule(`summernote/dist/lang/summernote-${options.lang}.js`)
+        //if (options.lang) require(`summernote/lang/summernote-${options.lang}.js`)
         this.editor = $(node);
         this.editor.summernote(options);
+        if (value) this.replace(value);
         if (codeview) {
             this.editor.summernote('codeview.activate');
+        }
+        if (destroy) {
+            this.editor.summernote('destroy')
         }
     }
 
@@ -65,11 +73,11 @@ class ReactSummernote extends Component {
     //}
 
     componentWillReceiveProps(nextProps) {
+        console.log('componentWillReceiveProps')
         const { props } = this;
 
         const codeview = nextProps.codeview;
         const codeviewCommand = codeview ? 'codeview.activate' : 'codeview.deactivate';
-
 
         if (typeof nextProps.value === 'string' && props.value !== nextProps.value) {
             this.replace(nextProps.value);
@@ -80,6 +88,9 @@ class ReactSummernote extends Component {
         }
         if (codeview !== props.codeview) {
             this.editor.summernote(codeviewCommand);
+        }
+        if (props.destroy) {
+            this.editor.summernote('destroy')
         }
     }
 
@@ -268,7 +279,8 @@ ReactSummernote.propTypes = {
     onKeyDown: PropTypes.func,
     onPaste: PropTypes.func,
     onChange: PropTypes.func,
-    onImageUpload: PropTypes.func
+    onImageUpload: PropTypes.func,
+    destroy: PropTypes.bool,
 };
 
 ReactSummernote.defaultProps = {
