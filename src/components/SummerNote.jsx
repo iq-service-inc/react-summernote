@@ -73,12 +73,9 @@ class ReactSummernote extends Component {
     //}
 
     componentWillReceiveProps(nextProps) {
-        console.log('componentWillReceiveProps')
         const { props } = this;
-
         const codeview = nextProps.codeview;
         const codeviewCommand = codeview ? 'codeview.activate' : 'codeview.deactivate';
-
         if (typeof nextProps.value === 'string' && props.value !== nextProps.value) {
             this.replace(nextProps.value);
         }
