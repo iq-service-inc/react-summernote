@@ -13,7 +13,7 @@ class App extends Component {
         return (
             <div className='demo'>
                 <h1>React SummerNote App</h1>
-                <SummerNote 
+                <SummerNote
                     destroy={false}
                     value={htmldata}
                     options={{
@@ -32,6 +32,7 @@ class App extends Component {
                     }}
                     onChange={onChange}
                     onImageUpload={onImageUpload}
+                    onImagePasteFromWord={onImagePasteFromWord}
                     //onPaste={onPaste}
                     onInit={e => console.log('--------- onInit --------', e)}
                 />
@@ -40,20 +41,24 @@ class App extends Component {
     }
 }
 
+function onImagePasteFromWord($imgs) {
+    console.log('onImagePasteFromWord', $imgs)
+}
+
 function onChange(e) {
     //$('span[style*="mso-ignore"]').remove()
     //let img = $('img[src*="file://"]').attr('loading',true);
-    console.log('change',e)
+    console.log('change')
 }
 
 function onImageUpload(file, cb, e) {
     console.log('--------- onImageUpload --------', file, cb, e)
     let image = file[0]
 
-        SummerNote.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
-            $image.css("width", Math.floor($image.width() / 2));
-            $image.attr("title", image.name);
-        })
+    SummerNote.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
+        $image.css("width", Math.floor($image.width() / 2));
+        $image.attr("title", image.name);
+    })
 
 }
 
@@ -86,13 +91,13 @@ function onPaste(e) {
                         //$('#test').append($html)
                     })
                     //console.log(imgs)
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         //console.log(imgs)
                         $('img[loading]').each((i, el) => {
                             if (imgs[i])
                                 el.src = imgs[i].src
                         })
-                    },0)
+                    }, 0)
                 }).catch(error => console.error(error))
             })
         }

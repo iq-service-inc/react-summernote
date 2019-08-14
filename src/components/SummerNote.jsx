@@ -8,6 +8,7 @@ import ImportCode from './ImportCode'
 class ReactSummernote extends Component {
     constructor(props) {
         super(props);
+        this.counter = 0; // counter for identitify for paste word content
         //this.uid = `react-summernote-${randomUid()}`;
         this.editor = {};
         this.noteEditable = null;
@@ -50,7 +51,10 @@ class ReactSummernote extends Component {
         //if (options.lang) require(`summernote/lang/summernote-${options.lang}.js`)
         this.editor = $(node);
         this.editor.summernote(options);
-        if (value) this.replace(value);
+        if (value) {
+            this.replace(value);
+            this.setState({ value })
+        }
         if (codeview) {
             this.editor.summernote('codeview.activate');
         }
@@ -136,7 +140,7 @@ class ReactSummernote extends Component {
     }
 
     focus() {
-        console.log(this.editor);
+        //console.log(this.editor);
         this.editor.summernote('focus');
     }
 
@@ -159,7 +163,6 @@ class ReactSummernote extends Component {
             } else if (contentLength === 0) {
                 notePlaceholder.show();
             }
-
             noteEditable.html(content);
         }
     }
@@ -193,9 +196,18 @@ class ReactSummernote extends Component {
     }
 
     handleChange(txt) {
-        const { onChange } = this.props;
         $('span[style*="mso-ignore"]').remove()
-        $('img[src*="file://"]').addClass('zap-img-uploading')
+        const { onChange, onImagePasteFromWord } = this.props;
+        const $pastedImgs = $('img[src*="file://"]')
+            .not('.zap-img-uploading')
+            .addClass('zap-img-uploading')
+            .addClass(`zap-img-uploading-${this.counter}`)
+
+        if ($pastedImgs.length) {
+            //console.log('add class' , `zap-img-uploading-${this.counter}`)
+            this.counter = this.counter + 1
+            if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pastedImgs)
+        }
         if (typeof onChange === 'function') onChange(txt)
     }
 
@@ -203,36 +215,30 @@ class ReactSummernote extends Component {
         // if have media, it will fire upload image event ,so skip paste
         const { onPaste } = this.props;
         const files = e.originalEvent.clipboardData.files;
-        for (let i = 0; i < files.length; i++) return e.preventDefault()
+        // only one pic, dont paste the photo
+        if (files.length) return e.preventDefault()
 
         const items = e.originalEvent.clipboardData.items;
+
         for (let i = 0; i < items.length; i++) {
             if (items[i].type.indexOf('rtf') > -1) {
-                items[i].getAsString(function (rtf) {
+                items[i].getAsString((rtf) => {
                     const doc = rtf2html(rtf)
-                    doc.render().then(function (htmlElements) {
+                    doc.render().then((htmlElements) => {
                         var imgs = []
                         htmlElements.forEach($html => {
-                            // collect all of base64 imgs
                             $html.find('img[src*="data:image"]').each((i, el) => { imgs.push(el) })
-                            // append base64 img to editor
                             setTimeout(() => {
-                                $('.zap-img-uploading').each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
-                                if (typeof onPaste === 'function') onPaste(e)
+                                //console.log('change url:' , `.zap-img-uploading-${this.counter - 1}`)
+                                $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
                             }, 0)
                         })
-                    }).catch(error => {
-                        console.error(error)
-                        if (typeof onPaste === 'function') onPaste(e)
                     })
                 })
                 break;
             }
         }
-
-
         if (typeof onPaste === 'function') onPaste(e)
-
     }
 
     get callbacks() {
@@ -251,8 +257,7 @@ class ReactSummernote extends Component {
     }
 
     render() {
-        const { tag: Tag, children, className } = this.props;
-
+        const { tag: Tag, children, className, name } = this.props;
         return (
             <div className={className}>
                 <Tag ref={this.handleEditorRef}>{children}</Tag>
@@ -277,11 +282,12 @@ ReactSummernote.propTypes = {
     onPaste: PropTypes.func,
     onChange: PropTypes.func,
     onImageUpload: PropTypes.func,
+    onImagePasteFromWord: PropTypes.func,
     destroy: PropTypes.bool,
 };
 
 ReactSummernote.defaultProps = {
-    tag: 'div'
+    tag: 'div',
 };
 
 ReactSummernote.prototype.ImportCode = ImportCode

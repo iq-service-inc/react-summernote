@@ -163,16 +163,14 @@ class App extends Component {
 import React, { Component } from 'react'
 import SummerNote from './SummerNote'
 
-function onChange(txt) {
-    let imgs = $('.zap-img-uploading')
-    if(imgs.length>0){
-        //...
-    }
+function onImagePasteFromWord($imgs) {
+    // $imgs collect imgs from this pasting action
+    $imgs.removeClass('zap-img-uploading')
 }
 
 class App extends Component {
     render() {
-        return (<SummerNote onChange={onChange} />)
+        return (<SummerNote onImagePasteFromWord={onChange} />)
     }
 }
 ```
