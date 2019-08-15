@@ -1,6 +1,6 @@
 {
   "name": "react-summernote",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Summernote (Super simple WYSIWYG editor) adaptation for react http://summernote.org",
   "main": "dist/main.js",
   "scripts": {

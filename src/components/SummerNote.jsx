@@ -224,12 +224,11 @@ class ReactSummernote extends Component {
                         var imgs = []
                         htmlElements.forEach($html => {
                             $html.find('img[src*="data:image"]').each((i, el) => { imgs.push(el) })
-                            setTimeout(() => {
-                                //console.log('change url:' , `.zap-img-uploading-${this.counter - 1}`)
-                                const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
-                                if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
-                            }, 0)
                         })
+                        setTimeout(() => {
+                            const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
+                            if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
+                        }, 0)
                     })
                 })
                 break;
