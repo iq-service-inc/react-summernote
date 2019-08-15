@@ -197,23 +197,19 @@ class ReactSummernote extends Component {
 
     handleChange(txt) {
         $('span[style*="mso-ignore"]').remove()
-        const { onChange, onImagePasteFromWord } = this.props;
+        const { onChange } = this.props;
         const $pastedImgs = $('img[src*="file://"]')
             .not('.zap-img-uploading')
             .addClass('zap-img-uploading')
             .addClass(`zap-img-uploading-${this.counter}`)
 
-        if ($pastedImgs.length) {
-            //console.log('add class' , `zap-img-uploading-${this.counter}`)
-            this.counter = this.counter + 1
-            if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pastedImgs)
-        }
+        if ($pastedImgs.length) this.counter = this.counter + 1
         if (typeof onChange === 'function') onChange(txt)
     }
 
     handlePaste(e) {
         // if have media, it will fire upload image event ,so skip paste
-        const { onPaste } = this.props;
+        const { onPaste, onImagePasteFromWord } = this.props;
         const files = e.originalEvent.clipboardData.files;
         // only one pic, dont paste the photo
         if (files.length) return e.preventDefault()
@@ -230,7 +226,8 @@ class ReactSummernote extends Component {
                             $html.find('img[src*="data:image"]').each((i, el) => { imgs.push(el) })
                             setTimeout(() => {
                                 //console.log('change url:' , `.zap-img-uploading-${this.counter - 1}`)
-                                $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
+                                const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
+                                if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
                             }, 0)
                         })
                     })
