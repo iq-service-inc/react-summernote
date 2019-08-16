@@ -155,6 +155,8 @@ class App extends Component {
 }
 ```
 
+![dd](http://chatbot.iqs-t.com/img/dd.gif)
+
 ## Paste from Microsoft Word
 
 貼上 Word 內容時，SummerNote 會解析剪貼簿中的 rtf 內容 (使用 [rtf.js](https://github.com/LinZap/rtf.js))，解析後會自動將 `<img>` 部分轉換成 base64 格式的圖片資源，這些 `<img>` 都會被加上 class `.zap-img-uploading`，可以在使用 jQuery 進行後續處理
@@ -175,6 +177,7 @@ class App extends Component {
 }
 ```
 
+![Wordpaste](http://chatbot.iqs-t.com/img/wordpaste.gif)
 
 ## 自行 import 必要依賴
 
