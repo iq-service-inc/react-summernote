@@ -220,16 +220,14 @@ class ReactSummernote extends Component {
             if (items[i].type.indexOf('rtf') > -1) {
                 items[i].getAsString((rtf) => {
                     const doc = rtf2html(rtf)
-                    doc.render().then((htmlElements) => {
-                        var imgs = []
-                        htmlElements.forEach($html => {
-                            $html.find('img[src*="data:image"]').each((i, el) => { imgs.push(el) })
-                        })
-                        setTimeout(() => {
-                            const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i].src })
-                            if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
-                        }, 0)
+                    var imgs = []
+                    doc.forEach(function(el) {
+                        imgs.push(el)
                     })
+                    setTimeout(() => {
+                        const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i] })
+                        if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
+                    }, 0)
                 })
                 break;
             }

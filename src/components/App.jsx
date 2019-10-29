@@ -79,6 +79,7 @@ function onPaste(e) {
         //console.log('---------- item -------------', items[i])
         if (items[i].type.indexOf('rtf') > -1) {
             items[i].getAsString(function (rtf) {
+                console.log('App rtf',rtf)
                 const doc = rtf2html(rtf)
                 //const meta = doc.metadata();
                 //console.log(doc)
