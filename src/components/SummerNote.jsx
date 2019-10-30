@@ -133,45 +133,6 @@ class ReactSummernote extends Component {
     }
 
     onImageUpload(images) {
-        console.log('images', images)
-        var url = []
-
-    
-        if(images[0] !== null) {
-            console.log('有近來')
-            var reader = new FileReader();
-            reader.onload = function(event) {
-                console.log('我是url',event.target.result); // data url! 
-                url.push(event.target.result)
-            };
-            reader.readAsDataURL(images[0])
-        }
-
-        
-        // document.getElementById('pasteArea').onpaste = function (event) {
-        //     // use event.originalEvent.clipboard for newer chrome versions
-        //     var items = (event.clipboardData  || event.originalEvent.clipboardData).items;
-        //     console.log(JSON.stringify(items)); // will give you the mime types
-        //     // find pasted image among pasted items
-        //     var blob = null;
-        //     for (var i = 0; i < items.length; i++) {
-        //       if (items[i].type.indexOf("image") === 0) {
-        //         blob = items[i].getAsFile();
-        //       }
-        //     }
-        //     // load image if there is a pasted image
-        //     if (blob !== null) {
-        //       var reader = new FileReader();
-        //       console.log('reader', reader)
-        //       reader.onload = function(event) {
-        //         console.log('url',event.target.result); // data url!
-        //         document.getElementById("pastedImage").src = event.target.result;
-        //       };
-        //       reader.readAsDataURL(blob);
-        //     }
-        // }
-
-
         const { onImageUpload } = this.props;
         if (typeof onImageUpload === 'function') {
             onImageUpload(images, this.insertImage);
@@ -259,16 +220,13 @@ class ReactSummernote extends Component {
             if (items[i].type.indexOf('rtf') > -1) {
                 items[i].getAsString((rtf) => {
                     const doc = rtf2html(rtf)
-                    console.log('doc',doc)
                     var imgs = []
                     doc.forEach(function (el) {
                         imgs.push(el)
                     })
-                    // console.log('imgs',imgs[0])
                     
                     setTimeout(() => {
                         const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = imgs[i] })
-                        console.log('$pasteImgs', $pasteImgs)
                         if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
                     }, 0)
                 })
@@ -303,7 +261,7 @@ class ReactSummernote extends Component {
             
             <div className={className}>
                 <Tag ref={this.handleEditorRef} >{children}</Tag>
-                <textarea id="pasteArea" placeholder="Paste Image Here"></textarea>
+                {/* <textarea id="pasteArea" placeholder="Paste Image Here"></textarea> */}
                 <img id="pastedImage"></img>
             </div>
             

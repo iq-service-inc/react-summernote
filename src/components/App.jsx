@@ -54,7 +54,8 @@ function onChange(e) {
 function onImageUpload(file, cb, e) {
     console.log('--------- onImageUpload --------', file, cb, e)
     let image = file[0]
-    console.log('image',image)
+
+    
     SummerNote.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
         $image.css("width", Math.floor($image.width() / 2));
         $image.attr("title", image.name);
