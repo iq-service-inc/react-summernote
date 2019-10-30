@@ -54,7 +54,7 @@ function onChange(e) {
 function onImageUpload(file, cb, e) {
     console.log('--------- onImageUpload --------', file, cb, e)
     let image = file[0]
-
+    console.log('image',image)
     SummerNote.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
         $image.css("width", Math.floor($image.width() / 2));
         $image.attr("title", image.name);
@@ -68,6 +68,7 @@ function onPaste(e) {
     let items = e.originalEvent.clipboardData.items;
     let files = e.originalEvent.clipboardData.files;
 
+
     for (let i = 0; i < files.length; i++) {
         return e.preventDefault()
     }
@@ -79,7 +80,7 @@ function onPaste(e) {
         //console.log('---------- item -------------', items[i])
         if (items[i].type.indexOf('rtf') > -1) {
             items[i].getAsString(function (rtf) {
-                console.log('App rtf',rtf)
+                console.log('App rtf', rtf)
                 const doc = rtf2html(rtf)
                 //const meta = doc.metadata();
                 //console.log(doc)
