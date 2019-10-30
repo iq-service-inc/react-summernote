@@ -143,22 +143,10 @@ class ReactSummernote extends Component {
             reader.onload = function(event) {
                 console.log('我是url',event.target.result); // data url! 
                 url.push(event.target.result)
-                // setTimeout(() => {
-                //     // console.log('我是url',event.target.result); // data url!
-                //     const url =  event.target.result
-                //     const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { el.src = url })
-                //     console.log('$pasteImgs', $pasteImgs)
-                //     if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
-                // }, 0)
             };
             reader.readAsDataURL(images[0])
         }
 
-        setTimeout(() => {
-            const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each((i, el) => { if (imgs[i]) el.src = url[i] })
-            console.log('$pasteImgs', $pasteImgs)
-            if (typeof onImagePasteFromWord === 'function') onImagePasteFromWord($pasteImgs)
-        }, 0)
         
         // document.getElementById('pasteArea').onpaste = function (event) {
         //     // use event.originalEvent.clipboard for newer chrome versions
