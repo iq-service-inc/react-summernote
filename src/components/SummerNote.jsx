@@ -224,12 +224,14 @@ class ReactSummernote extends Component {
 
     const items = e.originalEvent.clipboardData.items;
 
+  
+
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf("rtf") > -1) {
         items[i].getAsString(rtf => {
           const doc = rtf2html(rtf);
           var imgs = [];
-          doc.forEach(function(el) {
+          doc.forEach(function (el) {
             imgs.push(el);
           });
 
@@ -246,6 +248,7 @@ class ReactSummernote extends Component {
         break;
       }
     }
+
     if (typeof onPaste === "function") onPaste(e);
   }
 
