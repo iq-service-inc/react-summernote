@@ -267,10 +267,9 @@ class ReactSummernote extends Component {
   render() {
     const { tag: Tag, children, className, name } = this.props;
     return (
-      <div className={className}>
-        <Tag ref={this.handleEditorRef}>{children}</Tag>
-        {/* <iframe src="" frameBorder="0" onLoad={this.handleEditorRef}>{children}</iframe> */}
-      </div>
+        <div className={className} >
+          <Tag ref={this.handleEditorRef}>{children}</Tag>
+        </div>
     );
   }
 }
