@@ -2,7 +2,7 @@
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
-## [Online Demo](http://192.168.1.130:5566/)
+## [Online Demo](http://10.9.173.130:5566/)
 
 上面連結是一個 React SummerNote 的基本展示
 
@@ -24,7 +24,6 @@ React SummerNote 依賴以下套件
 * `popper.js`: ^1.15.0
 * `summernote`: ^0.8.12
 * `jquery`: ^3.4.1
-* `rtf.js`：git+https://github.com/LinZap/rtf.js.git
 
 
 ## Install 
@@ -32,13 +31,13 @@ React SummerNote 依賴以下套件
 #### 必要依賴安裝
 
 ```
-npm install --save bootstrap popper.js summernote jquery https://github.com/LinZap/rtf.js.git
+npm install --save bootstrap popper.js summernote jquery
 ```
 
 #### 安裝 React SummerNote
 
 ```
-npm install --save git+http://192.168.1.136/SideProject/react-summernote.git
+npm install --save git+http://10.9.173.136/SideProject/react-summernote.git
 ```
 
 #### 設定 Webpack
@@ -155,11 +154,11 @@ class App extends Component {
 }
 ```
 
-![dd](http://chatbot.iqs-t.com/img/dd.gif)
+![dd](http://10.9.173.136/uploads/-/system/personal_snippet/48/15d74641999a62e3979ef99d900cd546/dd.gif)
 
 ## Paste from Microsoft Word
 
-貼上 Word 內容時，SummerNote 會解析剪貼簿中的 rtf 內容 (使用 [rtf.js](https://github.com/LinZap/rtf.js))，解析後會自動將 `<img>` 部分轉換成 base64 格式的圖片資源，這些 `<img>` 都會被加上 class `.zap-img-uploading`，可以在使用 jQuery 進行後續處理
+貼上 Word 內容時，SummerNote 會解析剪貼簿中的 rtf 內容，解析後會自動將 `<img>` 部分轉換成 base64 格式的圖片資源，這些 `<img>` 都會被加上 class `.zap-img-uploading`，可以在使用 jQuery 進行後續處理
 
 ```jsx
 import React, { Component } from 'react'
@@ -177,7 +176,7 @@ class App extends Component {
 }
 ```
 
-![Wordpaste](http://chatbot.iqs-t.com/img/wordpaste.gif)
+![Wordpaste](http://10.9.173.136/uploads/-/system/personal_snippet/48/e2b3193ab8a4d6d66879140931e52666/wordpaste.gif)
 
 ## 自行 import 必要依賴
 
@@ -199,4 +198,4 @@ require('summernote/dist/summernote-bs4.min.js')
 ## License
 
 The MIT License (MIT)  
-Copyright (c) 2019 Zap
+Copyright (c) 2020 Zap
