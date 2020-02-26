@@ -8,7 +8,9 @@ import ImportCode from "./ImportCode";
 class ReactSummernote extends Component {
 	constructor(props) {
 		super(props);
+		this.editorbox = React.createRef();
 		this.counter = 0; // counter for identitify for paste word content
+		this.pasteResource = []
 		//this.uid = `react-summernote-${randomUid()}`;
 		this.editor = {};
 		this.noteEditable = null;
@@ -204,46 +206,46 @@ class ReactSummernote extends Component {
 	}
 
 	handleChange(txt) {
-		$('span[style*="mso-ignore"]').remove();
-		const { onChange } = this.props;
-		const $pastedImgs = $('img[src*="file://"]')
-			.not(".zap-img-uploading")
-			.addClass("zap-img-uploading")
-			.addClass(`zap-img-uploading-${this.counter}`);
 
-		if ($pastedImgs.length) this.counter = this.counter + 1;
+		const { onChange, onImagePasteFromWord } = this.props;
+		const editorbox = $(this.editorbox.current)
+
+		editorbox.find('span[style*="mso-ignore"]').remove()
+
+		const $pastedImgs = editorbox.find('img[src*="file://"]')
+			.not(".zap-img-uploading")
+			.addClass('zap-img-uploading')
+			.each((i, el) => {
+				//console.log(el, 'src', this.pasteResource[i])
+				$(el).attr('src', this.pasteResource[i])
+			})
+
+		if (typeof onImagePasteFromWord === "function" && this.isPasteFromWord) {
+			this.isPasteFromWord = false
+			onImagePasteFromWord($pastedImgs);
+		}
+
 		if (typeof onChange === "function") onChange(txt);
 	}
 
+	// if ctrl+v : fire this first
 	handlePaste(e) {
+		//console.log('handlePaste this.counter', this.counter)
 		// if have media, it will fire upload image event ,so skip paste
-		const { onPaste, onImagePasteFromWord } = this.props;
+		// const editorbox = $(this.editorbox.current)
+		const { onPaste } = this.props;
 		const files = e.originalEvent.clipboardData.files;
 		// only one pic, dont paste the photo
 		if (files.length) return e.preventDefault();
-
 		const items = e.originalEvent.clipboardData.items;
-
-
 
 		for (let i = 0; i < items.length; i++) {
 			if (items[i].type.indexOf("rtf") > -1) {
 				items[i].getAsString(rtf => {
-					const doc = rtf2html(rtf);
-					var imgs = [];
-					doc.forEach(function (el) {
-						imgs.push(el);
-					});
-
-					setTimeout(() => {
-						const $pasteImgs = $(`.zap-img-uploading-${this.counter - 1}`).each(
-							(i, el) => {
-								if (imgs[i]) el.src = imgs[i];
-							}
-						);
-						if (typeof onImagePasteFromWord === "function")
-							onImagePasteFromWord($pasteImgs);
-					}, 0);
+					const doc = rtf2html(rtf), imgs = [];
+					doc.forEach(function (el) { imgs.push(el) });
+					this.pasteResource = imgs
+					this.isPasteFromWord = true
 				});
 				break;
 			}
@@ -270,7 +272,7 @@ class ReactSummernote extends Component {
 	render() {
 		const { tag: Tag, children, className, name } = this.props;
 		return (
-			<div className={className} >
+			<div className={className} ref={this.editorbox}>
 				<Tag ref={this.handleEditorRef}>{children}</Tag>
 			</div>
 		);
