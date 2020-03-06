@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import SummerNote2 from "./SummerNote";
 import SummerNote from "./SummerNote";
 import rtf2html from "../lib/trf2html";
 // import required codes
@@ -9,11 +10,22 @@ const htmldata =
 
 //import IconButton from './ToolBar/IconButton'
 class App extends Component {
+
+	checkRef = (...args)=>{
+		console.log('checkRef',args)
+	}
+
+	componentDidMount(){
+		console.log(SummerNote)
+		console.log(SummerNote2)
+	}
+
 	render() {
 		return (
 			<div className="demo">
 				<h1>React SummerNote App</h1>
 				<SummerNote
+					id='editor1'
 					destroy={false}
 					value={htmldata}
 					options={{
@@ -35,7 +47,9 @@ class App extends Component {
 					onImagePasteFromWord={onImagePasteFromWord}
 					//onPaste={onPaste}
 					onInit={e => console.log("--------- onInit --------", e)}
+					ref={this.checkRef}
 				/>
+				<SummerNote2 id='editor2' ref={this.checkRef}/>
 			</div>
 		);
 	}

@@ -5,7 +5,7 @@ import ImportCode from "./ImportCode";
 
 //const randomUid = () => Math.floor(Math.random() * 100000);
 
-class ReactSummernote extends Component {
+class InnerReactSummernote extends Component {
 	constructor(props) {
 		super(props);
 		this.editorbox = React.createRef();
@@ -29,16 +29,16 @@ class ReactSummernote extends Component {
 		this.insertText = this.insertText.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handlePaste = this.handlePaste.bind(this);
-		ReactSummernote.focus = this.focus.bind(this);
-		ReactSummernote.isEmpty = this.isEmpty.bind(this);
-		ReactSummernote.reset = this.reset.bind(this);
-		ReactSummernote.replace = this.replace.bind(this);
-		ReactSummernote.disable = this.disable.bind(this);
-		ReactSummernote.enable = this.enable.bind(this);
-		ReactSummernote.toggleState = this.toggleState.bind(this);
-		ReactSummernote.insertImage = this.insertImage.bind(this);
-		ReactSummernote.insertNode = this.insertNode.bind(this);
-		ReactSummernote.insertText = this.insertText.bind(this);
+		InnerReactSummernote.focus = this.focus.bind(this);
+		InnerReactSummernote.isEmpty = this.isEmpty.bind(this);
+		InnerReactSummernote.reset = this.reset.bind(this);
+		InnerReactSummernote.replace = this.replace.bind(this);
+		InnerReactSummernote.disable = this.disable.bind(this);
+		InnerReactSummernote.enable = this.enable.bind(this);
+		InnerReactSummernote.toggleState = this.toggleState.bind(this);
+		InnerReactSummernote.insertImage = this.insertImage.bind(this);
+		InnerReactSummernote.insertNode = this.insertNode.bind(this);
+		InnerReactSummernote.insertText = this.insertText.bind(this);
 	}
 
 	//loadModule = path => require(path)
@@ -46,12 +46,13 @@ class ReactSummernote extends Component {
 	handleEditorRef = node => {
 		if (!node) return;
 		const options = this.props.options || {};
-		const { codeview, destroy, value } = this.props;
+		const { codeview, destroy, value, forwardedRef } = this.props;
 		options.callbacks = this.callbacks;
 		// load lang pack
 		//if (options.lang && options.lang != 'en') this.loadModule(`summernote/dist/lang/summernote-${options.lang}.js`)
 		//if (options.lang) require(`summernote/lang/summernote-${options.lang}.js`)
 		this.editor = $(node);
+
 		this.editor.summernote(options);
 		if (value) {
 			this.replace(value);
@@ -63,6 +64,9 @@ class ReactSummernote extends Component {
 		if (destroy) {
 			this.editor.summernote("destroy");
 		}
+
+		console.log('forwardedRef',forwardedRef)
+		if(typeof forwardedRef==='function') forwardedRef(node, this.editor)
 	};
 
 	//componentDidMount() {
@@ -194,6 +198,7 @@ class ReactSummernote extends Component {
 	}
 
 	insertImage(url, filenameOrCallback) {
+		console.log(this.editor)
 		this.editor.summernote("insertImage", url, filenameOrCallback);
 	}
 
@@ -270,16 +275,16 @@ class ReactSummernote extends Component {
 	}
 
 	render() {
-		const { tag: Tag, children, className, name } = this.props;
+		const { tag: Tag, children, className, name, id } = this.props;
 		return (
-			<div className={className} ref={this.editorbox}>
+			<div className={className} ref={this.editorbox} id={id}>
 				<Tag ref={this.handleEditorRef}>{children}</Tag>
 			</div>
 		);
 	}
 }
 
-ReactSummernote.propTypes = {
+InnerReactSummernote.propTypes = {
 	tag: PropTypes.string, // will determing using div or textarea field for form components like redux-form
 	children: PropTypes.node, // instead of value, using children makes more sense for div and textarea blocks
 	codeview: PropTypes.bool,
@@ -299,11 +304,20 @@ ReactSummernote.propTypes = {
 	destroy: PropTypes.bool
 };
 
-ReactSummernote.defaultProps = {
+InnerReactSummernote.defaultProps = {
 	tag: "div"
 };
 
-ReactSummernote.prototype.ImportCode = ImportCode;
+
+
+
+const ReactSummernote = React.forwardRef((props, ref) => (
+	<InnerReactSummernote {...props} forwardedRef={ref}/>
+));
+
+console.log(ReactSummernote)
+//ReactSummernote.prototype.ImportCode = ImportCode;
 ReactSummernote.ImportCode = ImportCode;
+
 
 export default ReactSummernote;
