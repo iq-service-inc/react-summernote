@@ -1,13 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import rtf2html from "../lib/trf2html";
 import ImportCode from "./ImportCode";
 
-//const randomUid = () => Math.floor(Math.random() * 100000);
+class InnerReactSummernote extends React.Component {
 
-class InnerReactSummernote extends Component {
 	constructor(props) {
+
 		super(props);
+		//console.log('forwardedRef', props.forwardedRef)
 		this.editorbox = React.createRef();
 		this.counter = 0; // counter for identitify for paste word content
 		this.pasteResource = []
@@ -41,12 +42,10 @@ class InnerReactSummernote extends Component {
 		InnerReactSummernote.insertText = this.insertText.bind(this);
 	}
 
-	//loadModule = path => require(path)
-
 	handleEditorRef = node => {
 		if (!node) return;
 		const options = this.props.options || {};
-		const { codeview, destroy, value, forwardedRef } = this.props;
+		const { codeview, destroy, value, innerRef } = this.props;
 		options.callbacks = this.callbacks;
 		// load lang pack
 		//if (options.lang && options.lang != 'en') this.loadModule(`summernote/dist/lang/summernote-${options.lang}.js`)
@@ -54,6 +53,7 @@ class InnerReactSummernote extends Component {
 		this.editor = $(node);
 
 		this.editor.summernote(options);
+
 		if (value) {
 			this.replace(value);
 			this.setState({ value });
@@ -65,8 +65,8 @@ class InnerReactSummernote extends Component {
 			this.editor.summernote("destroy");
 		}
 
-		console.log('forwardedRef',forwardedRef)
-		if(typeof forwardedRef==='function') forwardedRef(node, this.editor)
+		if (typeof innerRef === 'function') innerRef(this)
+		else if (typeof innerRef === 'object') innerRef.current = this
 	};
 
 	//componentDidMount() {
@@ -198,16 +198,19 @@ class InnerReactSummernote extends Component {
 	}
 
 	insertImage(url, filenameOrCallback) {
-		console.log(this.editor)
+		//console.log(this.editor)
+		this.editor.summernote("focus")
 		this.editor.summernote("insertImage", url, filenameOrCallback);
 	}
 
 	insertNode(node) {
+		this.editor.summernote("focus")
 		this.editor.summernote("insertNode", node);
 	}
 
 	insertText(text) {
-		this.editor.summernote("insertText", text);
+		this.editor.summernote("focus")
+		this.editor.summernote("insertText", text)
 	}
 
 	handleChange(txt) {
@@ -275,10 +278,11 @@ class InnerReactSummernote extends Component {
 	}
 
 	render() {
-		const { tag: Tag, children, className, name, id } = this.props;
+		const { className, id, tag } = this.props;
+		const Tag = tag || 'div'
 		return (
 			<div className={className} ref={this.editorbox} id={id}>
-				<Tag ref={this.handleEditorRef}>{children}</Tag>
+				<Tag ref={this.handleEditorRef}></Tag>
 			</div>
 		);
 	}
@@ -286,7 +290,7 @@ class InnerReactSummernote extends Component {
 
 InnerReactSummernote.propTypes = {
 	tag: PropTypes.string, // will determing using div or textarea field for form components like redux-form
-	children: PropTypes.node, // instead of value, using children makes more sense for div and textarea blocks
+	//children: PropTypes.node, // instead of value, using children makes more sense for div and textarea blocks
 	codeview: PropTypes.bool,
 	className: PropTypes.string,
 	options: PropTypes.object,
@@ -302,22 +306,11 @@ InnerReactSummernote.propTypes = {
 	onImageUpload: PropTypes.func,
 	onImagePasteFromWord: PropTypes.func,
 	destroy: PropTypes.bool
-};
-
-InnerReactSummernote.defaultProps = {
-	tag: "div"
-};
+}
 
 
 
+const ReactSummernote = React.forwardRef((props, ref) => <InnerReactSummernote innerRef={ref} {...props} />)
+ReactSummernote.ImportCode = ImportCode
 
-const ReactSummernote = React.forwardRef((props, ref) => (
-	<InnerReactSummernote {...props} forwardedRef={ref}/>
-));
-
-console.log(ReactSummernote)
-//ReactSummernote.prototype.ImportCode = ImportCode;
-ReactSummernote.ImportCode = ImportCode;
-
-
-export default ReactSummernote;
+export default ReactSummernote

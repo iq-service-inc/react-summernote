@@ -1,5 +1,7 @@
 # React SummerNote
 
+**Stable Version: `v2.0.0`**
+
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
 ## [Online Demo](http://10.9.173.130:5566/)
@@ -130,6 +132,37 @@ render(
 
 更詳細的設定方式，可以參閱上面的官方說明
 
+## Control Editor
+
+下面簡單示範如何使用新版 API 控制編輯器 (version > `v2.0.0`)
+
+```jsx
+import React, { Component } from 'react'
+import SummerNote from './SummerNote'
+
+class App extends Component {
+
+    constructor(props) {
+		super(props)
+		this.editor = React.createRef()
+    }
+
+    componentDidMount(){
+        const editor = this.editor.current
+        editor.focus()                      // 焦點設置在 editor 上
+        editor.isEmpty()                    // 編輯器內容是否為空
+        editor.reset()                      // 清除編輯器所有內容
+        editor.disable()                    // 使編輯器禁止輸入
+        editor.enable()                     // 使編輯器可以輸入
+        editor.insertImage()                // 插入圖片 (詳情可參考下一個段落)
+        editor.insertNode(/* html node */)  // 插入 HTML 節點    
+        editor.insertText('')               // 插入純文字 
+	}
+    render() {
+        return (<SummerNote ref={this.editor}/>)
+    }
+}
+```
 
 ## Upload Image
 
@@ -139,17 +172,23 @@ render(
 import React, { Component } from 'react'
 import SummerNote from './SummerNote'
 
-function onImageUpload(file) {
-    let image = file[0]
-    SummerNote.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
-        $image.css("width", Math.floor($image.width() / 2));
-        $image.attr("title", image.name);
-    })
-}
-
 class App extends Component {
+
+    constructor(props) {
+		super(props)
+		this.editor = React.createRef();
+    }
+    
+    onImageUpload = file => {
+        let image = file[0]
+        this.editor.current.insertImage('https://i.imgur.com/JOOEENx.png', ($image) => {
+            $image.css("width", Math.floor($image.width() / 2));
+            $image.attr("title", image.name);
+        })
+    }
+
     render() {
-        return (<SummerNote onImageUpload={onImageUpload}/>)
+        return (<SummerNote onImageUpload={this.onImageUpload} ref={this.editor}/>)
     }
 }
 ```

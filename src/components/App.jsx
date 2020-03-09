@@ -3,6 +3,7 @@ import SummerNote2 from "./SummerNote";
 import SummerNote from "./SummerNote";
 import rtf2html from "../lib/trf2html";
 // import required codes
+console.log(SummerNote)
 SummerNote.ImportCode();
 
 const htmldata =
@@ -11,13 +12,37 @@ const htmldata =
 //import IconButton from './ToolBar/IconButton'
 class App extends Component {
 
-	checkRef = (...args)=>{
-		console.log('checkRef',args)
+	constructor(props) {
+		super(props)
+		this.editor1 = React.createRef();
+		this.editor2 = React.createRef();
+		// console.log( 'constructor this.editor1 ',this.editor1 )
+		// console.log( 'constructor this.editor2 ',this.editor2 )
 	}
 
-	componentDidMount(){
-		console.log(SummerNote)
-		console.log(SummerNote2)
+	// componentDidMount(){
+	// }
+
+
+	onImageUpload1 = (file, cb, e) => {
+		//console.log("--------- onImageUpload --------", file, cb, e);
+		let image = file[0];
+
+		console.log(this.editor1)
+		this.editor1.current.insertImage("https://i.imgur.com/JOOEENx.png", $image => {
+			$image.css("width", Math.floor($image.width() / 2));
+			$image.attr("title", image.name);
+		});
+	}
+
+	onImageUpload2 = (file, cb, e) => {
+		//console.log("--------- onImageUpload --------", file, cb, e);
+		let image = file[0];
+		console.log(this.editor2)
+		this.editor2.current.insertImage("https://i.imgur.com/JOOEENx.png", $image => {
+			$image.css("width", Math.floor($image.width() / 2));
+			$image.attr("title", image.name);
+		});
 	}
 
 	render() {
@@ -43,13 +68,13 @@ class App extends Component {
 						]
 					}}
 					onChange={onChange}
-					onImageUpload={onImageUpload}
+					onImageUpload={this.onImageUpload1}
 					onImagePasteFromWord={onImagePasteFromWord}
 					//onPaste={onPaste}
 					onInit={e => console.log("--------- onInit --------", e)}
-					ref={this.checkRef}
+					ref={this.editor1}
 				/>
-				<SummerNote2 id='editor2' ref={this.checkRef}/>
+				<SummerNote2 id='editor2' onImageUpload={this.onImageUpload2} ref={this.editor2} />
 			</div>
 		);
 	}
@@ -65,15 +90,6 @@ function onChange(e) {
 	console.log("change");
 }
 
-function onImageUpload(file, cb, e) {
-	console.log("--------- onImageUpload --------", file, cb, e);
-	let image = file[0];
-
-	SummerNote.insertImage("https://i.imgur.com/JOOEENx.png", $image => {
-		$image.css("width", Math.floor($image.width() / 2));
-		$image.attr("title", image.name);
-	});
-}
 
 function onPaste(e) {
 	//console.log('--------- onPaste --------', e)
