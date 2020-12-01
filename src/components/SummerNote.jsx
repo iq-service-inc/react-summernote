@@ -28,6 +28,7 @@ class InnerReactSummernote extends React.Component {
 		this.insertImage = this.insertImage.bind(this);
 		this.insertNode = this.insertNode.bind(this);
 		this.insertText = this.insertText.bind(this);
+		this.insertHtml = this.insertHtml.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handlePaste = this.handlePaste.bind(this);
 		InnerReactSummernote.focus = this.focus.bind(this);
@@ -40,6 +41,7 @@ class InnerReactSummernote extends React.Component {
 		InnerReactSummernote.insertImage = this.insertImage.bind(this);
 		InnerReactSummernote.insertNode = this.insertNode.bind(this);
 		InnerReactSummernote.insertText = this.insertText.bind(this);
+		InnerReactSummernote.insertHtml = this.insertHtml.bind(this);
 	}
 
 	handleEditorRef = node => {
@@ -141,7 +143,8 @@ class InnerReactSummernote extends React.Component {
 				enable: this.enable,
 				insertImage: this.insertImage,
 				insertNode: this.insertNode,
-				insertText: this.insertText
+				insertText: this.insertText,
+				insertHtml: this.insertHtml
 			});
 		}
 	}
@@ -213,6 +216,11 @@ class InnerReactSummernote extends React.Component {
 		this.editor.summernote("insertText", text)
 	}
 
+	insertHtml(html) {
+		this.editor.summernote("focus")
+		this.editor.summernote("pasteHTML", html)
+	}
+
 	handleChange(txt) {
 
 		const { onChange, onImagePasteFromWord } = this.props;
@@ -252,12 +260,16 @@ class InnerReactSummernote extends React.Component {
 		// if have media, it will fire upload image event ,so skip paste
 		// const editorbox = $(this.editorbox.current)
 		const { onPaste } = this.props;
-		const files = e.originalEvent.clipboardData.files;
+		// const files = e.originalEvent.clipboardData.files;
 		// only one pic, dont paste the photo
-		if (files.length) return e.preventDefault();
+		// if (files.length) return e.preventDefault();
 		const items = e.originalEvent.clipboardData.items;
 
 		for (let i = 0; i < items.length; i++) {
+			console.log(items[i].type)
+			if (items[i].type.indexOf("html") > -1) {
+				var html = items[i]
+			}
 			if (items[i].type.indexOf("rtf") > -1) {
 				items[i].getAsString(rtf => {
 					const doc = rtf2html(rtf), imgs = [];
@@ -270,6 +282,32 @@ class InnerReactSummernote extends React.Component {
 		}
 
 		if (typeof onPaste === "function") onPaste(e);
+
+		// if browser is Firefox and doc rely on vml
+		// prevent default paste event
+		if (navigator.userAgent.indexOf('Firefox') > -1 && e.originalEvent.clipboardData.getData('text/html').indexOf('RelyOnVML') > -1){
+			html.getAsString(text => {
+				var start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length
+				var end = text.indexOf('<!--EndFragment-->')
+				var str = text.substring(start, end)
+	
+				var selection = window.getSelection(),
+					selected = (selection.rangeCount > 0) && selection.getRangeAt(0);
+
+				if (selected.startOffset !== selected.endOffset) {	// replace selection
+					var range = selected.cloneRange();
+					selection.deleteFromDocument()	// delete selection content
+					// paste data after cursor
+					var newNode = document.createElement('p')
+					newNode.innerHTML = str
+					newNode.appendChild(range.extractContents());
+					range.insertNode(newNode)
+					selection.removeAllRanges();
+				}
+				else this.insertHtml(str)
+			});
+			e.preventDefault()
+		}
 	}
 
 	get callbacks() {
