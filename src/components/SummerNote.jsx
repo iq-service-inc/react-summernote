@@ -217,15 +217,28 @@ class InnerReactSummernote extends React.Component {
 
 		const { onChange, onImagePasteFromWord } = this.props;
 		const editorbox = $(this.editorbox.current)
-
 		editorbox.find('span[style*="mso-ignore"]').remove()
 
-		const $pastedImgs = editorbox.find('img[src*="file://"]')
+		const $pastedImgs = editorbox.find('img[src*="file://"],v\\:imagedata')
 			.not(".zap-img-uploading")
 			.addClass('zap-img-uploading')
 			.each((i, el) => {
-				//console.log(el, 'src', this.pasteResource[i])
-				$(el).attr('src', this.pasteResource[i])
+				// console.log(el, 'src', this.pasteResource[i])
+				if ($(el).prop("tagName") != 'IMG') {
+					var newElem = $('<img></img>', {html: $(el).html()})
+					$.each(el.attributes, (j, attr) => {
+						if (attr['name'] == 'src') {
+							newElem.attr(attr['name'], this.pasteResource[i])
+						}
+						else {
+							newElem.attr(attr['name'], attr['value'])
+						}
+					})
+					var style = $(el).parent().attr('style')
+					newElem.attr('style', style)
+					$(el).replaceWith(newElem)
+				}
+				else $(el).attr('src', this.pasteResource[i])
 			})
 
 		if (typeof onImagePasteFromWord === "function" && this.isPasteFromWord) {

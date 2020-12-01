@@ -6,7 +6,20 @@ function newstringToArrayBuffer(string) {
         wholeImages,
         imageType
 
-    wholeImages = string.match(rePicture);
+    var start = string.indexOf('\{\\*\\listpicture')
+    if(start > -1){
+        var brackets = 0, i = start
+        for (i; i < string.length; i++) {
+            const char = string[i];
+            if (char == '{') brackets = brackets + 1
+            if (char == '}') brackets = brackets - 1
+            if (brackets == 0) break
+        }
+        var str = string.substring(0, start) + string.substring(i)
+    }
+    else str = string
+
+    wholeImages = str.match(rePicture);
 
     if (!wholeImages) {
 
