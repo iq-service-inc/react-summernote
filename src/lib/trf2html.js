@@ -7,7 +7,7 @@ function newstringToArrayBuffer(string) {
         imageType
 
     var start = string.indexOf('\{\\*\\listpicture')
-    if(start > 0){
+    if(start > -1){
         var brackets = 0, i = start
         for (i; i < string.length; i++) {
             const char = string[i];
