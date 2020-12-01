@@ -226,15 +226,14 @@ class InnerReactSummernote extends React.Component {
 				// console.log(el, 'src', this.pasteResource[i])
 				if ($(el).prop("tagName") != 'IMG') {
 					var newElem = $('<img></img>', {html: $(el).html()})
-					var attr = el.attributes
-					for(let j = 0; j < attr.length; j++){
-						if (attr[j]['name'] == 'src') {
-							newElem.attr(attr[j]['name'], this.pasteResource[i])
+					$.each(el.attributes, (j, attr) => {
+						if (attr['name'] == 'src') {
+							newElem.attr(attr['name'], this.pasteResource[i])
 						}
 						else {
-							newElem.attr(attr[j]['name'], attr[j]['value'])
+							newElem.attr(attr['name'], attr['value'])
 						}
-					}
+					})
 					var style = $(el).parent().attr('style')
 					newElem.attr('style', style)
 					$(el).replaceWith(newElem)
