@@ -28,6 +28,8 @@ class InnerReactSummernote extends React.Component {
 		this.insertImage = this.insertImage.bind(this);
 		this.insertNode = this.insertNode.bind(this);
 		this.insertText = this.insertText.bind(this);
+		this.pasteHTML = this.pasteHTML.bind(this);
+		this.createRange = this.createRange.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handlePaste = this.handlePaste.bind(this);
 		InnerReactSummernote.focus = this.focus.bind(this);
@@ -40,6 +42,7 @@ class InnerReactSummernote extends React.Component {
 		InnerReactSummernote.insertImage = this.insertImage.bind(this);
 		InnerReactSummernote.insertNode = this.insertNode.bind(this);
 		InnerReactSummernote.insertText = this.insertText.bind(this);
+		InnerReactSummernote.pasteHTML = this.pasteHTML.bind(this);
 	}
 
 	handleEditorRef = node => {
@@ -141,7 +144,8 @@ class InnerReactSummernote extends React.Component {
 				enable: this.enable,
 				insertImage: this.insertImage,
 				insertNode: this.insertNode,
-				insertText: this.insertText
+				insertText: this.insertText,
+				pasteHTML: this.pasteHTML
 			});
 		}
 	}
@@ -213,6 +217,17 @@ class InnerReactSummernote extends React.Component {
 		this.editor.summernote("insertText", text)
 	}
 
+	pasteHTML(html) {
+		this.editor.summernote("focus")
+		this.editor.summernote("pasteHTML", html)
+	}
+
+	createRange() {
+		this.editor.summernote("focus")
+		var range = this.editor.summernote("createRange")
+		return range
+	}
+
 	handleChange(txt) {
 
 		const { onChange, onImagePasteFromWord } = this.props;
@@ -252,12 +267,15 @@ class InnerReactSummernote extends React.Component {
 		// if have media, it will fire upload image event ,so skip paste
 		// const editorbox = $(this.editorbox.current)
 		const { onPaste } = this.props;
-		const files = e.originalEvent.clipboardData.files;
+		// const files = e.originalEvent.clipboardData.files;
 		// only one pic, dont paste the photo
-		if (files.length) return e.preventDefault();
+		// if (files.length) return e.preventDefault();
 		const items = e.originalEvent.clipboardData.items;
 
 		for (let i = 0; i < items.length; i++) {
+			if (items[i].type.indexOf("html") > -1) {
+				var html = items[i]
+			}
 			if (items[i].type.indexOf("rtf") > -1) {
 				items[i].getAsString(rtf => {
 					const doc = rtf2html(rtf), imgs = [];
@@ -270,6 +288,70 @@ class InnerReactSummernote extends React.Component {
 		}
 
 		if (typeof onPaste === "function") onPaste(e);
+
+		var ua = navigator.userAgent
+		// if browser is not msie and paste excel table
+		// remove images
+		// todo: 1. table style
+		//		 2. paste table content on selection range
+		var excel = e.originalEvent.clipboardData.getData('text/html').indexOf('Microsoft Excel') > -1
+		var msie = /MSIE|Trident/i.test(ua)
+		if(excel && !msie) {
+			html.getAsString(text => {
+				// var begin = text.indexOf('<style>'),
+				// 	end = text.indexOf('</style>', begin + '<style>'.length),
+				// 	content = text.substring(begin + '<style>'.length, end),
+				// 	style = document.createElement('style')
+				// style.innerHTML = content
+
+				var node = document.createElement('table'),
+					start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
+					end = text.indexOf('<!--EndFragment-->'),
+					str = text.substring(start, end)
+				node.innerHTML = str
+
+				var imgs = node.getElementsByTagName('img')
+				for (let index = 0; index < imgs; index++) {
+					const el = imgs[index]
+					node.removeChild(el)
+				}
+
+				var range = this.createRange()
+				if(!!range.sc.parentNode.closest('table')){	// merge table / insert row/column
+					range.pasteHTML(node.innerHTML)
+				}
+				else range.pasteHTML(node.outerHTML)
+			})
+			return e.preventDefault()
+		}
+
+		// if browser is Firefox and doc rely on vml
+		// prevent default paste event
+		var ff = ua.indexOf('Firefox') > -1,
+        	vml = e.originalEvent.clipboardData.getData('text/html').indexOf('RelyOnVML') > -1
+		if (ff && vml){	
+			html.getAsString(text => {
+				var start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length
+				var end = text.indexOf('<!--EndFragment-->')
+				var str = text.substring(start, end)
+	
+				var selection = window.getSelection(),
+					selected = (selection.rangeCount > 0) && selection.getRangeAt(0);
+
+				if (selected.startOffset !== selected.endOffset) {	// replace selection
+					var range = selected.cloneRange();
+					selection.deleteFromDocument()	// delete selection content
+					// paste data after cursor
+					var newNode = document.createElement('p')
+					newNode.innerHTML = str
+					newNode.appendChild(range.extractContents());
+					range.insertNode(newNode)
+					selection.removeAllRanges();
+				}
+				else this.pasteHTML(str)
+			});
+			return e.preventDefault()
+		}
 	}
 
 	get callbacks() {
