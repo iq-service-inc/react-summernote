@@ -28,7 +28,7 @@ class InnerReactSummernote extends React.Component {
 		this.insertImage = this.insertImage.bind(this);
 		this.insertNode = this.insertNode.bind(this);
 		this.insertText = this.insertText.bind(this);
-		this.insertHtml = this.insertHtml.bind(this);
+		this.pasteHTML = this.pasteHTML.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handlePaste = this.handlePaste.bind(this);
 		InnerReactSummernote.focus = this.focus.bind(this);
@@ -41,7 +41,6 @@ class InnerReactSummernote extends React.Component {
 		InnerReactSummernote.insertImage = this.insertImage.bind(this);
 		InnerReactSummernote.insertNode = this.insertNode.bind(this);
 		InnerReactSummernote.insertText = this.insertText.bind(this);
-		InnerReactSummernote.insertHtml = this.insertHtml.bind(this);
 	}
 
 	handleEditorRef = node => {
@@ -144,7 +143,7 @@ class InnerReactSummernote extends React.Component {
 				insertImage: this.insertImage,
 				insertNode: this.insertNode,
 				insertText: this.insertText,
-				insertHtml: this.insertHtml
+				pasteHTML: this.pasteHTML
 			});
 		}
 	}
@@ -216,7 +215,7 @@ class InnerReactSummernote extends React.Component {
 		this.editor.summernote("insertText", text)
 	}
 
-	insertHtml(html) {
+	pasteHTML(html) {
 		this.editor.summernote("focus")
 		this.editor.summernote("pasteHTML", html)
 	}
@@ -266,7 +265,6 @@ class InnerReactSummernote extends React.Component {
 		const items = e.originalEvent.clipboardData.items;
 
 		for (let i = 0; i < items.length; i++) {
-			console.log(items[i].type)
 			if (items[i].type.indexOf("html") > -1) {
 				var html = items[i]
 			}
@@ -283,9 +281,12 @@ class InnerReactSummernote extends React.Component {
 
 		if (typeof onPaste === "function") onPaste(e);
 
+		var ua = navigator.userAgent
 		// if browser is Firefox and doc rely on vml
 		// prevent default paste event
-		if (navigator.userAgent.indexOf('Firefox') > -1 && e.originalEvent.clipboardData.getData('text/html').indexOf('RelyOnVML') > -1){
+		var ff = ua.indexOf('Firefox') > -1,
+        	vml = e.originalEvent.clipboardData.getData('text/html').indexOf('RelyOnVML') > -1
+		if (ff && vml){	
 			html.getAsString(text => {
 				var start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length
 				var end = text.indexOf('<!--EndFragment-->')
@@ -304,9 +305,9 @@ class InnerReactSummernote extends React.Component {
 					range.insertNode(newNode)
 					selection.removeAllRanges();
 				}
-				else this.insertHtml(str)
+				else this.pasteHTML(str)
 			});
-			e.preventDefault()
+			return e.preventDefault()
 		}
 	}
 
