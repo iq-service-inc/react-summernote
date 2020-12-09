@@ -308,6 +308,7 @@ class InnerReactSummernote extends React.Component {
 					start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
 					end = text.indexOf('<!--EndFragment-->'),
 					str = text.substring(start, end)
+				node.border = 1
 				node.innerHTML = str
 
 				var imgs = node.getElementsByTagName('img')
