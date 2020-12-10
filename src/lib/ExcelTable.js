@@ -5,7 +5,6 @@ export default {
             start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
             end = text.indexOf('<!--EndFragment-->'),
             str = text.substring(start, end)
-        table.border = 1
         table.innerHTML = str
 
         return table
