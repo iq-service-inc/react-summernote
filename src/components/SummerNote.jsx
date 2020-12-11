@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import rtf2html from "../lib/trf2html";
+import ExcelTable from "../lib/ExcelTable";
 import ImportCode from "./ImportCode";
 
 class InnerReactSummernote extends React.Component {
@@ -289,38 +290,26 @@ class InnerReactSummernote extends React.Component {
 
 		if (typeof onPaste === "function") onPaste(e);
 
-		var ua = navigator.userAgent
+		var ua = navigator.userAgent,
+			clipboardHTML = e.originalEvent.clipboardData.getData('text/html')
 		// if browser is not msie and paste excel table
-		// remove images
-		// todo: 1. table style
-		//		 2. paste table content on selection range
-		var excel = e.originalEvent.clipboardData.getData('text/html').indexOf('Microsoft Excel') > -1
-		var msie = /MSIE|Trident/i.test(ua)
+		// remove images, add style inline
+		// todo: 1. paste table content on selection range
+		var excel = clipboardHTML.indexOf('Microsoft Excel') > -1,
+			msie = /MSIE|Trident/i.test(ua)
 		if(excel && !msie) {
 			html.getAsString(text => {
-				// var begin = text.indexOf('<style>'),
-				// 	end = text.indexOf('</style>', begin + '<style>'.length),
-				// 	content = text.substring(begin + '<style>'.length, end),
-				// 	style = document.createElement('style')
-				// style.innerHTML = content
-
-				var node = document.createElement('table'),
-					start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
-					end = text.indexOf('<!--EndFragment-->'),
-					str = text.substring(start, end)
-				node.innerHTML = str
-
-				var imgs = node.getElementsByTagName('img')
-				for (let index = 0; index < imgs; index++) {
-					const el = imgs[index]
-					node.removeChild(el)
-				}
+				var table = ExcelTable.getTable(text),
+					style = ExcelTable.createStylesheet(text)
+					
+				ExcelTable.applyStyleInline(table, style)
+				ExcelTable.removeImage(table)
 
 				var range = this.createRange()
 				if(!!range.sc.parentNode.closest('table')){	// merge table / insert row/column
-					range.pasteHTML(node.innerHTML)
+					range.pasteHTML(table.innerHTML)
 				}
-				else range.pasteHTML(node.outerHTML)
+				else range.pasteHTML(table.outerHTML)
 			})
 			return e.preventDefault()
 		}
@@ -328,12 +317,12 @@ class InnerReactSummernote extends React.Component {
 		// if browser is Firefox and doc rely on vml
 		// prevent default paste event
 		var ff = ua.indexOf('Firefox') > -1,
-        	vml = e.originalEvent.clipboardData.getData('text/html').indexOf('RelyOnVML') > -1
+        	vml = clipboardHTML.indexOf('RelyOnVML') > -1
 		if (ff && vml){	
 			html.getAsString(text => {
-				var start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length
-				var end = text.indexOf('<!--EndFragment-->')
-				var str = text.substring(start, end)
+				var start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
+					end = text.indexOf('<!--EndFragment-->'),
+					str = text.substring(start, end)
 	
 				var selection = window.getSelection(),
 					selected = (selection.rangeCount > 0) && selection.getRangeAt(0);
