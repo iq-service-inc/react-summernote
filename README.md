@@ -1,6 +1,6 @@
 # React SummerNote
 
-**Stable Version: `v2.0.0`**
+**Stable Version: `v2.0.3`**
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
@@ -195,7 +195,7 @@ class App extends Component {
 
 ![dd](http://10.9.173.136/uploads/-/system/personal_snippet/48/15d74641999a62e3979ef99d900cd546/dd.gif)
 
-## Paste from Microsoft Word
+## Paste from Office Word
 
 貼上 Word 內容時，SummerNote 會解析剪貼簿中的 rtf 內容，解析後會自動將 `<img>` 部分轉換成 base64 格式的圖片資源，這些 `<img>` 都會被加上 class `.zap-img-uploading`，可以在使用 jQuery 進行後續處理
 
@@ -216,6 +216,13 @@ class App extends Component {
 ```
 
 ![Wordpaste](http://10.9.173.136/uploads/-/system/personal_snippet/48/e2b3193ab8a4d6d66879140931e52666/wordpaste.gif)
+
+
+## Paste from Office Excel
+
+貼上 Excel 內容時，SummerNote 會解析剪貼簿中的 HTML 內容，解析後會自動將樣式附加進去，但目前不支援包含 Excel 中的圖片，需額外逐一手動複製貼上
+
+![Excel](http://10.9.173.136/uploads/-/system/personal_snippet/40/58992bbadcc7e42f7095129be4845b0a/messageImage_1607666354357.jpg)
 
 ## 自行 import 必要依賴
 
