@@ -74,7 +74,18 @@ class App extends Component {
 					onInit={e => console.log("--------- onInit --------", e)}
 					ref={this.editor1}
 				/>
-				<SummerNote2 id='editor2' onImageUpload={this.onImageUpload2} ref={this.editor2} />
+				<SummerNote2 id='editor2' onImageUpload={this.onImageUpload2} ref={this.editor2} options={{
+					toolbar: [
+						["style", ["style"]],
+						["font", ["bold", "underline", "clear"]],
+						["fontname", ["fontname"]],
+						['color', ['color']],
+						["para", ["ul", "ol", "paragraph"]],
+						["table", ["table", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
+						["insert", ["link", "picture", "video"]],
+						["view", ["fullscreen", "codeview"]],
+					]
+				}}/>
 			</div>
 		);
 	}
