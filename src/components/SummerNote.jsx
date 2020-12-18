@@ -268,6 +268,7 @@ class InnerReactSummernote extends React.Component {
 		// if have media, it will fire upload image event ,so skip paste
 		// const editorbox = $(this.editorbox.current)
 		const { onPaste } = this.props;
+		if (/MSIE|Trident/i.test(navigator.userAgent)) return
 		// const files = e.originalEvent.clipboardData.files;
 		// only one pic, dont paste the photo
 		// if (files.length) return e.preventDefault();
@@ -294,7 +295,6 @@ class InnerReactSummernote extends React.Component {
 			clipboardHTML = e.originalEvent.clipboardData.getData('text/html')
 		// if browser is not msie and paste excel table
 		// remove images, add style inline
-		// todo: 1. paste table content on selection range
 		var excel = clipboardHTML.indexOf('Microsoft Excel') > -1,
 			msie = /MSIE|Trident/i.test(ua)
 		if(excel && !msie) {
@@ -305,9 +305,16 @@ class InnerReactSummernote extends React.Component {
 				ExcelTable.applyStyleInline(table, style)
 				ExcelTable.removeImage(table)
 
-				var range = this.createRange()
-				if(!!range.sc.parentNode.closest('table')){	// merge table / insert row/column
-					range.pasteHTML(table.innerHTML)
+				var range = this.createRange(),
+					target = range.sc	// range start container
+				if (!target.tagName) target = target.parentNode
+
+				var $block = $(target).closest('.note-editing-area').find('.jtable-block')
+
+				if(!!target.closest('table') && !!$block && $block.css('display') == 'block'){
+					table.className = 'jtable-paste'
+					target.closest('table').appendChild(table)
+					table.style.display = 'none'
 				}
 				else range.pasteHTML(table.outerHTML)
 			})

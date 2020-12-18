@@ -20,13 +20,21 @@
         var self = this,
             dom = $.summernote.dom,
             ui = $.summernote.ui,
-            $note = context.layoutInfo.note,
-            $editor = context.layoutInfo.editor,
             modules = context.modules,
             options = context.options,
             lang = options.langInfo,
             $mergeDialog,
             $tableInfoDialog;
+            
+        var userAgent = navigator.userAgent,
+            isMSIE = /MSIE|Trident/i.test(userAgent),
+            isEdge = /Edge\/\d+/.test(userAgent),
+            isFF = !isEdge && /firefox/i.test(userAgent),
+            isFF = !isEdge && /firefox/i.test(userAgent),
+            isPhantom = /PhantomJS/i.test(userAgent),
+            isWebkit = !isEdge && /webkit/i.test(userAgent),
+            isChrome = !isEdge && /chrome/i.test(userAgent),
+            isSafari = !isEdge && /safari/i.test(userAgent) && (!/chrome/i.test(userAgent))
 
         var tableResize = {
             pressed        : false,
@@ -223,55 +231,58 @@
                 self.beforeCommand();
 
                 var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
-
-                var currentTr = $(cell).closest('tr');
-                var trAttributes = self.recoverAttributes(currentTr);
-                var html = $('<tr' + trAttributes + '></tr>');
-
-                var vTable = new TableResultAction(cell, TableResultAction.where.Row,
-                    TableResultAction.requestAction.Add, $(currentTr).closest('table')[0]);
-                var actions = vTable.getActionList();
-
-                for (var idCell = 0; idCell < actions.length; idCell++) {
-                    var currentCell = actions[idCell];
-                    var tdAttributes = self.recoverAttributes(currentCell.baseCell);
-                    switch (currentCell.action) {
-                        case TableResultAction.resultAction.AddCell:
-                            html.append('<td' + tdAttributes + '>' + dom.blank + '</td>');
-                            break;
-                        case TableResultAction.resultAction.SumSpanCount: {
-                            if (position === 'top') {
-                                var baseCellTr = currentCell.baseCell.parent;
-                                var isTopFromRowSpan = (!baseCellTr ? 0 : currentCell.baseCell.closest('tr').rowIndex) <= currentTr[0].rowIndex;
-                                if (isTopFromRowSpan) {
-                                    var newTd = $('<div></div>').append($('<td' + tdAttributes + '>' + dom.blank + '</td>').removeAttr('rowspan')).html();
-                                    html.append(newTd);
-                                    break;
-                                }
-                            }
-                            var rowspanNumber = parseInt(currentCell.baseCell.rowSpan, 10);
-                            rowspanNumber++;
-                            currentCell.baseCell.setAttribute('rowSpan', rowspanNumber);
-                        }
-                            break;
-                    }
-                }
-
-                if (position === 'top') {
-                    currentTr.before(html);
-                } else {
-                    var cellHasRowspan = (cell.rowSpan > 1);
-                    if (cellHasRowspan) {
-                        var lastTrIndex = currentTr[0].rowIndex + (cell.rowSpan - 2);
-                        $($(currentTr).parent().find('tr')[lastTrIndex]).after($(html));
-                        return;
-                    }
-                    currentTr.after(html);
-                }
+                self.addRow(cell, position)
 
                 self.afterCommand();
             }
         };
+
+        self.addRow = function (cell, position) {
+            var currentTr = $(cell).closest('tr');
+            var trAttributes = self.recoverAttributes(currentTr);
+            var html = $('<tr' + trAttributes + '></tr>');
+
+            var vTable = new TableResultAction(cell, TableResultAction.where.Row,
+                TableResultAction.requestAction.Add, $(currentTr).closest('table')[0]);
+            var actions = vTable.getActionList();
+
+            for (var idCell = 0; idCell < actions.length; idCell++) {
+                var currentCell = actions[idCell];
+                var tdAttributes = self.recoverAttributes(currentCell.baseCell);
+                switch (currentCell.action) {
+                    case TableResultAction.resultAction.AddCell:
+                        html.append('<td' + tdAttributes + '>' + dom.blank + '</td>');
+                        break;
+                    case TableResultAction.resultAction.SumSpanCount: {
+                        if (position === 'top') {
+                            var baseCellTr = currentCell.baseCell.parent;
+                            var isTopFromRowSpan = (!baseCellTr ? 0 : currentCell.baseCell.closest('tr').rowIndex) <= currentTr[0].rowIndex;
+                            if (isTopFromRowSpan) {
+                                var newTd = $('<div></div>').append($('<td' + tdAttributes + '>' + dom.blank + '</td>').removeAttr('rowspan')).html();
+                                html.append(newTd);
+                                break;
+                            }
+                        }
+                        var rowspanNumber = parseInt(currentCell.baseCell.rowSpan, 10);
+                        rowspanNumber++;
+                        currentCell.baseCell.setAttribute('rowSpan', rowspanNumber);
+                    }
+                        break;
+                }
+            }
+
+            if (position === 'top') {
+                currentTr.before(html);
+            } else {
+                var cellHasRowspan = (cell.rowSpan > 1);
+                if (cellHasRowspan) {
+                    var lastTrIndex = currentTr[0].rowIndex + (cell.rowSpan - 2);
+                    $($(currentTr).parent().find('tr')[lastTrIndex]).after($(html));
+                    return;
+                }
+                currentTr.after(html);
+            }
+        }
 
         self.jAddCol = function (position) {
             var rng = modules.editor.getLastRange.call(modules.editor);
@@ -279,48 +290,65 @@
                 self.beforeCommand();
 
                 var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
-                var row = $(cell).closest('tr');
-                var colgroup = $(row).closest('table').find('colgroup').children('col');
-                var tdIndex = row.children().index($(cell));
-
-                var vTable = new TableResultAction(cell, TableResultAction.where.Column,
-                    TableResultAction.requestAction.Add, $(row).closest('table')[0]);
-                var actions = vTable.getActionList();
-
-                for (var actionIndex = 0; actionIndex < actions.length; actionIndex++) {
-                    var currentCell = actions[actionIndex];
-                    var tdAttributes = self.recoverAttributes(currentCell.baseCell);
-                    switch (currentCell.action) {
-                        case TableResultAction.resultAction.AddCell:
-                            if (position === 'right') {
-                                $(currentCell.baseCell).after('<td' + tdAttributes + '>' + dom.blank + '</td>');
-                            } else {
-                                $(currentCell.baseCell).before('<td' + tdAttributes + '>' + dom.blank + '</td>');
-                            }
-                            break;
-                        case TableResultAction.resultAction.SumSpanCount:
-                            var colspanNumber = parseInt(currentCell.baseCell.colSpan, 10);
-                            colspanNumber++;
-                            currentCell.baseCell.setAttribute('colSpan', colspanNumber);
-                            break;
-                    }
-                }
-
-                if (colgroup.length) {
-                    var baseCol = colgroup[tdIndex];
-                    var colAttributes = self.recoverAttributes(baseCol);
-                    var $col = $('<col' + colAttributes + '/>');
-                    $col.width(100);
-                    if (position === 'right') {
-                        $(baseCol).after($col[0]);
-                    } else {
-                        $(baseCol).before($col[0]);
-                    }
-                }
+                self.addCol(cell, position)
 
                 self.afterCommand();
             }
         };
+
+        self.addCol = function (cell, position) {
+            var row = $(cell).closest('tr');
+            var colgroup = $(row).closest('table').find('colgroup').children('col');
+            var tdIndex = row.children().index($(cell));
+
+            var vTable = new TableResultAction(cell, TableResultAction.where.Column,
+                TableResultAction.requestAction.Add, $(row).closest('table')[0]);
+            var actions = vTable.getActionList();
+
+            for (var actionIndex = 0; actionIndex < actions.length; actionIndex++) {
+                var currentCell = actions[actionIndex];
+                var tdAttributes = self.recoverAttributes(currentCell.baseCell);
+                switch (currentCell.action) {
+                    case TableResultAction.resultAction.AddCell:
+                        if (position === 'right') {
+                            $(currentCell.baseCell).after('<td' + tdAttributes + '>' + dom.blank + '</td>');
+                        } else {
+                            $(currentCell.baseCell).before('<td' + tdAttributes + '>' + dom.blank + '</td>');
+                        }
+                        break;
+                    case TableResultAction.resultAction.SumSpanCount:
+                        var colspanNumber = parseInt(currentCell.baseCell.colSpan, 10);
+                        colspanNumber++;
+                        currentCell.baseCell.setAttribute('colSpan', colspanNumber);
+                        break;
+                }
+            }
+
+            if (colgroup.length) {
+                /**
+                 * expand colgroup col span
+                 */
+                for (let index = 0; index < colgroup.length; index++) {
+                    var col = colgroup[index];
+                    var span = col.span
+                    col.span = 1
+                    while (span > 1) {
+                        $(col).after($(col).prop('outerHTML'))
+                        span = span - 1
+                    }
+                }
+
+                var baseCol = colgroup[tdIndex];
+                var colAttributes = self.recoverAttributes(baseCol);
+                var $col = $('<col' + colAttributes + '/>');
+                $col.width(100);
+                if (position === 'right') {
+                    $(baseCol).after($col[0]);
+                } else {
+                    $(baseCol).before($col[0]);
+                }
+            }
+        }
 
         self.jDeleteRow = function () {
             var rng = modules.editor.getLastRange.call(modules.editor);
@@ -465,6 +493,10 @@
             for (var i = 0; i < attrList.length; i++) {
                 if (attrList[i].name.toLowerCase() === 'id') {
                     continue;
+                }
+
+                if (attrList[i].name.toLowerCase() === 'span' && el.tagName.toLowerCase() == 'col') {
+                    continue
                 }
 
                 if (attrList[i].specified) {
@@ -1443,10 +1475,138 @@
             }
         };
 
+        self.expandColgroup = function (colgroup) {
+            if (isMSIE) return
+            /**
+             * expand colgroup col span
+             * ( ie will crash )
+             */
+            for (let index = 0; index < colgroup.length; index++) {
+                var col = colgroup[index];
+                var span = col.span
+                col.span = 1
+                while (span > 1) {
+                    $(col).after($(col).prop('outerHTML'))
+                    span = span - 1
+                }
+            }
+        }
 
         self.events = {
             'summernote.init': function (_, layoutInfo) {
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
+
+                /**
+                 * expand colgroup after paste
+                 */
+                layoutInfo.editingArea.on('paste', '.note-editable', function (event) {
+                    var $this = $(event.target).closest('.note-editable')
+                    setTimeout(function() {
+                        var expandTable = $this.find('table').not('.jtable-expanded')
+                        for (let t = 0; t < expandTable.length; t++) {
+                            const table = $(expandTable[t]);
+                            let colgroup = table.find('col')
+                            self.expandColgroup(colgroup)
+                            table.toggleClass('jtable-expanded', true)
+                        }
+                    }, 1);
+                })
+                /**
+                 * paste cells
+                 */
+                layoutInfo.editingArea.on('paste', '.note-editable', function (event) {
+                    setTimeout(function() {
+                        var $this = $(event.target).closest('.note-editable'),
+                            $block = $this.closest('.note-editing-area').find('.jtable-block');
+
+                        if (!tableBlock.currentTableEl || $block[0].style.display == 'none') return true
+                        
+                        var $p_Table = $this.find('table.jtable-paste')
+                        if (!$p_Table.length) return true
+                        $p_Table.removeAttr('id')
+                        $p_Table.remove()
+
+                        var $p_cell = $p_Table.find('tr, td, th'),
+                            p_vTable = new TableResultAction($p_cell, undefined, undefined, $p_Table[0]),
+                            p_matrixTable = p_vTable.getMatrixTable(),
+                            p_rows = p_matrixTable.length,
+                            p_cols = p_matrixTable[0].length
+                        
+                        var b_table = tableBlock.currentTableEl,
+                            b_cell = tableBlock.currentTdEl,
+                            effectRow = tableBlock.effect.row,
+                            effectCol = tableBlock.effect.col,
+                            rows = effectRow.end - effectRow.start + 1,
+                            cols = effectCol.end - effectCol.start + 1
+
+                        var type = 0
+                        if (p_rows == rows && p_cols == cols) type = 1  // completely match rows & columns
+                        else if (p_cols > cols || p_rows > rows) type = 2    // need to add cols or rows
+                        else type = 0   // replace by cell ignore rows & columns
+                        
+                        if (type > 0) {
+                            if (type == 2) {
+                                // new col
+                                for (let index = cols; index < p_cols; index++) {
+                                    // self.jAddCol('right')
+                                    self.addCol(b_cell, 'right')
+                                }
+                                cols = p_cols
+    
+                                // new row
+                                for (let index = rows; index < p_rows; index++) {
+                                    // self.jAddRow('bottom')
+                                    self.addRow(b_cell, 'bottom')
+                                }
+                                rows = p_rows
+                            }
+
+                            // replace by row & column
+                            var vTable = new TableResultAction(b_cell, undefined, undefined, b_table),
+                                matrixTable = vTable.getMatrixTable();
+
+                            for (let i = 0; i < rows; i++) {
+                                var row = matrixTable[i + effectRow.start],
+                                    p_row = p_matrixTable[i].filter(cell => !cell.isVirtual);
+                                for (let j = 0; j < cols; j++) {
+                                    var cell = row[j + effectCol.start]
+                                    if (!cell || !p_row[j]) continue
+                                    cell.baseCell.innerText = p_row[j].baseCell.innerText
+                                }
+                            }
+                        }
+                        else {
+                            // replace by cell ignore rows & columns
+                            var p_cells = [],
+                                cellIndex = 0
+                            // expand matrixTable
+                            for (let p_rIndex = 0; p_rIndex < p_matrixTable.length; p_rIndex++) {
+                                const rows = p_matrixTable[p_rIndex];
+                                for (let p_cIndex = 0; p_cIndex < rows.length; p_cIndex++) {
+                                    const cell = rows[p_cIndex];
+                                    p_cells.push(cell)
+                                }
+                            }
+                            // replace by cell
+                            for (let i = 0; i < rows; i++) {
+                                var $row = b_table.rows[i + effectRow.start]
+                                for (let j = 0; j < cols; j++, cellIndex++) {
+                                    var cell = $row.cells[j + effectCol.start]
+                                    if (!p_cells[cellIndex]) break
+                                    cell.innerText = p_cells[cellIndex].baseCell.innerText
+                                }
+                            }
+                        }
+
+                        $block.hide()
+                    }, 1);
+                })
+                
+                /**
+                 * table resize, format, ...
+                 * ie will crash
+                 */
+                if (isMSIE) return
 
                 layoutInfo.editingArea.on('click', '.note-editable table', function (event) {
                     var $target = $(event.target).closest('td');
@@ -1615,9 +1775,6 @@
                     $block.hide()
                 })
 
-                /**
-                 * prevent default selection
-                 */
                 layoutInfo.editingArea.on('mousemove mousedown touchstart', '.note-editable', function (event) {
                     if (!tableBlock.pressed) return true;
                     event.preventDefault();
@@ -1677,6 +1834,22 @@
                     $this.closest('.note-editing-area').css('cursor', cursor);
                     $this.closest('.note-editable').removeAttr('contenteditable');
 
+                    /**
+                     * expand colgroup col span
+                     */
+                    var colgroup = $table.find('col')
+                    self.expandColgroup(colgroup)
+
+                    /**
+                     * remove td width turn into <col> width
+                     */
+                    var tds = $table.find('td')
+                    for (let index = 0; index < tds.length; index++) {
+                        var td = tds[index];
+                        if (!!td.width) td.width = ''
+                        if (!!td.style.width) td.style.width = ''
+                    }
+
                     var vTable = new TableResultAction(this, undefined, undefined, $table[0]);
                     var virtualTable = vTable.getVirtualTable();
 
@@ -1719,6 +1892,7 @@
                         contenteditable: contenteditable
                     };
 
+                    // prevent default selection
                     $table.toggleClass('unselectable', true)
 
                     resetTableBlock($this);
