@@ -1793,6 +1793,10 @@
                  * reset table pressed and update table popover
                  */
                 layoutInfo.editingArea.on('mouseup', '.note-editable', function (event) {
+                    var $table = $('table.unselectable');
+                    $table.toggleClass('unselectable', false)
+                    $table.attr('unselectable', 'off')
+
                     if (!tableBlock.pressed) return true;
                     tableBlock.pressed = false;
 
@@ -1800,9 +1804,6 @@
                     if (!$target.length) $target = $(event.target).closest('th');
                     if ($target.length) modules.tablePopover.update($target[0]);
 
-                    var $table = $(tableResize.currentTableEl);
-                    $table.toggleClass('unselectable', false)
-                    $table.attr('unselectable', 'off')
                 });
                 /**
                  * get table resize info
@@ -1958,12 +1959,11 @@
                  * reset table resize info
                  */
                 layoutInfo.editingArea.on('mouseup', '.note-editable', function (event) {
-                    if (!tableResize.pressed) return true;
-
-                    var $table = $(tableResize.currentTableEl);
+                    var $table = $('table.unselectable');
                     $table.toggleClass('unselectable', false)
                     $table.attr('unselectable', 'off')
 
+                    if (!tableResize.pressed) return true;
                     resetTableResizeCursor($(this), tableResize.contenteditable);
                     resetTableResize();
                 });
