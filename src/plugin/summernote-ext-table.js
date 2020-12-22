@@ -601,7 +601,7 @@
             var $cell = $(cell);
             $cell.closest('table').find('td, th').css('border', '1px solid ' + borderColor);
 
-            resetTableBlock($cell);
+            // resetTableBlock($cell);
 
             self.afterCommand();
         };
@@ -631,7 +631,7 @@
                 }
             }
 
-            resetTableBlock($cell);
+            // resetTableBlock($cell);
 
             self.afterCommand();
         };
@@ -782,7 +782,7 @@
                 }
             }
 
-            resetTableBlock($cell);
+            // resetTableBlock($cell);
 
             self.afterCommand();
         };
@@ -806,7 +806,7 @@
                 }
             }
 
-            resetTableBlock($cell);
+            // resetTableBlock($cell);
 
             self.afterCommand();
         };
@@ -1476,20 +1476,20 @@
         };
 
         self.expandColgroup = function (colgroup) {
-            if (isMSIE) return
             /**
              * expand colgroup col span
-             * ( ie will crash )
              */
+            var innerHTML = ''
             for (let index = 0; index < colgroup.length; index++) {
                 var col = colgroup[index];
                 var span = col.span
-                col.span = 1
-                while (span > 1) {
-                    $(col).after($(col).prop('outerHTML'))
+                var attr = self.recoverAttributes(col)
+                while (span > 0) {
+                    innerHTML = innerHTML.concat(`<col ${attr} />`)
                     span = span - 1
                 }
             }
+            colgroup.closest('colgroup').html(innerHTML)
         }
 
         self.events = {
