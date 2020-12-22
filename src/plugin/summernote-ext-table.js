@@ -1531,11 +1531,15 @@
                         var $this = $(event.target).closest('.note-editable'),
                             $block = $this.closest('.note-editing-area').find('.jtable-block');
 
-                        if (!tableBlock.currentTableEl || $block[0].style.display == 'none') return true
+                        if (!tableBlock.currentTableEl || !$block[0] || $block[0].style.display == 'none') return true
                         
-                        var $p_Table = $this.find('table.jtable-paste')
+                        if (isMSIE) {
+                            var $p_Table = $(event.target).find('table')
+                        }
+                        else {
+                            var $p_Table = $this.find('table.jtable-paste')
+                        }
                         if (!$p_Table.length) return true
-                        $p_Table.removeAttr('id')
                         $p_Table.remove()
 
                         var $p_cell = $p_Table.find('tr, td, th'),
@@ -1716,8 +1720,10 @@
 
                     event.stopPropagation();
                     // prevent default selection
-                    $table.toggleClass('unselectable', true)
-                    $table.attr('unselectable', 'on')
+                    if (isMSIE) {
+                        $table.toggleClass('unselectable', true)
+                        $table.attr('unselectable', 'on')
+                    }
                 });
 
                 /**
@@ -1793,9 +1799,11 @@
                  * reset table pressed and update table popover
                  */
                 layoutInfo.editingArea.on('mouseup', '.note-editable', function (event) {
-                    var $table = $('table.unselectable');
-                    $table.toggleClass('unselectable', false)
-                    $table.attr('unselectable', 'off')
+                    if (isMSIE) {
+                        var $table = $('table.unselectable');
+                        $table.toggleClass('unselectable', false)
+                        $table.attr('unselectable', 'off')
+                    }
 
                     if (!tableBlock.pressed) return true;
                     tableBlock.pressed = false;
@@ -1907,8 +1915,10 @@
                     };
 
                     // prevent default selection
-                    $table.toggleClass('unselectable', true)
-                    $table.attr('unselectable', 'on')
+                    if (isMSIE) {
+                        $table.toggleClass('unselectable', true)
+                        $table.attr('unselectable', 'on')
+                    }
 
                     resetTableBlock($this);
 
