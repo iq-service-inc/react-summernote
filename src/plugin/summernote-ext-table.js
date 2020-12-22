@@ -1495,6 +1495,14 @@
         self.events = {
             'summernote.init': function (_, layoutInfo) {
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
+                
+                /**
+                 * toolbar close color palette
+                 */
+                layoutInfo.toolbar.on('mousedown', '.note-color-btn', function (event) {
+                    var $target = $(event.target).closest('.dropdown-menu')
+                    $target.dropdown(false)
+                })
 
                 /**
                  * expand colgroup after paste
