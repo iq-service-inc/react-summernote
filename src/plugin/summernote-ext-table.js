@@ -1479,10 +1479,14 @@
             /**
              * expand colgroup col span
              */
-            var innerHTML = ''
+            var innerHTML = '',
+                table = colgroup.closest('table')
+            table.removeAttr('width')
+            table.removeAttr('style')
             for (let index = 0; index < colgroup.length; index++) {
                 var col = colgroup[index];
                 var span = col.span
+                col.removeAttribute('width')
                 var attr = self.recoverAttributes(col)
                 while (span > 0) {
                     innerHTML = innerHTML.concat(`<col ${attr} />`)
@@ -1609,12 +1613,6 @@
                         $block.hide()
                     }, 1);
                 })
-                
-                /**
-                 * table resize, format, ...
-                 * ie will crash
-                 */
-                if (isMSIE) return
 
                 layoutInfo.editingArea.on('click', '.note-editable table', function (event) {
                     var $target = $(event.target).closest('td');
@@ -1717,6 +1715,9 @@
                     };
 
                     event.stopPropagation();
+                    // prevent default selection
+                    $table.toggleClass('unselectable', true)
+                    $table.attr('unselectable', 'on')
                 });
 
                 /**
@@ -1798,6 +1799,10 @@
                     var $target = $(event.target).closest('td');
                     if (!$target.length) $target = $(event.target).closest('th');
                     if ($target.length) modules.tablePopover.update($target[0]);
+
+                    var $table = $(tableResize.currentTableEl);
+                    $table.toggleClass('unselectable', false)
+                    $table.attr('unselectable', 'off')
                 });
                 /**
                  * get table resize info
@@ -1902,6 +1907,7 @@
 
                     // prevent default selection
                     $table.toggleClass('unselectable', true)
+                    $table.attr('unselectable', 'on')
 
                     resetTableBlock($this);
 
@@ -1956,6 +1962,7 @@
 
                     var $table = $(tableResize.currentTableEl);
                     $table.toggleClass('unselectable', false)
+                    $table.attr('unselectable', 'off')
 
                     resetTableResizeCursor($(this), tableResize.contenteditable);
                     resetTableResize();
