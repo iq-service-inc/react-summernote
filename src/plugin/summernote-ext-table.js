@@ -134,7 +134,7 @@
 
         context.memo('button.jAddDeleteRowCol', function () {
             return ui.buttonGroup({
-                className: 'jtable-add-del-row-col',
+                className: 'jtable-add-del-row-col jtable-display',
                 children : [
                     ui.button({
                         className: 'dropdown-toggle',
@@ -638,7 +638,7 @@
 
         self.colorPalette = function (className, tooltip, callbackFnc) {
             return ui.buttonGroup({
-                className: 'note-color ' + className,
+                className: 'note-color jtable-display ' + className,
                 children : [
                     ui.button({
                         className: 'note-current-color-button note-table-color',
@@ -871,7 +871,7 @@
         context.memo('button.jAlign', function () {
             return ui.buttonGroup([
                 ui.button({
-                    className: 'dropdown-toggle',
+                    className: 'dropdown-toggle jtable-display',
                     contents : ui.dropdownButtonContents(ui.icon(options.icons.alignLeft), options),
                     tooltip  : lang.paragraph.paragraph,
                     container: options.container,
@@ -941,6 +941,7 @@
 
         context.memo('button.jMerge', function () {
             return ui.buttonGroup({
+                className: 'jtable-display',
                 children: [
                     ui.button({
                         className: 'dropdown-toggle jtable-cell-split-dropdown-toggle',
@@ -1341,6 +1342,7 @@
 
         context.memo('button.jTableInfo', function () {
             return ui.button({
+                className: 'jtable-display',
                 contents : ui.icon('note-icon-table-margin'),
                 tooltip  : lang.table.table + ' ' + lang.jTable.info.margin,
                 container: options.container,
@@ -1436,6 +1438,7 @@
 
         context.memo('button.jWidthHeightReset', function () {
             return ui.button({
+                className: 'jtable-display',
                 contents : ui.icon('note-icon-table-width-height-reset'),
                 tooltip  : lang.table.table + ' ' + lang.jTable.areaReset,
                 container: options.container,
@@ -1617,11 +1620,20 @@
                         $block.hide()
                     }, 1);
                 })
-
+                layoutInfo.editingArea.on('click', function (event) {
+                    var $jtable = $(event.target).closest('.note-editor').find('.note-toolbar .jtable-display'),
+                        $block = $(event.target).closest('.note-editable').next('.jtable-block')
+                    if ($block.css('display') == 'none')
+                        $jtable.hide()
+                })
                 layoutInfo.editingArea.on('click', '.note-editable table', function (event) {
                     var $target = $(event.target).closest('td');
                     if (!$target.length) $target = $(event.target).closest('th');
                     if ($target.length) modules.tablePopover.update($target[0]);
+
+                    var $jtable = $(event.target).closest('.note-editor').find('.note-toolbar .jtable-display')
+                    $jtable.show()
+                    event.stopPropagation()
                 });
                 /**
                  * change cursor when hover on table border
