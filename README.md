@@ -79,7 +79,8 @@ render(
                 ['font', ['bold', 'underline', 'clear']],
                 ['fontname', ['fontname']],
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
+                // plugin
+                ["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
                 ['insert', ['link', 'picture', 'video']],
                 ['view', ['fullscreen', 'codeview']]
             ]
@@ -123,6 +124,14 @@ render(
     * `undo`: undo
     * `redo`: redo
     * `help`: open help dialog
+* Table ([Plugin](#plugin))
+    * `jTable`: 表格欄位長寬縮放
+    * `jMerge`: 框選後合併 cell
+    * `jBackcolor`: cell 的背景色
+    * `jBorderColor`: 整個表格 border 顏色
+    * `jAlign`: cell 的對齊方式
+    * `jTableInfo`: 調整整個 table 的 margin
+    * `jWidthHeightReset`: 重設 cell 寬高
 
 ## `options`
 
@@ -239,9 +248,18 @@ require('bootstrap/js/dist/dropdown')
 require('bootstrap/js/dist/tooltip')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
+
+```
+
+## Plugin
+
+從 `2.0.4` 的版本開始，引入了 table plugin，可針對 table 元素進行更多操作
+
+```js
 require('react-summernote/src/plugin/summernote-ext-table')
 require('react-summernote/src/plugin/summernote-ext-table.css')
 ```
+
 
 ## License
 
