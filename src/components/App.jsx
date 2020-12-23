@@ -81,10 +81,11 @@ class App extends Component {
 						["fontname", ["fontname"]],
 						['color', ['color']],
 						["para", ["ul", "ol", "paragraph"]],
-						["table", ["table", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
+						["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
 						["insert", ["link", "picture", "video"]],
 						["view", ["fullscreen", "codeview"]],
-					]
+					],
+					tableClassName: 'jtable table-bordered'
 				}}/>
 			</div>
 		);

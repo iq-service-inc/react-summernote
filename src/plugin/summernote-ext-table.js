@@ -580,7 +580,7 @@
             }
             trHTML = trs.join('');
 
-            var $table = $('<table style="width: auto !important;">' + colgroupHTML + trHTML + '</table>');
+            var $table = $('<table class="jtable-expanded" style="width: auto !important;">' + colgroupHTML + trHTML + '</table>');
             if (options && options.tableClassName) {
                 $table.addClass(options.tableClassName);
             }
@@ -1513,6 +1513,8 @@
 
                 /**
                  * expand colgroup after paste
+                 * row height => each td
+                 * col width => colgroup
                  */
                 layoutInfo.editingArea.on('paste', '.note-editable', function (event) {
                     var $this = $(event.target).closest('.note-editable')
@@ -1520,9 +1522,24 @@
                         var expandTable = $this.find('table').not('.jtable-expanded')
                         for (let t = 0; t < expandTable.length; t++) {
                             const table = $(expandTable[t]);
-                            let colgroup = table.find('col')
-                            self.expandColgroup(colgroup)
-                            table.toggleClass('jtable-expanded', true)
+                            if (!table.find('col').length) {
+                                var vTable = new TableResultAction(this, undefined, undefined, expandTable[t]);
+                                var virtualTable = vTable.getVirtualTable();
+                                var colgroup = document.createElement('colgroup')
+                                for (let index = 0; index < virtualTable[0].length; index++) {
+                                    const td = virtualTable[0][index];
+                                    var col = document.createElement('col')
+                                    col.style.width = td.baseCell.style.width
+                                    colgroup.appendChild(col)
+                                }
+                                table.prepend(colgroup)
+                            }
+                            else {
+                                var colgroup = table.find('col')
+                                self.expandColgroup(colgroup)
+                                table.toggleClass('jtable-expanded', true)
+                            }
+
                         }
                     }, 1);
                 })
@@ -1535,12 +1552,10 @@
                             $block = $this.closest('.note-editing-area').find('.jtable-block');
 
                         if (!tableBlock.currentTableEl || !$block[0] || $block[0].style.display == 'none') return true
-                        
-                        if (isMSIE) {
-                            var $p_Table = $(event.target).find('table')
-                        }
-                        else {
-                            var $p_Table = $this.find('table.jtable-paste')
+
+                        var $p_Table = $this.find('table.jtable-paste')
+                        if (!$p_Table.length) {
+                            $p_Table = $(event.target).find('table')
                         }
                         if (!$p_Table.length) return true
                         $p_Table.remove()
