@@ -239,6 +239,8 @@ require('bootstrap/js/dist/dropdown')
 require('bootstrap/js/dist/tooltip')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
+require('react-summernote/src/plugin/summernote-ext-table')
+require('react-summernote/src/plugin/summernote-ext-table.css')
 ```
 
 ## License

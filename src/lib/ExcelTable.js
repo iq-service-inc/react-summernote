@@ -12,9 +12,9 @@ export default {
 
     createStylesheet: function (text) {
         // create isolated stylesheet
-        var begin = text.indexOf('<style>'),
-            end = text.indexOf('</style>', begin + '<style>'.length),
-            content = text.substring(begin + '<style>'.length, end),
+        var begin = text.indexOf('<!--table'),
+            end = text.indexOf('-->', begin + '<!--table'.length),
+            content = text.substring(begin + '<!--table'.length, end),
             style = document.createElement('style'),
             iframe = document.createElement('iframe')
         style.innerHTML = content
@@ -44,9 +44,9 @@ export default {
     removeImage: function (table) {
         // remove excel img tag
         var imgs = table.getElementsByTagName('img')
-        for (let index = 0; index < imgs; index++) {
+        for (let index = 0; index < imgs.length; index++) {
             const el = imgs[index]
-            table.removeChild(el)
+            el.remove()
         }
     }
 }
