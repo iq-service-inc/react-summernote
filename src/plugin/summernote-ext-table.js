@@ -1510,7 +1510,58 @@
                     var $target = $(event.target).closest('.dropdown-menu')
                     $target.dropdown(false)
                 })
+                /**
+                 * copy table
+                 */
+                layoutInfo.editingArea.on('keydown', function(event) {
+                    if ((event.metaKey || event.ctrlKey) && ( String.fromCharCode(event.which).toLowerCase() === 'c') ) {
+                        var $this = $(event.target),
+                            $block = $this.closest('.note-editing-area').find('.jtable-block')
+                        if ($block.css('display') == 'block') {
+                            var table = tableBlock.currentTableEl,
+                                effect = tableBlock.effect,
+                                vTable = new TableResultAction(this, undefined, undefined, table),
+                                virtualTable = vTable.getVirtualTable()
 
+                            var newTable = document.createElement('table')
+                            newTable.className = table.className
+                            // IE will miss colgroup => regenerate colgroup after paste
+                            $(newTable).toggleClass('jtable-expanded', false)
+                            
+                            var colgroup = document.createElement('colgroup'),
+                                col = $(table).find('colgroup col')
+                            for (let index = 0; index < virtualTable[0].length; index++) {
+                                const td = virtualTable[0][index];
+                                var new_col = document.createElement('col'),
+                                    width = !!col[index].style.width? col[index].style.width : td.baseCell.style.width
+                                new_col.style.width = width
+                                colgroup.appendChild(new_col)
+                            }
+                            newTable.appendChild(colgroup)
+
+                            for (let r = effect.row.start; r <= effect.row.end; r++) {
+                                const row = virtualTable[r];
+                                var tr = document.createElement('tr')
+                                for (let c = effect.col.start, i = 0; c <= effect.col.end; c++, i++) {
+                                    const cell = row[c];
+                                    if (cell.isVirtual) continue
+                                    // IE will miss colgroup so set width in tr
+                                    tr.style.width = colgroup.childNodes[i].style.width
+                                    $(tr).append(cell.baseCell.outerHTML)
+                                }
+                                newTable.appendChild(tr)
+                            }
+
+                            $this.closest('.note-editor').after(newTable)
+                            
+                            var range = $.summernote.range.createFromNode(newTable)
+                            range.select()
+                            document.execCommand('copy')
+
+                            $(newTable).remove()
+                        }
+                    }
+                })
                 /**
                  * expand colgroup after paste
                  * row height => each td
@@ -1528,8 +1579,13 @@
                                 var colgroup = document.createElement('colgroup')
                                 for (let index = 0; index < virtualTable[0].length; index++) {
                                     const td = virtualTable[0][index];
-                                    var col = document.createElement('col')
-                                    col.style.width = td.baseCell.style.width
+                                    var col = document.createElement('col'),
+                                        width = td.baseCell.style.width
+                                    if (td.baseCell.colSpan > 1) {
+                                        var pattern = width.match(/([0-9]*)([a-z]*$)/)
+                                        width = pattern[1]/td.baseCell.colSpan + pattern[2]
+                                    }
+                                    col.style.width = width
                                     colgroup.appendChild(col)
                                 }
                                 table.prepend(colgroup)
