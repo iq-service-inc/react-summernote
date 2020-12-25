@@ -185,3 +185,18 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+.jtable-display {
+    display: none;
+}
+
+.jtable {
+    width: auto;
+    margin-bottom: 1rem;
+    color: #212529;
+    border: 1px solid #dee2e6;
+}
+
+.jtable td, .jtable th {
+    border: 1px solid #dee2e6;
+}

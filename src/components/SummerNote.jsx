@@ -275,16 +275,12 @@ class InnerReactSummernote extends React.Component {
 		const items = e.originalEvent.clipboardData.items;
 
 		for (let i = 0; i < items.length; i++) {
-			if (items[i].type.indexOf("html") > -1) {
-				var html = items[i]
-			}
 			if (items[i].type.indexOf("rtf") > -1) {
-				items[i].getAsString(rtf => {
-					const doc = rtf2html(rtf), imgs = [];
-					doc.forEach(function (el) { imgs.push(el) });
-					this.pasteResource = imgs
-					this.isPasteFromWord = true
-				});
+				const rtf = e.originalEvent.clipboardData.getData('text/rtf')
+				const doc = rtf2html(rtf), imgs = [];
+				doc.forEach(function (el) { imgs.push(el) });
+				this.pasteResource = imgs
+				this.isPasteFromWord = true
 				break;
 			}
 		}
@@ -295,30 +291,28 @@ class InnerReactSummernote extends React.Component {
 			clipboardHTML = e.originalEvent.clipboardData.getData('text/html')
 		// if browser is not msie and paste excel table
 		// remove images, add style inline
-		var excel = clipboardHTML.indexOf('Microsoft Excel') > -1,
+		var excel = clipboardHTML.indexOf('office:excel') > -1,
 			msie = /MSIE|Trident/i.test(ua)
 		if(excel && !msie) {
-			html.getAsString(text => {
-				var table = ExcelTable.getTable(text),
-					style = ExcelTable.createStylesheet(text)
-					
-				ExcelTable.applyStyleInline(table, style)
-				ExcelTable.removeImage(table)
+			e.preventDefault()
+			var table = ExcelTable.getTable(clipboardHTML),
+				style = ExcelTable.createStylesheet(clipboardHTML)
+				
+			ExcelTable.applyStyleInline(table, style)
+			ExcelTable.removeImage(table)
 
-				var range = this.createRange(),
-					target = range.sc	// range start container
-				if (!target.tagName) target = target.parentNode
+			var range = this.createRange(),
+				target = range.sc	// range start container
+			if (!target.tagName) target = target.parentNode
 
-				var $block = $(target).closest('.note-editing-area').find('.jtable-block')
+			var $block = $(target).closest('.note-editing-area').find('.jtable-block')
 
-				if(!!target.closest('table') && !!$block && $block.css('display') == 'block'){
-					table.className = 'jtable-paste'
-					target.closest('table').appendChild(table)
-					table.style.display = 'none'
-				}
-				else range.pasteHTML(table.outerHTML)
-			})
-			return e.preventDefault()
+			if(!!target.closest('table') && !!$block && $block.css('display') == 'block'){
+				table.className = 'jtable-paste'
+				target.closest('table').appendChild(table)
+				table.style.display = 'none'
+			}
+			else range.pasteHTML(table.outerHTML)
 		}
 
 		// if browser is Firefox and doc rely on vml
@@ -326,27 +320,25 @@ class InnerReactSummernote extends React.Component {
 		var ff = ua.indexOf('Firefox') > -1,
         	vml = clipboardHTML.indexOf('RelyOnVML') > -1
 		if (ff && vml){	
-			html.getAsString(text => {
-				var start = text.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
-					end = text.indexOf('<!--EndFragment-->'),
-					str = text.substring(start, end)
-	
-				var selection = window.getSelection(),
-					selected = (selection.rangeCount > 0) && selection.getRangeAt(0);
+			e.preventDefault()
+			var start = clipboardHTML.indexOf('<!--StartFragment-->') + '<!--StartFragment-->'.length,
+				end = clipboardHTML.indexOf('<!--EndFragment-->'),
+				str = clipboardHTML.substring(start, end)
 
-				if (selected.startOffset !== selected.endOffset) {	// replace selection
-					var range = selected.cloneRange();
-					selection.deleteFromDocument()	// delete selection content
-					// paste data after cursor
-					var newNode = document.createElement('p')
-					newNode.innerHTML = str
-					newNode.appendChild(range.extractContents());
-					range.insertNode(newNode)
-					selection.removeAllRanges();
-				}
-				else this.pasteHTML(str)
-			});
-			return e.preventDefault()
+			var selection = window.getSelection(),
+				selected = (selection.rangeCount > 0) && selection.getRangeAt(0);
+
+			if (selected.startOffset !== selected.endOffset) {	// replace selection
+				var range = selected.cloneRange();
+				selection.deleteFromDocument()	// delete selection content
+				// paste data after cursor
+				var newNode = document.createElement('p')
+				newNode.innerHTML = str
+				newNode.appendChild(range.extractContents());
+				range.insertNode(newNode)
+				selection.removeAllRanges();
+			}
+			else this.pasteHTML(str)
 		}
 	}
 

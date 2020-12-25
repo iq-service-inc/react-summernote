@@ -134,7 +134,7 @@
 
         context.memo('button.jAddDeleteRowCol', function () {
             return ui.buttonGroup({
-                className: 'jtable-add-del-row-col',
+                className: 'jtable-add-del-row-col jtable-display',
                 children : [
                     ui.button({
                         className: 'dropdown-toggle',
@@ -580,7 +580,7 @@
             }
             trHTML = trs.join('');
 
-            var $table = $('<table style="width: auto !important;">' + colgroupHTML + trHTML + '</table>');
+            var $table = $('<table class="jtable-expanded" style="width: auto !important;">' + colgroupHTML + trHTML + '</table>');
             if (options && options.tableClassName) {
                 $table.addClass(options.tableClassName);
             }
@@ -638,7 +638,7 @@
 
         self.colorPalette = function (className, tooltip, callbackFnc) {
             return ui.buttonGroup({
-                className: 'note-color ' + className,
+                className: 'note-color jtable-display ' + className,
                 children : [
                     ui.button({
                         className: 'note-current-color-button note-table-color',
@@ -871,7 +871,7 @@
         context.memo('button.jAlign', function () {
             return ui.buttonGroup([
                 ui.button({
-                    className: 'dropdown-toggle',
+                    className: 'dropdown-toggle jtable-display',
                     contents : ui.dropdownButtonContents(ui.icon(options.icons.alignLeft), options),
                     tooltip  : lang.paragraph.paragraph,
                     container: options.container,
@@ -941,6 +941,7 @@
 
         context.memo('button.jMerge', function () {
             return ui.buttonGroup({
+                className: 'jtable-display',
                 children: [
                     ui.button({
                         className: 'dropdown-toggle jtable-cell-split-dropdown-toggle',
@@ -1341,6 +1342,7 @@
 
         context.memo('button.jTableInfo', function () {
             return ui.button({
+                className: 'jtable-display',
                 contents : ui.icon('note-icon-table-margin'),
                 tooltip  : lang.table.table + ' ' + lang.jTable.info.margin,
                 container: options.container,
@@ -1436,6 +1438,7 @@
 
         context.memo('button.jWidthHeightReset', function () {
             return ui.button({
+                className: 'jtable-display',
                 contents : ui.icon('note-icon-table-width-height-reset'),
                 tooltip  : lang.table.table + ' ' + lang.jTable.areaReset,
                 container: options.container,
@@ -1507,9 +1510,62 @@
                     var $target = $(event.target).closest('.dropdown-menu')
                     $target.dropdown(false)
                 })
+                /**
+                 * copy table
+                 */
+                layoutInfo.editingArea.on('keydown', function(event) {
+                    if ((event.metaKey || event.ctrlKey) && ( String.fromCharCode(event.which).toLowerCase() === 'c') ) {
+                        var $this = $(event.target),
+                            $block = $this.closest('.note-editing-area').find('.jtable-block')
+                        if ($block.css('display') == 'block') {
+                            var table = tableBlock.currentTableEl,
+                                effect = tableBlock.effect,
+                                vTable = new TableResultAction(this, undefined, undefined, table),
+                                virtualTable = vTable.getVirtualTable()
 
+                            var newTable = document.createElement('table')
+                            newTable.className = table.className
+                            // IE will miss colgroup => regenerate colgroup after paste
+                            $(newTable).toggleClass('jtable-expanded', false)
+                            
+                            var colgroup = document.createElement('colgroup'),
+                                col = $(table).find('colgroup col')
+                            for (let index = 0; index < virtualTable[0].length; index++) {
+                                const td = virtualTable[0][index];
+                                var new_col = document.createElement('col'),
+                                    width = !!col[index].style.width? col[index].style.width : td.baseCell.style.width
+                                new_col.style.width = width
+                                colgroup.appendChild(new_col)
+                            }
+                            newTable.appendChild(colgroup)
+
+                            for (let r = effect.row.start; r <= effect.row.end; r++) {
+                                const row = virtualTable[r];
+                                var tr = document.createElement('tr')
+                                for (let c = effect.col.start, i = 0; c <= effect.col.end; c++, i++) {
+                                    const cell = row[c];
+                                    if (cell.isVirtual) continue
+                                    // IE will miss colgroup so set width in tr
+                                    tr.style.width = colgroup.childNodes[i].style.width
+                                    $(tr).append(cell.baseCell.outerHTML)
+                                }
+                                newTable.appendChild(tr)
+                            }
+
+                            $this.closest('.note-editor').after(newTable)
+                            
+                            var range = $.summernote.range.createFromNode(newTable)
+                            range.select()
+                            document.execCommand('copy')
+
+                            $(newTable).remove()
+                        }
+                    }
+                })
                 /**
                  * expand colgroup after paste
+                 * row height => each td
+                 * col width => colgroup
                  */
                 layoutInfo.editingArea.on('paste', '.note-editable', function (event) {
                     var $this = $(event.target).closest('.note-editable')
@@ -1517,9 +1573,29 @@
                         var expandTable = $this.find('table').not('.jtable-expanded')
                         for (let t = 0; t < expandTable.length; t++) {
                             const table = $(expandTable[t]);
-                            let colgroup = table.find('col')
-                            self.expandColgroup(colgroup)
-                            table.toggleClass('jtable-expanded', true)
+                            if (!table.find('col').length) {
+                                var vTable = new TableResultAction(this, undefined, undefined, expandTable[t]);
+                                var virtualTable = vTable.getVirtualTable();
+                                var colgroup = document.createElement('colgroup')
+                                for (let index = 0; index < virtualTable[0].length; index++) {
+                                    const td = virtualTable[0][index];
+                                    var col = document.createElement('col'),
+                                        width = td.baseCell.style.width
+                                    if (td.baseCell.colSpan > 1) {
+                                        var pattern = width.match(/([0-9]*)([a-z]*$)/)
+                                        width = pattern[1]/td.baseCell.colSpan + pattern[2]
+                                    }
+                                    col.style.width = width
+                                    colgroup.appendChild(col)
+                                }
+                                table.prepend(colgroup)
+                            }
+                            else {
+                                var colgroup = table.find('col')
+                                self.expandColgroup(colgroup)
+                                table.toggleClass('jtable-expanded', true)
+                            }
+
                         }
                     }, 1);
                 })
@@ -1532,12 +1608,10 @@
                             $block = $this.closest('.note-editing-area').find('.jtable-block');
 
                         if (!tableBlock.currentTableEl || !$block[0] || $block[0].style.display == 'none') return true
-                        
-                        if (isMSIE) {
-                            var $p_Table = $(event.target).find('table')
-                        }
-                        else {
-                            var $p_Table = $this.find('table.jtable-paste')
+
+                        var $p_Table = $this.find('table.jtable-paste')
+                        if (!$p_Table.length) {
+                            $p_Table = $(event.target).find('table')
                         }
                         if (!$p_Table.length) return true
                         $p_Table.remove()
@@ -1617,11 +1691,20 @@
                         $block.hide()
                     }, 1);
                 })
-
+                layoutInfo.editingArea.on('click', function (event) {
+                    var $jtable = $(event.target).closest('.note-editor').find('.note-toolbar .jtable-display'),
+                        $block = $(event.target).closest('.note-editable').next('.jtable-block')
+                    if ($block.css('display') == 'none')
+                        $jtable.hide()
+                })
                 layoutInfo.editingArea.on('click', '.note-editable table', function (event) {
                     var $target = $(event.target).closest('td');
                     if (!$target.length) $target = $(event.target).closest('th');
                     if ($target.length) modules.tablePopover.update($target[0]);
+
+                    var $jtable = $(event.target).closest('.note-editor').find('.note-toolbar .jtable-display')
+                    $jtable.show()
+                    event.stopPropagation()
                 });
                 /**
                  * change cursor when hover on table border
