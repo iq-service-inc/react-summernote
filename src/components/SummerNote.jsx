@@ -56,6 +56,36 @@ class InnerReactSummernote extends React.Component {
 		//if (options.lang) require(`summernote/lang/summernote-${options.lang}.js`)
 		this.editor = $(node);
 
+		// default popover
+		var initPopover = {
+			image: [
+			  ['resize', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+			  ['float', ['floatLeft', 'floatRight', 'floatNone']],
+			  ['remove', ['removeMedia']],
+			],
+			link: [
+			  ['link', ['linkDialogShow', 'unlink']],
+			],
+			table: [
+			  ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+			  ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+			],
+			air: [
+			  ['color', ['color']],
+			  ['font', ['bold', 'underline', 'clear']],
+			  ['para', ['ul', 'paragraph']],
+			  ['table', ['table']],
+			  ['insert', ['link', 'picture']],
+			  ['view', ['fullscreen', 'codeview']],
+			],
+		}
+
+
+		options.popover = {
+			...initPopover,
+			...options.popover
+		}
+		
 		this.editor.summernote(options);
 
 		if (value) {
