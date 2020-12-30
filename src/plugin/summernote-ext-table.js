@@ -22,10 +22,11 @@
             ui = $.summernote.ui,
             modules = context.modules,
             options = context.options,
+            $editable = context.layoutInfo.editable,
             lang = options.langInfo,
             $mergeDialog,
             $tableInfoDialog;
-            
+
         var userAgent = navigator.userAgent,
             isMSIE = /MSIE|Trident/i.test(userAgent),
             isEdge = /Edge\/\d+/.test(userAgent),
@@ -132,6 +133,35 @@
             })
         ];
 
+        /**
+         * recover table popover after click dropdown
+         * @param {jQuery.Event} event 
+         */
+        self.recoverPopover = function (event) {
+            var $button = $(event.target).closest('button'),
+                $toggle = $button.closest('.dropdown-toggle')
+            var rng = modules.editor.getLastRange.call(modules.editor)
+            var cell = dom.ancestor(rng.commonAncestor(), dom.isCell)
+
+            if ($button.closest('.popover').length) {
+                var left = $button.closest('.popover').css('left'),
+                    top = $button.closest('.popover').css('top'),
+                    height = $button.outerHeight()
+                setTimeout(() => {
+                    modules.tablePopover.update(cell)
+                    var $popover = $button.closest('.popover'),
+                        $dropdown = $toggle.next('.dropdown-menu')
+                    $popover.css({
+                        left: left,
+                        top: top
+                    })
+                    $dropdown.css({
+                        transform: `translate3d(0px, ${height}px, 0px)`
+                    })
+                }, 0);
+            }
+        }
+
         context.memo('button.jAddDeleteRowCol', function () {
             return ui.buttonGroup({
                 className: 'jtable-add-del-row-col jtable-display',
@@ -198,6 +228,7 @@
                                 $dropdown.css('width', '');
                             }
 
+                            self.recoverPopover(event)
                         },
                     }),
                     ui.dropdown({
@@ -524,6 +555,9 @@
                     data     : {
                         toggle: 'dropdown',
                     },
+                    click: function (event) {
+                        self.recoverPopover(event)
+                    }
                 }),
                 ui.dropdown({
                     title    : lang.table.table,
@@ -664,6 +698,9 @@
                         container: options.container,
                         data     : {
                             toggle: 'dropdown',
+                        },
+                        click: function (event) {
+                            self.recoverPopover(event)
                         }
                     }),
                     ui.dropdown({
@@ -878,6 +915,9 @@
                     data     : {
                         toggle: 'dropdown',
                     },
+                    click: function (event) {
+                        self.recoverPopover(event)
+                    }
                 }),
                 ui.dropdown({
                     className: 'jtable-align-dropdown',
@@ -965,6 +1005,7 @@
 
                             $cellSplitBtn.toggleClass('disabled', !cellHasSpan);
                             $cellSplitBtn.attr('disabled', !cellHasSpan);
+                            self.recoverPopover(event)
                         },
                     }),
                     ui.dropdown({
@@ -1502,6 +1543,7 @@
         self.events = {
             'summernote.init': function (_, layoutInfo) {
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
+                layoutInfo.toolbar.find('.jtable-display').hide()
                 
                 /**
                  * toolbar close color palette
