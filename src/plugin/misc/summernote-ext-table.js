@@ -221,7 +221,6 @@
                             if (hasSpan) {
                                 $btnGroup.hide();
                                 $message.show();
-                                $dropdown.css('width', 'auto');
                             } else {
                                 $btnGroup.show();
                                 $message.hide();
@@ -986,7 +985,7 @@
                     ui.button({
                         className: 'dropdown-toggle jtable-cell-split-dropdown-toggle',
                         contents : ui.dropdownButtonContents(ui.icon('note-icon-table-merge'), options),
-                        tooltip  : lang.jTable.merge.split,
+                        tooltip  : lang.jTable.merge.merge,
                         container: options.container,
                         data     : {
                             toggle: 'dropdown',
@@ -1037,7 +1036,6 @@
             var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
             var matrixTable = vTable.getMatrixTable();
 
-            console.log(tableBlock, matrixTable)
             var effectRow = tableBlock.effect.row;
             var effectCol = tableBlock.effect.col;
 
@@ -1545,13 +1543,6 @@
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
                 layoutInfo.toolbar.find('.jtable-display').hide()
                 
-                /**
-                 * toolbar close color palette
-                 */
-                layoutInfo.toolbar.on('mousedown', '.note-color-btn', function (event) {
-                    var $target = $(event.target).closest('.dropdown-menu')
-                    $target.dropdown(false)
-                })
                 /**
                  * copy table
                  */
@@ -2599,6 +2590,31 @@
         },
     });
     $.extend(true, $.summernote.lang, {
+        'zh-TW': {
+            jTable: {
+                borderColor    : '外框顏色',
+                merge          : {
+                    merge  : '合併儲存格',
+                    colspan: '欄',
+                    rowspan: '列',
+                    split  : '取消合併儲存格',
+                },
+                align          : {
+                    top     : '靠上對齊',
+                    middle  : '置中對齊',
+                    bottom  : '靠下對齊',
+                    baseline: 'baseline',
+                },
+                info           : {
+                    info  : 'table info',
+                    margin: '邊界'
+                },
+                apply          : '套用',
+                addDeleteRowCOl: '欄/列(插入/刪除)',
+                areaReset      : '清除格式',
+                message        : '<b>取消合併儲存格才可使用</br>',
+            }
+        },
         'en-US': {
             jTable: {
                 borderColor    : 'Border color',
