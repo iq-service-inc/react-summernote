@@ -50,7 +50,10 @@ class InnerReactSummernote extends React.Component {
 		if (!node) return;
 		const options = this.props.options || {};
 		const { codeview, destroy, value, innerRef } = this.props;
-		options.callbacks = this.callbacks;
+		options.callbacks = {
+			...this.props.options.callbacks,
+			...this.callbacks
+		};
 		// load lang pack
 		//if (options.lang && options.lang != 'en') this.loadModule(`summernote/dist/lang/summernote-${options.lang}.js`)
 		//if (options.lang) require(`summernote/lang/summernote-${options.lang}.js`)
