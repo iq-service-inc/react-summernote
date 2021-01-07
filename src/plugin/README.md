@@ -194,8 +194,9 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
  - [summernote-drafts](https://github.com/MissAllSunday/summernoteDrafts)
    - Allows users to save and load drafts directly on the editor.
    - 可儲存草稿，需要 [store.js](https://github.com/marcuswestin/store.js/#installation)
+   - button: 'sDraftsLoad'
 
-   ```
+   ```sh
     npm i store
    ```
 
@@ -207,10 +208,9 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
       })
     ],
    ```
-   - button: 'sDraftsLoad'
  - [summernote-ext-print](https://github.com/lqez/summernote-ext-print)
    - Add print button on toolbar. This allows summernote to print its own document, not whole page.
-   - 列印編輯器內的內容
+   - 列印編輯器內的內容，可搭配 summernote-pagebreak
    - button: 'print'
  - ~~[summernote-floats-bs](https://github.com/MarcosBL/summernote-floats-bs)~~
    - Replace (or extend) image popover buttons (using float: attributes) with a new set of buttons that inject proper Bootstrap classes (pull-right / pull-left / none).
