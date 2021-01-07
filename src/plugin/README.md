@@ -161,9 +161,8 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
  - ~~[summernote-nugget](https://github.com/pHAlkaline/summernote-plugins/tree/master/plugins/nugget)~~
    - Pre-defined custom code nuggets. You can add your own nuggets and insert them in the editor in one click.
    - ?
- - [summernote-template](https://github.com/Nanakii/summernote-plugins/tree/master/plugin/template)
-   - Dropdown of pre-defined custom templates. You can add your own html templates and insert them in the editor in one click.
-   - 改成用 jquery 從 React 傳遞 templates，整合到 summernote-element-template
+ - summernote-element-template
+   - 改成用 jquery 從 React 傳遞 templates
    - button: 'template'
    
    ```js
@@ -179,6 +178,9 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
       }}/>
     , document.getElementById('root'))
    ```
+ - [summernote-template](https://github.com/Nanakii/summernote-plugins/tree/master/plugin/template)
+   - Dropdown of pre-defined custom templates. You can add your own html templates and insert them in the editor in one click.
+   - 整合到 summernote-element-template
  - [summernote-templates](https://github.com/DiemenDesign/summernote-templates)
    - Add Toolbar Buttons to add Page and Block Templates from html template files.
    - 整合到 summernote-element-template
@@ -192,6 +194,19 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
  - [summernote-drafts](https://github.com/MissAllSunday/summernoteDrafts)
    - Allows users to save and load drafts directly on the editor.
    - 可儲存草稿，需要 [store.js](https://github.com/marcuswestin/store.js/#installation)
+
+   ```
+    npm i store
+   ```
+
+   ```js
+    // webpack
+    plugins: [
+      new webpack.ProvidePlugin({
+        store: "store"
+      })
+    ],
+   ```
    - button: 'sDraftsLoad'
  - [summernote-ext-print](https://github.com/lqez/summernote-ext-print)
    - Add print button on toolbar. This allows summernote to print its own document, not whole page.
