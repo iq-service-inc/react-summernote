@@ -3,6 +3,7 @@
 ## import plugins
 ```js
 require('react-summernote/src/plugin/custom/summernote-custom')
+require('react-summernote/src/plugin/custom/summernote-toc')
 
 require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax')
 require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax.css')
@@ -34,6 +35,13 @@ require('react-summernote/src/plugin/syntax/run_prettify')
 require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
 ```
 
+## Custom
+  - summernote-custom
+    - custom ul button, close toolbar colorplette, table popover language zh-TW
+    - button: 'customUL'
+  - summernote-toc
+    - 插入 anchor 快捷鍵 ctrl + shift + a
+    - button: 'anchor', 'toc'
 
 ## Emojis
  - ~~[summernote-emoji-ext](https://github.com/nilobarp/summernote-ext-emoji)~~
