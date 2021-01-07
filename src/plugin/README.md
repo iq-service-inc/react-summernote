@@ -8,8 +8,8 @@ require('react-summernote/src/plugin/custom/summernote-toc')
 require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax')
 require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax.css')
 
-require('react-summernote/src/plugin/formatting/summernote-add-text-tags.css')
 require('react-summernote/src/plugin/formatting/summernote-add-text-tags')
+require('react-summernote/src/plugin/formatting/summernote-add-text-tags.css')
 require('react-summernote/src/plugin/formatting/summernote-addclass')
 require('react-summernote/src/plugin/formatting/summernote-case-converter')
 require('react-summernote/src/plugin/formatting/summernote-image-captionit')
@@ -23,7 +23,7 @@ require('react-summernote/src/plugin/insert/summernote-at-mention')
 require('react-summernote/src/plugin/insert/summernote-file')
 require('react-summernote/src/plugin/insert/summernote-element-template')
 
-require('react-summernote/src/plugin/misc/summernoteDrafts')
+require('react-summernote/src/plugin/misc/summernoteDrafts')  // see summernote-drafts to install store
 require('react-summernote/src/plugin/misc/summernote-ext-print')
 require('react-summernote/src/plugin/misc/summernote-text-findnreplace')
 require('react-summernote/src/plugin/misc/summernote-ext-table')
@@ -31,8 +31,68 @@ require('react-summernote/src/plugin/misc/summernote-ext-table.css')
 
 require('react-summernote/src/plugin/special_characters/summernote-ext-specialchars')
 
+require('react-summernote/src/plugin/syntax/summernote-ext-highlight')  // require run_prettify
 require('react-summernote/src/plugin/syntax/run_prettify')
-require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
+```
+
+## Example
+```js
+options = {{
+  lang: "zh-TW",
+  toolbar: [
+    ["icon", ["emoji", "specialChar"]],
+    ["style", ["style", "addclass"]],
+    ["font", ["caseConverter", "bold", "underline", "add-text-tags", "clear"]],
+    ["fontname", ["fontname"]],
+    ['color', ['color']],
+    ["para", ["customUL", "ol", 'listStyles', "paragraph"]],
+    ["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset", "jAddDeleteRowCol"]],
+    ["insert", ["link", "picture", 'videoAttributes', 'audio', 'file', 'template']],
+    ["print", ["pagebreak", "print"]],
+    ['misc', ['sDraftsLoad', 'sDraftsSave', 'findnreplace']],
+    ['syntax', ['highlight']],
+    ['toc', ['anchor', 'toc', 'markAnchor']],
+    ["view", ["fullscreen", "codeview"]],
+  ],
+  popover: {
+    image: [
+      ['custom', ['captionIt', 'imageShapes']],
+      ['float', ['floatLeft', 'floatRight']],
+      ['remove', ['removeMedia']]
+    ],
+    table: [
+      ['merge', ['jMerge']],
+      ['style', ['jBackcolor', 'jBorderColor', 'jAlign', 'jAddDeleteRowCol']],
+      ['info', ['jTableInfo']],
+      ['delete', ['jWidthHeightReset', 'deleteTable']],
+    ]
+  },
+  tableClassName: 'jtable table-bordered',
+  callbacks: {
+    summernoteFile: {
+      onFileUploadDone: () => {
+        console.log('done')
+      }
+    },
+    summernoteAtMention: {
+      getSuggestions:  (value) => {
+        const user = ['Amy', 'Ban', 'Curry'];
+        return user.filter((name) => {
+          return name.includes(value) && name !== value
+        });
+      },
+    },
+  },
+  sDrafts: {
+    storePrefix: 'sDrafts'
+  },
+  template: {
+    list: {
+      'sample text': $('<span><h1>sample</h1> text</span>'),
+      'bussiness letter': $(ReactDOMServer.renderToString(<BussinessLetter Date={new Date().toLocaleString()}/>)), // render at initial
+    }
+  },
+}}
 ```
 
 ## Custom
@@ -193,7 +253,7 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
    - Adds the option to create soft linebreaks by pressing SHIFT+RETURN at the same time
  - [summernote-drafts](https://github.com/MissAllSunday/summernoteDrafts)
    - Allows users to save and load drafts directly on the editor.
-   - 可儲存草稿，需要 [store.js](https://github.com/marcuswestin/store.js/#installation)
+   - 使用 local storage 儲存草稿，需要 [store.js](https://github.com/marcuswestin/store.js/#installation)
    - button: 'sDraftsLoad'
 
    ```sh
@@ -250,6 +310,6 @@ require('react-summernote/src/plugin/syntax/summernote-ext-highlight')
    - `pre` tag，樣式會移除
  - [summernote-ext-highlight](https://github.com/heyanlong/summernote-ext-highlight)
    - Based on code-prettify the summernote code highlighting plugin
-   - code prettify，使用 [Google code-prettify](https://github.com/googlearchive/code-prettify)
+   - code prettify，使用 [Google code-prettify](https://github.com/googlearchive/code-prettify)，`react-summernote/src/plugin/syntax/run_prettify`
    - button: 'highlight'
 
