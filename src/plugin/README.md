@@ -89,7 +89,8 @@ options = {{
   template: {
     list: {
       'sample text': $('<span><h1>sample</h1> text</span>'),
-      'bussiness letter': $(ReactDOMServer.renderToString(<BussinessLetter Date={new Date().toLocaleString()}/>)), // render at initial
+      'bussiness letter': $(ReactDOMServer.renderToString(<BussinessLetter Date={new Date().toLocaleString()}/>))
+      // render at initial
     }
   },
 }}
@@ -120,7 +121,6 @@ options = {{
    - Uses the github emoji api and loads them via ajax.
    - 從 [github api](https://api.github.com/emojis) 取得 emoji
    - button: 'emoji'
-
 
 ## Formatting
  - [summernote-add-text-tags](https://github.com/tylerecouture/summernote-add-text-tags)
@@ -189,6 +189,7 @@ options = {{
    - Adds a Toolbar Button for Allowing to edit Video Attributes before inserting into Editor.
    - 影片屬性
    - button: 'videoAttributes'
+
 ## Insert
  - [summernote-at-mention](https://github.com/team-loxo/summernote-at-mention)
    - Triggers a dropdown with autocomplete options whenever the `@` character is encountered in a new word.
@@ -288,7 +289,8 @@ options = {{
  - [summernote-ext-table](https://github.com/ksy11/summernote-ext-table)
    - Adds table column/row resize, cell background-color change, cell merge, cell unmerge, border-color change, table margin change, table width/height reset.
    - table 功能
-   - button: 'jMerge', 'jBackcolor', 'jBorderColor', 'jAlign', 'jAddDeleteRowCol', 'jTableInfo', 'jWidthHeightReset', 'deleteTable', 
+   - button: 'jMerge', 'jBackcolor', 'jBorderColor', 'jAlign', 'jAddDeleteRowCol', 'jTableInfo', 'jWidthHeightReset', 'deleteTable'
+
 ## Special Characters & Icons
  - [summernote-ext-specialchars](https://github.com/JustinEldracher/summernote-plugins/tree/master/summernote-ext-specialchars)
    - Few tweaks to the official specialchars plugin, revising the view and making it more mobile-friendly
