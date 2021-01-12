@@ -31,6 +31,17 @@
 				maximumFileSizeError: 'Maximum file size exceeded.'
 			}
 		},
+		'zh-TW': {
+			file: {
+				file: '檔案',
+				btn: '檔案',
+				insert: '插入檔案',
+				selectFromFiles: '從本機上傳',
+				url: '檔案網址',
+				maximumFileSize: '檔案大小上限',
+				maximumFileSizeError: '檔案過大'
+			}
+		},
 		'fr-FR': {
 			file: {
 				file: 'Fichier',
@@ -125,8 +136,9 @@
 				// Build the Body HTML of the Dialog.
 				let body = [
 					'<div class="form-group note-form-group note-group-select-from-files">',
-					'<label class="note-form-label">' + lang.file.selectFromFiles + '</label>',
-					'<input class="note-file-input note-form-control note-input" ',
+					`<label class="note-form-label" for="note-dialog-file-${options.id}">` + lang.file.selectFromFiles + '</label>',
+					'<input class="note-file-input note-form-control form-control-file note-input" ',
+					` id="note-dialog-file-${options.id}"`,
 					' type="file" name="files" accept="*/*">',
 					'</div>',
 					fileLimitation,

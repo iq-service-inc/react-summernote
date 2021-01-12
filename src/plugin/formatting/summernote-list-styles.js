@@ -28,6 +28,21 @@
             "Square"
           ]
         }
+      },
+      "zh-TW": {
+        listStyleTypes: {
+          tooltip: "清單樣式",
+          labelsListStyleTypes: [
+            "數字",
+            "小寫字母",
+            "大寫字母",
+            "小寫羅馬數字",
+            "大寫羅馬數字",
+            "實心圓形",
+            "空心圓形",
+            "實心方形"
+          ]
+        }
       }
     });
     $.extend($.summernote.options, {
@@ -78,7 +93,7 @@
                 callback: function ($dropdownBtn) {
                   $dropdownBtn.click(function (e) {
                     e.preventDefault();
-                    // self.updateListStyleMenuState($dropdownBtn);
+                    self.updateListStyleMenuState($dropdownBtn);
                   })
                 }
               }),

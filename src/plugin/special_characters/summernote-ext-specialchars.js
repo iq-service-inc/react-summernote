@@ -481,6 +481,12 @@
         specialChar: '특수문자',
         select: '특수문자를 선택하세요'
       }
-    }
+    },
+    'zh-TW': {
+      specialChar: {
+        specialChar: '特殊字元',
+        select: '插入特殊字元'
+      }
+    },
   });
 }));

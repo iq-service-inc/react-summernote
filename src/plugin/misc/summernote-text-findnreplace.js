@@ -21,6 +21,20 @@
         replaceError:       'Nothing entered to replace...',
         noneSelected:       'Nothing selected to replace...'
       }
+    },
+    'zh-TW': {
+      findnreplace: {
+        tooltip:            `搜尋與取代`,
+        findBtn:            '搜尋',
+        findPlaceholder:    '搜尋...',
+        findResult:         ' 個結果 ',
+        findError:          '查無結果',
+        replaceBtn:         '取代',
+        replacePlaceholder: '取代...',
+        replaceResult:      ', 取代成 ',
+        replaceError:       '查無結果',
+        noneSelected:       '查無結果'
+      }
     }
   });
   $.extend($.summernote.options, {

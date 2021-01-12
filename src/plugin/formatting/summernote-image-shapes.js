@@ -16,12 +16,18 @@
           tooltipShapeOptions: ['Responsive', 'Rounded', 'Circle', 'Thumbnail', 'None']
         }
       },
+      'zh-TW': {
+        imageShapes: {
+          tooltip: '圖片外框',
+          tooltipShapeOptions: ['自動', '圓角', '圓形', '縮圖', '無']
+        }
+      },
     });
     $.extend($.summernote.options, {
       imageShapes: {
         icon: '<i class="note-icon-picture"/>',
         /* Must keep the same order as in lang.imageAttributes.tooltipShapeOptions */
-        shapes: ['img-responsive', 'rounded', 'rounded-circle', 'img-thumbnail', '']
+        shapes: ['img-fluid', 'rounded', 'rounded-circle', 'img-thumbnail', '']
       }
     });
     $.extend($.summernote.plugins, {

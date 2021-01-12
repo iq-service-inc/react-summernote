@@ -19,6 +19,18 @@
         factory(window.jQuery);
     }
 }(function ($) {
+    $.extend(true, $.summernote.lang, {
+        'zh-TW': {
+            addClass: {
+                style: '套用 CSS class'
+            }
+        },
+        'en-US': {
+            addClass: {
+                style: 'toggle CSS class'
+            }
+        },
+    });
 
     // Extends plugins for adding hello.
     //  - plugin is external module for customizing.
@@ -41,6 +53,8 @@
 
             addStyleString(".scrollable-menu {height: auto; max-height: 200px; max-width:300px; overflow-x: hidden;}");
 
+            var options = context.options,
+                lang = options.langInfo;
             context.memo('button.addclass', function () {
                 return ui.buttonGroup([
                     ui.button({
@@ -48,7 +62,7 @@
                         contents: '<i class="text-primary">CSS3</i>',
                         // contents: '<i class="fa fa-css3"\/>' + ' ' + ui.icon(context.options.icons.caret, 'span'),
                         //ui.icon(context.options.icons.magic) + ' ' + ui.icon(context.options.icons.caret, 'span'),
-                        tooltip: 'toggle CSS class', //lang.style.style,
+                        tooltip: lang.addClass.style, //lang.style.style,
                         data: {
                             toggle: 'dropdown'
                         }

@@ -29,6 +29,15 @@
      * example Plugin
      */
     $.extend(true, $.summernote.lang, {
+        'zh-TW': {
+            caseConverter: {
+                title: '大小寫傳換',
+                lowerCase: '小寫',
+                upperCase: '大寫',
+                sentenceCase: '句子大寫',
+                titleCase: '標題大寫'
+            }
+        },
         'en-US': {
             /* US English(Default Language) */
             caseConverter: {

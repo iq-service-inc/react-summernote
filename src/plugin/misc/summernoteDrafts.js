@@ -40,6 +40,21 @@
                 youSure: 'Are you sure you want to do this?'
             }
         });
+        $.extend($.summernote.lang['zh-TW'], {
+            sDrafts: {
+                save: '儲存草稿',
+                load: '載入草稿',
+                select: '選擇要載入的草稿',
+                provideName: '輸入草稿名稱',
+                saved: '成功儲存草稿',
+                loaded: '成功載入草告',
+                deleteAll: '刪除所有草稿',
+                noDraft: '無法載入選擇的草稿，重試或選擇其他草稿',
+                nosavedDrafts: '目前尚無儲存的草稿',
+                deleteDraft: '刪除',
+                youSure: '確定要刪除所有草稿？'
+            }
+        });
         $.extend($.summernote.plugins, {
             'sDraftsSave': function (context) {
                 var $editor, lang, options, ui;
@@ -47,10 +62,15 @@
                 options = context.options;
                 lang = options.langInfo.sDrafts;
                 $editor = context.layoutInfo.editor;
+                console.log(options.sDrafts)
                 context.memo('button.sDraftsSave', function () {
                     var button;
                     button = ui.button({
-                        contents: options.sDrafts.saveIcon ? options.sDrafts.saveIcon : lang.save,
+                        contents: options.sDrafts.saveIcon || `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-bookmark" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 8V1h1v6.117L8.743 6.07a.5.5 0 0 1 .514 0L11 7.117V1h1v7a.5.5 0 0 1-.757.429L9 7.083 6.757 8.43A.5.5 0 0 1 6 8z"/>
+                        <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
+                        <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
+                    </svg>`,
                         tooltip: lang.save,
                         click: function (e) {
                             e.preventDefault();
@@ -131,7 +151,7 @@
                 fn = function () {
                     var fDate;
                     fDate = options.sDrafts.dateFormat && typeof options.sDrafts.dateFormat === 'function' ? options.sDrafts.dateFormat(draft.sDate) : draft.sDate;
-                    return htmlList += "<li class='list-group-item'><a href='#' class='note-draft' data-draft='" + key + "'>" + draft.name + " - <small>" + fDate + "</small></a><a href='#' class='label label-danger pull-right delete-draft' data-draft='" + key + "'>" + lang.deleteDraft + "</a></li>";
+                    return htmlList += "<li class='list-group-item'><a href='#' class='note-draft' data-draft='" + key + "'>" + draft.name + " - <small>" + fDate + "</small></a><a href='#' class='label label-danger pull-right delete-draft' data-draft='" + key + "' style='float:right;'>" + lang.deleteDraft + "</a></li>";
                 };
                 for (key in drafts) {
                     draft = drafts[key];
@@ -140,7 +160,10 @@
                 context.memo('button.sDraftsLoad', function () {
                     var button;
                     button = ui.button({
-                        contents: options.sDrafts.loadIcon ? options.sDrafts.loadIcon : lang.load,
+                        contents: options.sDrafts.loadIcon || `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journals" viewBox="0 0 16 16">
+                        <path d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2z"/>
+                        <path d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0z"/>
+                    </svg>`,
                         tooltip: lang.load,
                         click: function (e) {
                             e.preventDefault();

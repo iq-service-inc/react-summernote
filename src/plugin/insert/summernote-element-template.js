@@ -11,6 +11,21 @@
         factory(window.jQuery);
     }
 }(function ($) {
+    $.extend(true, $.summernote.lang, {
+        'zh-TW': {
+            template: {
+                template: '模版',
+                insert: '插入模版',
+            }
+        },
+        'en-US': {
+            template: {
+                template: 'Template',
+                insert: 'Insert Template',
+            }
+        },
+    });
+
     $.extend($.summernote.options, {
         template: {}
     });
@@ -22,10 +37,11 @@
          */
         'template': function (context) {
             var ui = $.summernote.ui;
+            var lang = context.options.langInfo.template
             var options = context.options.template;
             var defaultOptions = {
-                label: 'Template',
-                tooltip: 'Insert Template',
+                label: lang.template,
+                tooltip: lang.insert,
                 list: {}
             };
             // Assign default values if not supplied
@@ -38,12 +54,12 @@
             // add template button
             context.memo('button.template', function () {
                 // initialize list
-                var htmlDropdownList = '';
-                for (var htmlTemplate in options.list) {
-                    if (options.list.hasOwnProperty(htmlTemplate)) {
-                        htmlDropdownList += '<li><a href="#" data-value="' + htmlTemplate + '">' + htmlTemplate + '</a></li>';
-                    }
-                }
+                // var htmlDropdownList = '';
+                // for (var htmlTemplate in options.list) {
+                //     if (options.list.hasOwnProperty(htmlTemplate)) {
+                //         htmlDropdownList += '<li><a href="#" data-value="' + htmlTemplate + '">' + htmlTemplate + '</a></li>';
+                //     }
+                // }
 
                 // create button
                 var button = ui.buttonGroup([

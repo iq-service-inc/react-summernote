@@ -34,6 +34,32 @@
           note: 'Note: Not all options are available with all services...',
           ok: 'OK'
         }
+      },
+      'zh-TW': { 
+        videoAttributes: {
+          dialogTitle: '影片屬性',
+          tooltip: '影片',
+          pluginTitle: '影片屬性',
+          href: '網址',
+          videoSize: '影片尺寸',
+          videoOption0: 'Responsive',
+          videoOption1: '1280x720',
+          videoOption2: '853x480',
+          videoOption3: '640x360',
+          videoOption4: '560x315',
+          alignment: '對齊方式',
+          alignmentOption0: '無',
+          alignmentOption1: '左',
+          alignmentOption2: '右',
+          alignmentOption3: '預設',
+          alignmentOption4: '繼承',
+          suggested: '影片結束後顯示推薦影片',
+          controls: '顯示播放器控制項',
+          autoplay: '自動播放',
+          loop: '循環播放',
+          note: 'Note: Not all options are available with all services...',
+          ok: '確認'
+        }
       }
     });
   
@@ -75,10 +101,6 @@
         this.initialize = function () {
           var $container = options.dialogsInBody ? $(document.body) : $editor;
             var body =
-                '<div class="form-group">' +
-                '  <div class="col-xs-3"></div>' +
-                '  <div class="col-xs-9 help-block">' + lang.videoAttributes.note + '</div>' +
-                '</div>' +
                 '<div class="form-group">' +
                 '  <label for="note-video-attributes-href" class="control-label col-xs-3">' + lang.videoAttributes.href + '</label>' +
                 '  <div class="input-group col-xs-9">';
@@ -179,6 +201,10 @@
                     '</div>';
             }
   
+          body += '<div class="form-group">' +
+            '  <div class="col-xs-3"></div>' +
+            '  <div class="col-xs-9 help-block">' + lang.videoAttributes.note + '</div>' +
+            '</div>'
           this.$dialog = ui.dialog({
             title:  lang.videoAttributes.dialogTitle,
             body:   body,

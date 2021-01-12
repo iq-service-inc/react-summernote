@@ -27,6 +27,11 @@
         print: {
           print: 'Imprimir'
         }
+      },
+      'zh-TW': {
+        print: {
+          print: '列印'
+        }
       }
     });
   

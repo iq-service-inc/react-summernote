@@ -14,6 +14,11 @@
         pagebreak: {
           tooltip: 'Page Break'
         }
+      },
+      'zh-TW': {
+        pagebreak: {
+          tooltip: '分頁符號'
+        }
       }
     });
     $.extend($.summernote.options, {
