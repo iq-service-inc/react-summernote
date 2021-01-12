@@ -8,8 +8,6 @@ require('react-summernote/src/plugin/custom/summernote-toc')
 require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax')
 require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax.css')
 
-require('react-summernote/src/plugin/formatting/summernote-add-text-tags')
-require('react-summernote/src/plugin/formatting/summernote-add-text-tags.css')
 require('react-summernote/src/plugin/formatting/summernote-addclass')
 require('react-summernote/src/plugin/formatting/summernote-case-converter')
 require('react-summernote/src/plugin/formatting/summernote-image-captionit')
@@ -42,7 +40,7 @@ options = {{
   toolbar: [
     ["icon", ["emoji", "specialChar"]],
     ["style", ["style", "addclass"]],
-    ["font", ["caseConverter", "bold", "underline", "add-text-tags", "clear"]],
+    ["font", ["caseConverter", "bold", "underline", "clear"]],
     ["fontname", ["fontname"]],
     ['color', ['color']],
     ["para", ["customUL", "ol", 'listStyles', "paragraph"]],
@@ -123,10 +121,9 @@ options = {{
    - button: 'emoji'
 
 ## Formatting
- - [summernote-add-text-tags](https://github.com/tylerecouture/summernote-add-text-tags)
+ - ~~[summernote-add-text-tags](https://github.com/tylerecouture/summernote-add-text-tags)~~
    - Adds additional text-level semantic elements that are already provided with styling by Bootstrap 3 and 4, such as `<kbd>` and `<code>` etc.
-   - bootstrap 文字樣式
-   - button: 'add-text-tags'
+   - bootstrap 文字樣式，無法簡化結構，無法移除樣式
  - [summernote-addclass](https://github.com/creativeprogramming/summernote-addclass)
    - With this plugin you will get a configurable button so you'll be able to toggle custom CSS classes in summernote elements (like the default 'style' button, but you can define custom CSS classes, eg. your favourite UI framework styling classes)
    - 選取文字套用自訂 class 樣式
