@@ -62,7 +62,6 @@
                 options = context.options;
                 lang = options.langInfo.sDrafts;
                 $editor = context.layoutInfo.editor;
-                console.log(options.sDrafts)
                 context.memo('button.sDraftsSave', function () {
                     var button;
                     button = ui.button({

@@ -97,12 +97,6 @@
 				// lang holds the Language Information from Summernote and what we extended above.
                 lang = options.langInfo;
 
-            if (context.options && context.options.callbacks && context.options.callbacks.summernoteFile) {
-                var summernoteCallbacks = context.options.callbacks.summernoteFile;
-                if (summernoteCallbacks.onFileUploadDone) {
-                    var onFileUploadDone = summernoteCallbacks.onFileUploadDone;
-                }
-            }
 
 			context.memo('button.file', function () {
 				// Here we create a button
@@ -308,7 +302,7 @@
 				}).fail(function () {
 					context.invoke('editor.restoreRange');
 				}).done(function () {
-                    if (!!onFileUploadDone) onFileUploadDone()
+                    if (!!options.callbacks.onFileUploadDone) options.callbacks.onFileUploadDone()
                 });
 			};
 			this.showFileDialog = function () {

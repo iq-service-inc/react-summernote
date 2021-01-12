@@ -1,3 +1,8 @@
+/**
+ * base on
+ * [summernote-template](https://github.com/Nanakii/summernote-plugins/tree/master/plugin/template)
+ * [summernote-templates](https://github.com/DiemenDesign/summernote-templates)
+ */
 (function (factory) {
     /* global define */
     if (typeof define === 'function' && define.amd) {
@@ -53,13 +58,6 @@
 
             // add template button
             context.memo('button.template', function () {
-                // initialize list
-                // var htmlDropdownList = '';
-                // for (var htmlTemplate in options.list) {
-                //     if (options.list.hasOwnProperty(htmlTemplate)) {
-                //         htmlDropdownList += '<li><a href="#" data-value="' + htmlTemplate + '">' + htmlTemplate + '</a></li>';
-                //     }
-                // }
 
                 // create button
                 var button = ui.buttonGroup([
