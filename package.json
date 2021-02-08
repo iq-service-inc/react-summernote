@@ -25,7 +25,8 @@
     "popper.js": "^1.15.0",
     "summernote": "^0.8.12",
     "jquery": "^3.4.1",
-    "rtf.js": "git+https://github.com/LinZap/rtf.js.git"
+    "rtf.js": "git+https://github.com/LinZap/rtf.js.git",
+    "store": "^2.0.12"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
