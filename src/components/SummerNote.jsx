@@ -50,12 +50,45 @@ class InnerReactSummernote extends React.Component {
 		if (!node) return;
 		const options = this.props.options || {};
 		const { codeview, destroy, value, innerRef } = this.props;
-		options.callbacks = this.callbacks;
+		options.callbacks = {
+			...this.props.options.callbacks,
+			...this.callbacks
+		};
 		// load lang pack
 		//if (options.lang && options.lang != 'en') this.loadModule(`summernote/dist/lang/summernote-${options.lang}.js`)
 		//if (options.lang) require(`summernote/lang/summernote-${options.lang}.js`)
 		this.editor = $(node);
 
+		// default popover
+		var initPopover = {
+			image: [
+			  ['resize', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+			  ['float', ['floatLeft', 'floatRight', 'floatNone']],
+			  ['remove', ['removeMedia']],
+			],
+			link: [
+			  ['link', ['linkDialogShow', 'unlink']],
+			],
+			table: [
+			  ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+			  ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+			],
+			air: [
+			  ['color', ['color']],
+			  ['font', ['bold', 'underline', 'clear']],
+			  ['para', ['ul', 'paragraph']],
+			  ['table', ['table']],
+			  ['insert', ['link', 'picture']],
+			  ['view', ['fullscreen', 'codeview']],
+			],
+		}
+
+
+		options.popover = {
+			...initPopover,
+			...options.popover
+		}
+		
 		this.editor.summernote(options);
 
 		if (value) {

@@ -22,10 +22,11 @@
             ui = $.summernote.ui,
             modules = context.modules,
             options = context.options,
+            $editable = context.layoutInfo.editable,
             lang = options.langInfo,
             $mergeDialog,
             $tableInfoDialog;
-            
+
         var userAgent = navigator.userAgent,
             isMSIE = /MSIE|Trident/i.test(userAgent),
             isEdge = /Edge\/\d+/.test(userAgent),
@@ -132,6 +133,35 @@
             })
         ];
 
+        /**
+         * recover table popover after click dropdown
+         * @param {jQuery.Event} event 
+         */
+        self.recoverPopover = function (event) {
+            var $button = $(event.target).closest('button'),
+                $toggle = $button.closest('.dropdown-toggle')
+            var rng = modules.editor.getLastRange.call(modules.editor)
+            var cell = dom.ancestor(rng.commonAncestor(), dom.isCell)
+
+            if ($button.closest('.popover').length) {
+                var left = $button.closest('.popover').css('left'),
+                    top = $button.closest('.popover').css('top'),
+                    height = $button.outerHeight()
+                setTimeout(() => {
+                    modules.tablePopover.update(cell)
+                    var $popover = $button.closest('.popover'),
+                        $dropdown = $toggle.next('.dropdown-menu')
+                    $popover.css({
+                        left: left,
+                        top: top
+                    })
+                    $dropdown.css({
+                        transform: `translate3d(0px, ${height}px, 0px)`
+                    })
+                }, 0);
+            }
+        }
+
         context.memo('button.jAddDeleteRowCol', function () {
             return ui.buttonGroup({
                 className: 'jtable-add-del-row-col jtable-display',
@@ -191,13 +221,13 @@
                             if (hasSpan) {
                                 $btnGroup.hide();
                                 $message.show();
-                                $dropdown.css('width', 'auto');
                             } else {
                                 $btnGroup.show();
                                 $message.hide();
                                 $dropdown.css('width', '');
                             }
 
+                            self.recoverPopover(event)
                         },
                     }),
                     ui.dropdown({
@@ -524,6 +554,9 @@
                     data     : {
                         toggle: 'dropdown',
                     },
+                    click: function (event) {
+                        self.recoverPopover(event)
+                    }
                 }),
                 ui.dropdown({
                     title    : lang.table.table,
@@ -664,6 +697,9 @@
                         container: options.container,
                         data     : {
                             toggle: 'dropdown',
+                        },
+                        click: function (event) {
+                            self.recoverPopover(event)
                         }
                     }),
                     ui.dropdown({
@@ -878,6 +914,9 @@
                     data     : {
                         toggle: 'dropdown',
                     },
+                    click: function (event) {
+                        self.recoverPopover(event)
+                    }
                 }),
                 ui.dropdown({
                     className: 'jtable-align-dropdown',
@@ -946,7 +985,7 @@
                     ui.button({
                         className: 'dropdown-toggle jtable-cell-split-dropdown-toggle',
                         contents : ui.dropdownButtonContents(ui.icon('note-icon-table-merge'), options),
-                        tooltip  : lang.jTable.merge.split,
+                        tooltip  : lang.jTable.merge.merge,
                         container: options.container,
                         data     : {
                             toggle: 'dropdown',
@@ -965,6 +1004,7 @@
 
                             $cellSplitBtn.toggleClass('disabled', !cellHasSpan);
                             $cellSplitBtn.attr('disabled', !cellHasSpan);
+                            self.recoverPopover(event)
                         },
                     }),
                     ui.dropdown({
@@ -996,7 +1036,6 @@
             var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
             var matrixTable = vTable.getMatrixTable();
 
-            console.log(tableBlock, matrixTable)
             var effectRow = tableBlock.effect.row;
             var effectCol = tableBlock.effect.col;
 
@@ -1502,14 +1541,8 @@
         self.events = {
             'summernote.init': function (_, layoutInfo) {
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
+                layoutInfo.toolbar.find('.jtable-display').hide()
                 
-                /**
-                 * toolbar close color palette
-                 */
-                layoutInfo.toolbar.on('mousedown', '.note-color-btn', function (event) {
-                    var $target = $(event.target).closest('.dropdown-menu')
-                    $target.dropdown(false)
-                })
                 /**
                  * copy table
                  */
@@ -2557,6 +2590,31 @@
         },
     });
     $.extend(true, $.summernote.lang, {
+        'zh-TW': {
+            jTable: {
+                borderColor    : '外框顏色',
+                merge          : {
+                    merge  : '合併儲存格',
+                    colspan: '欄',
+                    rowspan: '列',
+                    split  : '取消合併儲存格',
+                },
+                align          : {
+                    top     : '靠上對齊',
+                    middle  : '置中對齊',
+                    bottom  : '靠下對齊',
+                    baseline: 'baseline',
+                },
+                info           : {
+                    info  : 'table info',
+                    margin: '邊界'
+                },
+                apply          : '套用',
+                addDeleteRowCOl: '欄/列(插入/刪除)',
+                areaReset      : '清除格式',
+                message        : '<b>取消合併儲存格才可使用</br>',
+            }
+        },
         'en-US': {
             jTable: {
                 borderColor    : 'Border color',

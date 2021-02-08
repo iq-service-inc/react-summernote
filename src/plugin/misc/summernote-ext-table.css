@@ -186,10 +186,6 @@
     user-select: none;
 }
 
-.jtable-display {
-    display: none;
-}
-
 .jtable {
     width: auto;
     margin-bottom: 1rem;
