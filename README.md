@@ -28,6 +28,7 @@ React SummerNote 依賴以下套件
 * `popper.js`: ^1.15.0
 * `summernote`: ^0.8.12
 * `jquery`: ^3.4.1
+* `store`: ^2.0.12
 
 
 ## Install 
@@ -35,7 +36,7 @@ React SummerNote 依賴以下套件
 #### 必要依賴安裝
 
 ```
-npm install --save bootstrap popper.js summernote jquery
+npm install --save bootstrap popper.js summernote jquery store
 ```
 
 #### 安裝 React SummerNote
@@ -46,7 +47,7 @@ npm install --save git+http://10.9.173.136/SideProject/react-summernote.git
 
 #### 設定 Webpack
 
-使 jQuery 可以在 Component 中被存取，而不需額外 import
+使 jQuery, store 可以在 Component 中被存取，而不需額外 import
 
 ```js
 {
@@ -55,6 +56,7 @@ npm install --save git+http://10.9.173.136/SideProject/react-summernote.git
         new webpack.ProvidePlugin({
             $: "jquery",
 			jQuery: "jquery",
+            store: "store",
         })
     ] 
 }
@@ -250,6 +252,7 @@ require('bootstrap/js/dist/dropdown')
 require('bootstrap/js/dist/tooltip')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
+<<<<<<< HEAD
 
 ```
 
@@ -261,6 +264,10 @@ require('summernote/dist/summernote-bs4.min.js')
 require('react-summernote/src/plugin/summernote-ext-table')
 require('react-summernote/src/plugin/summernote-ext-table.css')
 ```
+
+### 其他 Plugin
+
+若要自行引入 plugin 可參考 [Plugin 介紹](/src/plugin)
 
 
 ## License

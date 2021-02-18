@@ -64,7 +64,8 @@ class App extends Component {
 							["para", ["ul", "ol", "paragraph"]],
 							["table", ["table"]],
 							["insert", ["link", "picture", "video"]],
-							["view", ["fullscreen", "codeview"]]
+							["view", ["fullscreen", "codeview"]],
+							["anchor",["anchor", "toc", "markAnchor"]]
 						]
 					}}
 					onChange={onChange}
