@@ -93,6 +93,23 @@
                 })
             };
 
+            this.events = {
+                'summernote.init': function (_, layoutInfo) {
+                    layoutInfo.editingArea.on('keydown', function(event) {
+                        if (event.keyCode === 13) { // key enter
+                            var rng = range.create()
+                            var node = dom.ancestor(rng.commonAncestor(), function (node) {
+                                return node && $(node).hasClass(`${prefix}-toc-anchor`)
+                            }) || $(rng.sc).find(`.${prefix}-toc-anchor`)
+                            // remove duplicated anchor
+                            if(!!node && $editable.find(`#${$(node).attr('id')}`).length > 0) {
+                                $(node).removeAttr('id').removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
+                            }
+                        }
+                    })
+                }
+            }
+
             context.memo('button.markAnchor', function () {
                 return ui.button({
                     className: `${prefix}-btn-mark-anchor`,
@@ -124,7 +141,8 @@
                 if ($editable.find(node).length > 0) {
                     var id = $(node).text()
                     id = id.replace(/[\W\-]/g, '-')
-                    if (id.length == 0) return
+                    // 空白段落消除錨點
+                    if (id.length == 0) return $(node).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
                     if ($(node).attr('id') === id) {
                         $(node).toggleClass(`${prefix}-toc-anchor`)
                     }
