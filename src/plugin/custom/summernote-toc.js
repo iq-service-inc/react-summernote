@@ -81,6 +81,14 @@
                 }).render().appendTo(options.container);
                 this.$dialog.find('.modal-body').addClass(`${prefix}-toc-form-container`)
 
+                $editingArea.prepend(`<div style="background-color:rgba(0,0,0,.03);border-right: 1px solid rgba(0,0,0,.125); width:20em;" class="${prefix}-edit-anchor-container"><div style="width:20em;" class="${prefix}-edit-anchor"></div></div>`).css('display', 'flex').css('flex-direction', 'row')
+                $editable.css('width', '100%')
+
+                this.$editAnchorContainer = $editingArea.find(`.${prefix}-edit-anchor-container`)
+                this.$editAnchorContainer.hide()
+                this.$editAnchor = $editingArea.find(`.${prefix}-edit-anchor`)
+                this.$editAnchor.css('padding', '1em 0')
+
                 $editable.css('padding', '1.5rem')
                 $editingArea.on('keydown', function (e) {
                     // toggle anchor
@@ -109,6 +117,101 @@
                     })
                 }
             }
+
+            this.resetEditAnchor = function ($target) {
+                // reset anchor list
+                var anchors = $editor.find(`.${prefix}-toc-anchor[id]`)
+                self.$editAnchor.html('<ul>')
+                anchors.each((i, d) => {
+                    var id = $(d).attr('id'),
+                        text = $(d).data('text')
+
+                    var $anchor = $('<a>').text(text).attr('href', '#' + id).css('flex', '2').css('align-self', 'center')
+                    var $input = $('<input>').attr('value', text).addClass(`${prefix}-toc-data-text`)
+                    var $edit = $('<button>').text('編輯').addClass(['btn', 'btn-primary'])
+                    var $del = $('<button>').text('移除').addClass(['btn', 'btn-primary'])
+                    var $check = $('<button>').text('確認').addClass(['btn', 'btn-primary'])
+                    var $cancel = $('<button>').text('取消').addClass(['btn', 'btn-primary'])
+                    var $btncontainer = $('<div>').append([$edit, $check, $cancel, $del])
+                                        .css('flex', '2').css('display', 'flex').css('justify-content', 'space-evenly')
+                    var $div = $('<li>').addClass(['form-group', `${prefix}-toc-form-group`]).append([$anchor, $input, $btncontainer])
+                    self.$editAnchor.find('ul').append($div)
+
+                    function viewmode() {
+                        $anchor.show()
+                        $edit.show()
+                        $del.show()
+                        $input.hide()
+                        $check.hide()
+                        $cancel.hide()
+                    }
+
+                    function editmode() {
+                        $anchor.hide()
+                        $edit.hide()
+                        $del.hide()
+                        $input.show()
+                        $check.show()
+                        $cancel.show()
+                    }
+
+                    viewmode()
+
+                    $edit.click(function (event) {
+                        editmode()
+                    })
+
+                    $check.click(function (event) {
+                        $editor.find(`.${prefix}-toc-anchor#${id}`).data('text', $input.val())
+                        // $anchor.text($input.val())
+                        self.resetEditAnchor()
+                        viewmode()
+                    })
+                    
+                    $cancel.click(function (event) {
+                        viewmode()
+                    })
+
+                    $del.click(function (event) {
+                        $editor.find(`#${id}`).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`]).removeAttr('id')
+                        self.resetEditAnchor()
+                    })
+
+                    // remove event when close edit anchor area
+                    !!$target && $target.bind('hideEditAnchor', function () {
+                        $edit.off()
+                        $del.off()
+                    });
+                })
+            }
+
+            context.memo('button.editAnchor', function () {
+                return ui.button({
+                    className: `${prefix}-btn-edit-anchor`,
+                    contents: `<i class="note-icon ${prefix}-mark-anchor"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                    <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
+                  </svg></i>`,
+                    tooltip: lang.toc.editAnchor,
+                    click: function (event) {
+                        var $target = $(event.target).closest('button')
+                        
+                        // toggle edit anchor area
+                        self.$editAnchorContainer.animate({'width': 'toggle'})
+                        $target.toggleClass(`${prefix}-show-edit-anchor`)
+                        if ($target.hasClass(`${prefix}-show-edit-anchor`)) {
+                            // create custom event
+                            $target.on('hideEditAnchor')
+                            self.resetEditAnchor($target)
+                        }
+                        else {
+                            $target.trigger('hideEditAnchor')
+                            $target.off('hideEditAnchor')
+                        }
+                        
+                    },
+                }).render();
+            });
 
             context.memo('button.markAnchor', function () {
                 return ui.button({
@@ -142,7 +245,11 @@
                     var id = $(node).text()
                     id = id.replace(/[\W\-]/g, '-')
                     // 空白段落消除錨點
-                    if (id.length == 0) return $(node).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
+                    if (id.length == 0) {
+                        $(node).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
+                        self.resetEditAnchor()
+                        return
+                    }
                     if ($(node).attr('id') === id) {
                         $(node).toggleClass(`${prefix}-toc-anchor`)
                     }
@@ -160,6 +267,7 @@
                         $(node).removeClass(`${prefix}-toc-mark`)
                     }
                 }
+                self.resetEditAnchor()
             }
 
             context.memo('button.anchor', function () {
@@ -172,6 +280,20 @@
                     },
                 }).render();
             });
+
+            this.resetTOC = function () {
+                self.$toc.html('')
+                $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
+                    let text = $(d).data('text'),
+                        id = $(d).attr('id')
+                    
+                    // 產生 TOC
+                    var anchor = $('<a>').attr('href', '#' + id)
+                    anchor.text(text)
+                    var li = $('<li>').append(anchor)
+                    self.$toc.append(li)
+                })
+            }
 
             this.showDialog = function () {
                 ui.showDialog(this.$dialog)
@@ -205,7 +327,6 @@
                 $btn.click(function (event) {
                     ui.hideDialog(self.$dialog)
                     // reset toc
-                    self.$toc.html('')
                     var input = self.$dialog.find(`.${prefix}-toc-data-text`).not('b')
                     input.each((i, d) => {
                         let text = $(d).val(),
@@ -213,13 +334,9 @@
     
                         // update anchor text
                         $editor.find(`.${prefix}-toc-anchor#${id}`).data('text', text)
-
-                        // 產生 TOC
-                        var anchor = $('<a>').attr('href', '#' + id)
-                        anchor.text(text)
-                        var li = $('<li>').append(anchor)
-                        self.$toc.append(li)
                     })
+                    self.resetTOC()
+                    self.resetEditAnchor()
                 })
 
                 ui.onDialogHidden(self.$dialog, function () {
@@ -260,6 +377,7 @@
                 insertanchor: '插入錨點',
                 message: '目前尚無錨點',
                 markAnchor: '檢視錨點',
+                editAnchor: '編輯錨點',
             }
         },
         'en-US': {
@@ -272,6 +390,7 @@
                 insertanchor: 'insert anchor',
                 message: 'Cannot find any anchor',
                 markAnchor: 'mark anchor',
+                editAnchor: 'edit anchor',
             }
         },
     });
