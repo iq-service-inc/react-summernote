@@ -1,6 +1,6 @@
 {
   "name": "react-summernote",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "description": "Summernote (Super simple WYSIWYG editor) adaptation for react http://summernote.org",
   "main": "dist/main.js",
   "scripts": {
@@ -16,17 +16,17 @@
   },
   "author": "zap",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.4.1",
+    "store": "^2.0.12"
+  },
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "prop-types": "^15.7.2",
     "bootstrap": "^4.3.1",
     "popper.js": "^1.15.0",
-    "summernote": "^0.8.12",
-    "jquery": "^3.4.1",
-    "rtf.js": "git+https://github.com/LinZap/rtf.js.git",
-    "store": "^2.0.12"
+    "rtf.js": "git+https://github.com/LinZap/rtf.js.git"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",

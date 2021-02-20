@@ -1,8 +1,10 @@
 # React SummerNote
 
-**Stable Version: `v2.0.0`**
-
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
+
+* **Latest Version: `v2.0.5`**
+* **Stable Version: `v2.0.4`**
+* 版本修改紀錄：[Changelog](http://10.9.173.136/SideProject/react-summernote/blob/master/CHANGELOG.md)
 
 ## [Online Demo](http://10.9.173.130:5566/)
 
@@ -81,9 +83,11 @@ render(
                 ['font', ['bold', 'underline', 'clear']],
                 ['fontname', ['fontname']],
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
+                // plugin
+                ["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
                 ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview']]
+                ['view', ['fullscreen', 'codeview']],
+                //["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
             ]
         }}
         onChange={e => console.log(e)}
@@ -125,6 +129,14 @@ render(
     * `undo`: undo
     * `redo`: redo
     * `help`: open help dialog
+* Table ([Plugin](#plugin))
+    * `jTable`: 表格欄位長寬縮放
+    * `jMerge`: 框選後合併 cell
+    * `jBackcolor`: cell 的背景色
+    * `jBorderColor`: 整個表格 border 顏色
+    * `jAlign`: cell 的對齊方式
+    * `jTableInfo`: 調整整個 table 的 margin
+    * `jWidthHeightReset`: 重設 cell 寬高
 
 ## `options`
 
@@ -197,7 +209,7 @@ class App extends Component {
 
 ![dd](http://10.9.173.136/uploads/-/system/personal_snippet/48/15d74641999a62e3979ef99d900cd546/dd.gif)
 
-## Paste from Microsoft Word
+## Paste from Office Word
 
 貼上 Word 內容時，SummerNote 會解析剪貼簿中的 rtf 內容，解析後會自動將 `<img>` 部分轉換成 base64 格式的圖片資源，這些 `<img>` 都會被加上 class `.zap-img-uploading`，可以在使用 jQuery 進行後續處理
 
@@ -219,6 +231,13 @@ class App extends Component {
 
 ![Wordpaste](http://10.9.173.136/uploads/-/system/personal_snippet/48/e2b3193ab8a4d6d66879140931e52666/wordpaste.gif)
 
+
+## Paste from Office Excel
+
+貼上 Excel 內容時，SummerNote 會解析剪貼簿中的 HTML 內容，解析後會自動將樣式附加進去，但目前不支援包含 Excel 中的圖片，需額外逐一手動複製貼上
+
+![Excel](http://10.9.173.136/uploads/-/system/personal_snippet/40/58992bbadcc7e42f7095129be4845b0a/messageImage_1607666354357.jpg)
+
 ## 自行 import 必要依賴
 
 如果專案也有使用 Bootstrap 等套件，不希望重複引用，可以自行引入必要依賴
@@ -234,10 +253,23 @@ require('bootstrap/js/dist/dropdown')
 require('bootstrap/js/dist/tooltip')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
+<<<<<<< HEAD
+
 ```
 
-## 自行 import plugin
+## Plugin
+
+從 `2.0.4` 的版本開始，引入了 table plugin，可針對 table 元素進行更多操作
+
+```js
+require('react-summernote/src/plugin/summernote-ext-table')
+require('react-summernote/src/plugin/summernote-ext-table.css')
+```
+
+### 其他 Plugin
+
 若要自行引入 plugin 可參考 [Plugin 介紹](/src/plugin)
+
 
 ## License
 
