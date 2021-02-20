@@ -86,7 +86,8 @@ render(
                 // plugin
                 ["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
                 ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview']]
+                ['view', ['fullscreen', 'codeview']],
+                //["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
             ]
         }}
         onChange={e => console.log(e)}

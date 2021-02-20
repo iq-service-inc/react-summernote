@@ -65,7 +65,7 @@ class App extends Component {
 							["table", ["table"]],
 							["insert", ["link", "picture", "video"]],
 							["view", ["fullscreen", "codeview"]],
-							["anchor",["anchor", "toc", "markAnchor"]]
+							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
 						]
 					}}
 					onChange={onChange}
