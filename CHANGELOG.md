@@ -1,6 +1,17 @@
 # Changelog
 
 
+## `2.0.6`
+* 修復 table popover dropdown
+* 修復 popover 指定單一類型導致其他類型的 popover 無效
+* 新增 table popover 中文翻譯
+* 新增 [awesome summernote plugins](/src/plugin)
+* 新增 custom plugin
+* 新增 toc plugin
+* plugin 支援中文
+* react summernote 支援傳遞 callbacks
+
+
 ## `2.0.5`
 
 * [自動隱藏 table buttons](http://10.9.173.136/snippets/63#%E8%87%AA%E5%8B%95%E9%9A%B1%E8%97%8F-plugin-buttons)
