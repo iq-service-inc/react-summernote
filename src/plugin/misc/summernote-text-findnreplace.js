@@ -69,7 +69,7 @@
         .note-display-block {
           display: block !important; }
         
-        mark.note-findnreplace {
+        span.note-findnreplace {
           background-color: #ff0; }
       </style>`).appendTo('head');
       context.memo('button.findnreplace', function() {
@@ -80,7 +80,7 @@
           placement: options.placement,
           click: function (e) {
             e.preventDefault();
-            $editor.find('.note-findnreplace').contents().unwrap('mark');
+            $editor.find('.note-findnreplace').contents().unwrap('span');
             $toolbar.find('.findnreplaceToolbar').toggleClass(options.findnreplace.classHidden);
             $statusbar.find('.note-status-output').text('');
             if ($note.summernote('createRange').toString()) {
@@ -111,21 +111,21 @@
         var $fnrReplaceBtn = $toolbar.find('.note-findnreplace-replace-btn');
         $fnrFindBtn.click(function (e) {
           e.preventDefault();
-          $editor.find('.note-findnreplace').contents().unwrap('mark');
+          $editor.find('.note-findnreplace').contents().unwrap('span');
           var fnrCode    = context.invoke('code');
           var fnrFind    = $toolbar.find('.note-findnreplace-find').val();
           var fnrReplace = $toolbar.find('.note-findnreplace-replace').val();
           var fnrCount   = (fnrCode.match(new RegExp(fnrFind + "(?![^<>]*>)", "gi")) || []).length
           if (fnrFind) {
             $statusbar.find('.note-status-output').text(fnrCount + lang.findnreplace.findResult + "`" + fnrFind + "`");
-            var fnrReplaced = fnrCode.replace(new RegExp(fnrFind + "(?![^<>]*>)", "gi"), function(e){return '<mark class="note-findnreplace">' + e + '</mark>';});
+            var fnrReplaced = fnrCode.replace(new RegExp(fnrFind + "(?![^<>]*>)", "gi"), function(e){return '<span class="note-findnreplace">' + e + '</span>';});
             $note.summernote('code',fnrReplaced);
           } else
             $statusbar.find('.note-status-output').html(lang.findnreplace.findError);
         });
         $fnrReplaceBtn.click(function (e) {
           e.preventDefault();
-          $editor.find('.note-findnreplace').contents().unwrap('mark');
+          $editor.find('.note-findnreplace').contents().unwrap('span');
           var fnrCode    = context.invoke('code');
           var fnrFind    = $toolbar.find('.note-findnreplace-find').val();
           var fnrReplace = $toolbar.find('.note-findnreplace-replace').val();

@@ -111,6 +111,14 @@
                 }).render();
             });
 
+            this.wrapCommand = function (fn) {
+                return function() {
+                    context.invoke("beforeCommand");
+                    fn.apply(this, arguments);
+                    context.invoke("afterCommand");
+                }
+            }
+
             self.initialize = function () {
                 var $search = self.$search;
                 var $list = self.$list;
@@ -137,10 +145,10 @@
                                 });
                             var $img = $('<img/>', {'src' :url});
                             $btn.html($img);
-                            $btn.click( function(event) {
+                            $btn.click(self.wrapCommand(function(event) {
                                 event.preventDefault();
                                 context.invoke('emoji.insertEmoji', name, url);
-                            });
+                            }));
                             self.$list.append($btn);
                         }, 0); //timeout
                     }); // $each

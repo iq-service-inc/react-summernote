@@ -36,12 +36,20 @@
         var ui        = $.summernote.ui,
             $editable = context.layoutInfo.editable,
             options   = context.options,
-            lang      = options.langInfo;
+            lang      = options.langInfo,
+            self      = this;
+        this.wrapCommand = function (fn) {
+          return function() {
+              context.invoke("beforeCommand");
+              fn.apply(this, arguments);
+              context.invoke("afterCommand");
+          }
+        }
         context.memo('button.captionIt', function () {
           var button=ui.button({
             contents: options.captionIt.icon,
             tooltip:  lang.captionIt.tooltip,
-            click: function () {
+            click: self.wrapCommand(function () {
               var img = $($editable.data('target'));
               var $parentAnchorLink = img.parent();
               if (img.parent('figure').length) {
@@ -73,7 +81,7 @@
                   $newFigure.width(imgWidth);
                 }
               }
-            }
+            })
           });
           return button.render();
         });
