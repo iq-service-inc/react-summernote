@@ -1,5 +1,11 @@
 # Changelog
 
+## `2.0.7`
+* 修復 錨點文字無法帶到 html
+* 錨點可使用中文當 id
+* 修復 錨點側欄編輯無法調整高度
+* 修復 plugin 部分事件未觸發 onchange
+
 
 ## `2.0.6`
 * 修復 table popover dropdown
