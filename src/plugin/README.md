@@ -214,7 +214,7 @@ options = {{
 - 自行製作 TOC
 ```js
 $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
-    let text = $(d).data('text'),
+    let text = $(d).attr('data-anchortext'),
         id = $(d).attr('id')
     
     // 產生 TOC
