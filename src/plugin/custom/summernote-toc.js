@@ -39,6 +39,7 @@
                 modules = modules = context.modules,
                 options = context.options,
                 lang = options.langInfo;
+            this.$document = $(document);
 
             var prefix = options.toc.prefix || 'summernote'
 
@@ -81,7 +82,7 @@
                 }).render().appendTo(options.container);
                 this.$dialog.find('.modal-body').addClass(`${prefix}-toc-form-container`)
 
-                $editingArea.prepend(`<div style="background-color:rgba(0,0,0,.03);border-right: 1px solid rgba(0,0,0,.125); width:20em;" class="${prefix}-edit-anchor-container"><div style="width:20em;" class="${prefix}-edit-anchor"></div></div>`).css('display', 'flex').css('flex-direction', 'row')
+                $editingArea.prepend(`<div style="background-color:rgba(0,0,0,.03);border-right: 1px solid rgba(0,0,0,.125); width:30em; overflow-y:auto; " class="${prefix}-edit-anchor-container"><div style="width:20em;" class="${prefix}-edit-anchor"></div></div>`).css('display', 'flex').css('flex-direction', 'row')
                 $editable.css('width', '100%')
 
                 this.$editAnchorContainer = $editingArea.find(`.${prefix}-edit-anchor-container`)
@@ -90,43 +91,94 @@
                 this.$editAnchor.css('padding', '1em 0')
 
                 $editable.css('padding', '1.5rem')
-                $editingArea.on('keydown', function (e) {
+                $editable.on('keydown', function (e) {
                     // toggle anchor
                     var key = e.keyCode,
                         ctrlKey = e.ctrlKey,
                         shiftKey = e.shiftKey
                     if (key == 65 && ctrlKey && shiftKey) { // ctrl + shift + a
+                        context.invoke("beforeCommand")
                         self.anchor()
+                        context.invoke("afterCommand")
                     }
                 })
             };
 
+            this.wrapCommand = function (fn) {
+                return function() {
+                    context.invoke("beforeCommand");
+                    fn.apply(this, arguments);
+                    context.invoke("afterCommand");
+                }
+            }
+
             this.events = {
                 'summernote.init': function (_, layoutInfo) {
-                    layoutInfo.editingArea.on('keydown', function(event) {
+                    layoutInfo.editable.on('keyup', function(event) {
+                        if (event.keyCode === 8) { //key backspace
+                            setTimeout(() => {
+                                var code = context.invoke('code')
+                                if (code.length == 0) {
+                                    context.invoke('pasteHTML', '<p><br></p>')
+                                }
+                            }, 1);
+                        }
                         if (event.keyCode === 13) { // key enter
+                            context.invoke("beforeCommand")
                             var rng = range.create()
                             var node = dom.ancestor(rng.commonAncestor(), function (node) {
                                 return node && $(node).hasClass(`${prefix}-toc-anchor`)
                             }) || $(rng.sc).find(`.${prefix}-toc-anchor`)
                             // remove duplicated anchor
                             if(!!node && $editable.find(`#${$(node).attr('id')}`).length > 0) {
-                                $(node).removeAttr('id').removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
+                                $(node).removeAttr('id').removeAttr('data-anchortext').removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
                             }
+                            context.invoke("afterCommand");
                         }
                     })
+
+                    layoutInfo.statusbar.on('mousedown', (event) => {   // resize height of edit anchor area
+                        EDITABLE_PADDING = 24
+                        event.preventDefault();
+                        event.stopPropagation();
+                  
+                        const onMouseMove = (event) => {
+                            let height = $editable.outerHeight()
+                            self.$editAnchorContainer.height(height)
+                        };
+                  
+                        self.$document.on('mousemove', onMouseMove).one('mouseup', () => {
+                            self.$document.off('mousemove', onMouseMove);
+                        });
+                    });
+
+                    layoutInfo.toolbar.on('click', '.btn-codeview', (event) => {    // toggle codeview
+                        console.log(event.target)
+                        var $target = $(event.target).closest('.btn-codeview')
+                        if ($target.hasClass('active')) {
+                            self.$editAnchorContainer.hide()
+                        }
+                        else {
+                            self.$editAnchorContainer.show()
+                            self.resetEditAnchor()
+                        }
+                    });
                 }
             }
 
             this.resetEditAnchor = function ($target) {
+                // set edit anchor area height
+                let height = $editable.outerHeight()
+                self.$editAnchorContainer.height(height)
+
                 // reset anchor list
                 var anchors = $editor.find(`.${prefix}-toc-anchor[id]`)
                 self.$editAnchor.html('<ul>')
                 anchors.each((i, d) => {
                     var id = $(d).attr('id'),
-                        text = $(d).data('text')
+                        text = $(d).attr('data-anchortext')
 
-                    var $anchor = $('<a>').text(text).attr('href', '#' + id).css('flex', '2').css('align-self', 'center')
+                    var $anchor = $('<a>').text(text).attr('href', '#' + id).css('flex', '2').css('align-self', 'center').css('overflow', 'hidden').css('text-overflow', 'ellipsis').css('white-space', 'nowrap')
                     var $input = $('<input>').attr('value', text).addClass(`${prefix}-toc-data-text`)
                     var $edit = $('<button>').text('編輯').addClass(['btn', 'btn-primary'])
                     var $del = $('<button>').text('移除').addClass(['btn', 'btn-primary'])
@@ -161,26 +213,44 @@
                         editmode()
                     })
 
-                    $check.click(function (event) {
-                        $editor.find(`.${prefix}-toc-anchor#${id}`).data('text', $input.val())
+                    $input.on('keydown', function (event) {
+                        if (event.keyCode === 13){
+                            context.invoke("beforeCommand")
+                            event.preventDefault()
+                            $editor.find(`.${prefix}-toc-anchor#${id}`).attr('data-anchortext', $input.val())
+                            self.resetEditAnchor()
+                            viewmode()
+                            context.invoke("afterCommand")
+                        }
+                        
+                        if (event.keyCode === 27){
+                            viewmode()
+                        }
+                    })
+
+                    $check.click(self.wrapCommand(function (event) {
+                        $editor.find(`.${prefix}-toc-anchor#${id}`).attr('data-anchortext', $input.val())
                         // $anchor.text($input.val())
                         self.resetEditAnchor()
                         viewmode()
-                    })
+                    }))
                     
                     $cancel.click(function (event) {
                         viewmode()
                     })
 
-                    $del.click(function (event) {
+                    $del.click(self.wrapCommand(function (event) {
                         $editor.find(`#${id}`).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`]).removeAttr('id')
                         self.resetEditAnchor()
-                    })
+                    }))
 
                     // remove event when close edit anchor area
                     !!$target && $target.bind('hideEditAnchor', function () {
                         $edit.off()
                         $del.off()
+                        $input.off()
+                        $check.off()
+                        $cancel.off()
                     });
                 })
             }
@@ -220,7 +290,7 @@
                     <path d="M4.5 1A1.5 1.5 0 0 0 3 2.5V3h4v-.5A1.5 1.5 0 0 0 5.5 1h-1zM7 4v1h2V4h4v.882a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V13H9v-1.5a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5V13H1V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V4h4zM1 14v.5A1.5 1.5 0 0 0 2.5 16h3A1.5 1.5 0 0 0 7 14.5V14H1zm8 0v.5a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5V14H9zm4-11H9v-.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5V3z"/>
                   </svg></i>`,
                     tooltip: lang.toc.markAnchor,
-                    click: function (event) {
+                    click: self.wrapCommand(function (event) {
                         var $target = $(event.target).closest('button')
                         if ($target.find(`.${prefix}-toc-mark`).length) {
                             $target.find(`.${prefix}-mark-anchor`).removeClass(`${prefix}-toc-mark`)
@@ -230,7 +300,7 @@
                             $target.find(`.${prefix}-mark-anchor`).addClass(`${prefix}-toc-mark`)
                             $editable.find(`.${prefix}-toc-anchor[id]`).addClass(`${prefix}-toc-mark`)
                         }
-                    },
+                    }),
                 }).render();
             });
 
@@ -242,8 +312,9 @@
                 })
 
                 if ($editable.find(node).length > 0) {
-                    var id = $(node).text()
-                    id = id.replace(/[\W\-]/g, '-')
+                    var text = $(node).text(),
+                        id = $(node).text()
+                    id = id.replace(/[\s!"#\$%&'\(\)\*\+,\.\/:;<=>\?@\[\]\^`\{\|\}~]/g, '-')
                     // 空白段落消除錨點
                     if (id.length == 0) {
                         $(node).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
@@ -258,7 +329,7 @@
                         while ($editable.find(`#${id}${index || ''}`).length) {
                             index += 1
                         }
-                        $(node).attr('id', `${id}${index || ''}`).toggleClass(`${prefix}-toc-anchor`).data('text', id)
+                        $(node).attr('id', `${id}${index || ''}`).toggleClass(`${prefix}-toc-anchor`).attr('data-anchortext', text)
                     }
                     if ($toolbar.find(`.${prefix}-btn-mark-anchor .${prefix}-toc-mark`).length && $(node).hasClass(`${prefix}-toc-anchor`)) {
                         $(node).addClass(`${prefix}-toc-mark`)
@@ -275,16 +346,16 @@
                     className: `${prefix}-anchor`,
                     contents: `<i class="note-icon">#</i>`,
                     tooltip: `${lang.toc.insertanchor} (${shortcut})`,
-                    click: function (event) {
+                    click: self.wrapCommand(function (event) {
                         self.anchor()
-                    },
+                    }),
                 }).render();
             });
 
             this.resetTOC = function () {
                 self.$toc.html('')
                 $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
-                    let text = $(d).data('text'),
+                    let text = $(d).attr('data-anchortext'),
                         id = $(d).attr('id')
                     
                     // 產生 TOC
@@ -315,7 +386,7 @@
                 </div>`)
                 anchors.each((i, d) => {
                     var id = $(d).attr('id'),
-                        text = $(d).data('text')
+                        text = $(d).attr('data-anchortext')
 
                     var label = $('<label>').text(id).addClass(`${prefix}-toc-data-id`)
                     var input = $('<input>').attr('value', text).attr('id', id).addClass(`${prefix}-toc-data-text`)
@@ -324,7 +395,7 @@
                 })
 
                 var $btn = self.$dialog.find(`.modal-footer .${prefix}-toc-btn`)
-                $btn.click(function (event) {
+                $btn.click(self.wrapCommand(function (event) {
                     ui.hideDialog(self.$dialog)
                     // reset toc
                     var input = self.$dialog.find(`.${prefix}-toc-data-text`).not('b')
@@ -333,11 +404,11 @@
                             id = $(d).attr('id')
     
                         // update anchor text
-                        $editor.find(`.${prefix}-toc-anchor#${id}`).data('text', text)
+                        $editor.find(`.${prefix}-toc-anchor#${id}`).attr('data-anchortext', text)
                     })
                     self.resetTOC()
                     self.resetEditAnchor()
-                })
+                }))
 
                 ui.onDialogHidden(self.$dialog, function () {
                     $btn.off();
@@ -362,6 +433,7 @@
             self.destroy = function () {
                 ui.hideDialog(this.$dialog);
                 this.$dialog.remove();
+                this.$editAnchorContainer.remove()
             };
         }
     })

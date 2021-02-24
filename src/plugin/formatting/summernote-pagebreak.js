@@ -33,13 +33,22 @@
         var options = context.options;
         var lang    = options.langInfo;
         var $editable = context.layoutInfo.editable
+        var self = this
         $("head").append('<style>' + options.pagebreak.css + '</style>');
+
+        this.wrapCommand = function (fn) {
+          return function() {
+              context.invoke("beforeCommand");
+              fn.apply(this, arguments);
+              context.invoke("afterCommand");
+          }
+        }
         context.memo('button.pagebreak',function() {
           var button = ui.button({
             contents: options.pagebreak.icon,
             tooltip:  lang.pagebreak.tooltip,
             container: 'body',
-            click: function (e) {
+            click: self.wrapCommand(function (e) {
               e.preventDefault();
               if (getSelection().rangeCount > 0) {
                 var el = getSelection().getRangeAt(0).commonAncestorContainer.parentNode;
@@ -56,8 +65,8 @@
               }
   
               // Launching this method to force Summernote sync it's content with the bound textarea element
-              context.invoke('editor.insertText','');
-            }
+              // context.invoke('editor.insertText','');
+            })
           });
           return button.render();
         });

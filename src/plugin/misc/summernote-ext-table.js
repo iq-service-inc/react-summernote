@@ -972,7 +972,7 @@
             ui.button({
                 className: 'note-btn-jtable-cell-split',
                 contents : ui.icon('note-icon-table-cell-split'),
-                tooltip  : lang.jTable.merge.merge,
+                tooltip  : lang.jTable.merge.split,
                 container: options.container,
                 click    : context.createInvokeHandler('jTable.cellSplit'),
             }),
@@ -1101,6 +1101,7 @@
         };
 
         function tableCellMerge(cell, data) {
+            self.beforeCommand();
             var $cell = $(cell);
             var colRemoveCount = data.merge.col - data.current.col;
             var rowRemoveCount = data.merge.row - data.current.row;
@@ -1131,6 +1132,8 @@
                 if(!$cellList.length)   $tr.remove();
                 // console.log('aaaaaaaaa');
             }
+
+            self.afterCommand();
         }
 
         function showMergeDialog(cellData) {
@@ -1449,6 +1452,7 @@
                     });
 
                     $applyBtn.click(function (event) {
+                        context.invoke('beforeCommand')
                         event.preventDefault();
 
                         deferred.resolve([
@@ -1457,6 +1461,8 @@
                             parseInt($marginBottomInput.val(), 10) + 'px',
                             parseInt($marginLeftInput.val(), 10) + 'px'
                         ]);
+
+                        context.invoke('afterCommand')
                     });
 
                 });
@@ -2090,8 +2096,10 @@
                     $table.attr('unselectable', 'off')
 
                     if (!tableResize.pressed) return true;
+                    context.invoke('beforeCommand')
                     resetTableResizeCursor($(this), tableResize.contenteditable);
                     resetTableResize();
+                    context.invoke("afterCommand")
                 });
             },
         };

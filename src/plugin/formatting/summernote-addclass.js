@@ -51,6 +51,14 @@
             //  - you can create a button with `ui.button`
             var ui = $.summernote.ui;
 
+            this.wrapCommand = function (fn) {
+                return function() {
+                    context.invoke("beforeCommand");
+                    fn.apply(this, arguments);
+                    context.invoke("afterCommand");
+                }
+            }
+
             addStyleString(".scrollable-menu {height: auto; max-height: 200px; max-width:300px; overflow-x: hidden;}");
 
             var options = context.options,
@@ -84,7 +92,7 @@
 
                             return '<' + tag + ' ' + style + cssclass + '>' + title + '</' + tag + '>';
                         },
-                        click: function (event, namespace, value) {
+                        click: self.wrapCommand(function (event, namespace, value) {
 
                             event.preventDefault();
                             value = value || $(event.target).closest('[data-value]').data('value');
@@ -104,7 +112,7 @@
                             $node.toggleClass(value)
 
 
-                        }
+                        })
                     })
                 ]).render();
                 return $optionList;

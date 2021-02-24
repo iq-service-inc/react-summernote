@@ -26,6 +26,13 @@
                 options = context.options,
                 lang = options.langInfo;
 
+            this.wrapCommand = function (fn) {
+                return function() {
+                    context.invoke("beforeCommand");
+                    fn.apply(this, arguments);
+                    context.invoke("afterCommand");
+                }
+            }
             /**
              * "customUL" insert Unordered List
              * add style on ul
@@ -35,11 +42,11 @@
                     className: 'custom-ul',
                     contents: ui.icon(options.icons.unorderedlist),
                     tooltip: lang.lists.unordered + modules.buttons.representShortcut.call(modules.buttons, 'insertUnorderedList'),
-                    click: function (event) {
-                        context.invoke('editor.insertUnorderedList')
+                    click: self.wrapCommand(function (event) {
+                        modules.editor.bullet.insertUnorderedList()
                         var rng = range.create()
                         $(rng.sc).closest('ul').css('padding-left', '40px')
-                    },
+                    }),
                 }).render();
             });
 

@@ -77,8 +77,17 @@
             $editable = context.layoutInfo.editable, // contentEditable element
             $toolbar = context.layoutInfo.toolbar, // contentEditable element                
             options = context.options, // options holds the Options Information from Summernote and what we extended above. 
-            lang = options.langInfo; // lang holds the Language Information from Summernote and what we extended above.
-            
+            lang = options.langInfo, // lang holds the Language Information from Summernote and what we extended above.
+            modules = modules = context.modules
+
+            this.wrapCommand = function (fn) {
+                return function() {
+                    context.invoke("beforeCommand");
+                    fn.apply(this, arguments);
+                    context.invoke("afterCommand");
+                }
+            }
+
             context.memo('button.caseConverter', function () {                        
                 
                 // Dropdown HTML
@@ -106,7 +115,7 @@
                         callback: function ($dropdown) {
                             $dropdown.css('padding', '.5rem')
                         },
-                        click: function (event) {
+                        click: self.wrapCommand(function (event) {
                             event.preventDefault();
                             var selected = $note.summernote('createRange');
                             if(selected.toString()){
@@ -131,7 +140,7 @@
                             }
                             $("#summernote").summernote("editor.restoreRange");
                             $("#summernote").summernote("editor.focus");
-                        }
+                        })
 
                     })
                 ]);
