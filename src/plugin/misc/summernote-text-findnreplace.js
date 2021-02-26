@@ -53,25 +53,29 @@
           options  = context.options,
           lang     = options.langInfo;
 
-      $(`
-      <style>
-        .findnreplaceToolbar {
-          padding: 5px;
-          background-color: var(--note-toolbar-background-color) !important;
-          border-bottom: var(--note-toolbar-border-width) var(--note-toolbar-border-style) var(--note-toolbar-border-color);
-        }
-        .findnreplaceToolbar .note-form-group {
-          padding: 0;
-        }
-        .note-display-none {
-          display: none !important; }
-        
-        .note-display-block {
-          display: block !important; }
-        
-        span.note-findnreplace {
-          background-color: #ff0; }
-      </style>`).appendTo('head');
+      if ($('#summernote-findnreplace-style').length == 0) {
+        this.css = $(`
+        <style>
+          .findnreplaceToolbar {
+            padding: 5px;
+            background-color: var(--note-toolbar-background-color) !important;
+            border-bottom: var(--note-toolbar-border-width) var(--note-toolbar-border-style) var(--note-toolbar-border-color);
+          }
+          .findnreplaceToolbar .note-form-group {
+            padding: 0;
+          }
+          .note-display-none {
+            display: none !important; }
+          
+          .note-display-block {
+            display: block !important; }
+          
+          span.note-findnreplace {
+            background-color: #ff0; }
+        </style>`)
+        this.css.attr('id', 'summernote-findnreplace-style')
+        this.css.appendTo('head');
+      }
       context.memo('button.findnreplace', function() {
         var button = ui.button({
           contents: options.findnreplace.icon,
@@ -92,7 +96,7 @@
         return button.render();
       });
       this.initialize = function () {
-        var fnrBody =
+        this.fnrBody = $(
         '<div class="findnreplaceToolbar note-display-none">' +
           '<div class="note-form-group">' +
             '<input type="text" class="note-findnreplace-find note-input" value="" placeholder="' + lang.findnreplace.findPlaceholder + '">' +
@@ -102,8 +106,8 @@
             '<input type="text" class="note-findnreplace-replace note-input" value="" placeholder="' + lang.findnreplace.replacePlaceholder + '">' +
             '<button class="note-findnreplace-replace-btn btn btn-default note-btn" style="width:100px;">' + lang.findnreplace.replaceBtn + '</button>' +
           '</div>' +
-        '</div>';
-        $toolbar.append(fnrBody);
+        '</div>');
+        $toolbar.append(this.fnrBody);
         this.show();
       };
       this.findnreplace = function() {
@@ -148,6 +152,10 @@
       };
       this.show = function() {
         this.findnreplace();
+      };
+      this.destroy = function () {
+          !!this.css && this.css.remove()
+          this.fnrBody.remove()
       };
     }
   });

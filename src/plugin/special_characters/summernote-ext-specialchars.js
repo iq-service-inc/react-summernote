@@ -222,6 +222,9 @@
 					// This adds the Modal to the DOM.
 				}).render().appendTo($editor);
       }
+      this.destroy = function () {
+        this.$dialog.remove()
+      }
       /**
        * @member plugin.specialChar
        * @private

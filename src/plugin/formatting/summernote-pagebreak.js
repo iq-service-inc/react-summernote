@@ -34,7 +34,12 @@
         var lang    = options.langInfo;
         var $editable = context.layoutInfo.editable
         var self = this
-        $("head").append('<style>' + options.pagebreak.css + '</style>');
+
+        if ($('#summernote-pagebreak-style').length == 0) {
+          this.css = $('<style>').html(options.pagebreak.css)
+          this.css.attr('id', 'summernote-pagebreak-style')
+          $("head").append(this.css);
+        }
 
         this.wrapCommand = function (fn) {
           return function() {
@@ -43,6 +48,9 @@
               context.invoke("afterCommand");
           }
         }
+        this.destroy = function () {
+            !!this.css && this.css.remove()
+        };
         context.memo('button.pagebreak',function() {
           var button = ui.button({
             contents: options.pagebreak.icon,
