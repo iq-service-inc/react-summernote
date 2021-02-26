@@ -60,8 +60,17 @@
             </svg>`
 
             this.initialize = function () {
-                var css = $('<style>').html(`.${prefix}-toc-anchor{position:relative;}.${prefix}-toc-anchor::before{content:"#";opacity:0.6;position:absolute;left:-0.7em;visibility:hidden;}.${prefix}-toc-anchor:hover::before{visibility:visible;}.${prefix}-toc-mark{background-color:yellow;}.${prefix}-toc-mark::before{visibility:visible;}.${prefix}-toc-form-container{max-height:700px;overflow-y:auto;}.${prefix}-toc-form-group{display:flex;}.${prefix}-toc-form-group>.${prefix}-toc-data-id{width:50%;}.${prefix}-toc-form-group>.${prefix}-toc-data-text{width:50%;}`)
-                $(document.head).append(css)
+                if ($(`#${prefix}-toc-style`).length == 0) {
+                    this.css = $('<style>').html(`.${prefix}-toc-anchor{position:relative;}.${prefix}-toc-anchor::before{content:"#";opacity:0.6;position:absolute;left:-0.7em;visibility:hidden;}.${prefix}-toc-anchor:hover::before{visibility:visible;}`)
+                    this.css.attr('id', `${prefix}-toc-style`)
+                    $(document.head).append(this.css)
+                }
+
+                if ($(`#${prefix}-toc-temp-style`).length == 0) {
+                    this.tempcss = $('<style>').html(`.${prefix}-toc-mark{background-color:yellow;}.${prefix}-toc-mark::before{visibility:visible;}.${prefix}-toc-form-container{max-height:700px;overflow-y:auto;}.${prefix}-toc-form-group{display:flex;}.${prefix}-toc-form-group>.${prefix}-toc-data-id{width:50%;}.${prefix}-toc-form-group>.${prefix}-toc-data-text{width:50%;}`)
+                    this.tempcss.attr('id', `${prefix}-toc-temp-style`)
+                    $(document.head).append(this.tempcss)
+                }
 
                 this.$toc = $(`<div class="${prefix}-toc"></div>`)
                 if (!!options.toc.selector) {
@@ -82,26 +91,16 @@
                 }).render().appendTo(options.container);
                 this.$dialog.find('.modal-body').addClass(`${prefix}-toc-form-container`)
 
-                $editingArea.prepend(`<div style="background-color:rgba(0,0,0,.03);border-right: 1px solid rgba(0,0,0,.125); width:30em; overflow-y:auto; " class="${prefix}-edit-anchor-container"><div style="width:20em;" class="${prefix}-edit-anchor"></div></div>`).css('display', 'flex').css('flex-direction', 'row')
+                $editingArea.css('display', 'flex').css('flex-direction', 'row')
                 $editable.css('width', '100%')
 
-                this.$editAnchorContainer = $editingArea.find(`.${prefix}-edit-anchor-container`)
+                this.$editAnchorContainer = $(`<div style="background-color:rgba(0,0,0,.03);border-right: 1px solid rgba(0,0,0,.125); width:30em; overflow-y:auto; " class="${prefix}-edit-anchor-container"><div style="width:20em;" class="${prefix}-edit-anchor"></div></div>`)
+                $editingArea.prepend(this.$editAnchorContainer)
                 this.$editAnchorContainer.hide()
                 this.$editAnchor = $editingArea.find(`.${prefix}-edit-anchor`)
                 this.$editAnchor.css('padding', '1em 0')
 
                 $editable.css('padding', '1.5rem')
-                $editable.on('keydown', function (e) {
-                    // toggle anchor
-                    var key = e.keyCode,
-                        ctrlKey = e.ctrlKey,
-                        shiftKey = e.shiftKey
-                    if (key == 65 && ctrlKey && shiftKey) { // ctrl + shift + a
-                        context.invoke("beforeCommand")
-                        self.anchor()
-                        context.invoke("afterCommand")
-                    }
-                })
             };
 
             this.wrapCommand = function (fn) {
@@ -123,17 +122,17 @@
                                 }
                             }, 1);
                         }
-                        if (event.keyCode === 13) { // key enter
+                    })
+
+                    layoutInfo.editable.on('keydown', function (e) {
+                        // toggle anchor
+                        var key = e.keyCode,
+                            ctrlKey = e.ctrlKey,
+                            shiftKey = e.shiftKey
+                        if (key == 65 && ctrlKey && shiftKey) { // ctrl + shift + a
                             context.invoke("beforeCommand")
-                            var rng = range.create()
-                            var node = dom.ancestor(rng.commonAncestor(), function (node) {
-                                return node && $(node).hasClass(`${prefix}-toc-anchor`)
-                            }) || $(rng.sc).find(`.${prefix}-toc-anchor`)
-                            // remove duplicated anchor
-                            if(!!node && $editable.find(`#${$(node).attr('id')}`).length > 0) {
-                                $(node).removeAttr('id').removeAttr('data-anchortext').removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
-                            }
-                            context.invoke("afterCommand");
+                            self.anchor()
+                            context.invoke("afterCommand")
                         }
                     })
 
@@ -151,25 +150,45 @@
                             self.$document.off('mousemove', onMouseMove);
                         });
                     });
-
-                    layoutInfo.toolbar.on('click', '.btn-codeview', (event) => {    // toggle codeview
-                        console.log(event.target)
-                        var $target = $(event.target).closest('.btn-codeview')
-                        if ($target.hasClass('active')) {
-                            self.$editAnchorContainer.hide()
+                },
+                'summernote.enter': function () {   // insert paragraph
+                    setTimeout(() => {
+                        context.invoke("beforeCommand")
+                        var rng = range.create()
+                        var node = dom.ancestor(rng.commonAncestor(), function (node) {
+                            return node && $(node).hasClass(`${prefix}-toc-anchor`)
+                        }) || $(rng.sc).find(`.${prefix}-toc-anchor`)
+                        // remove duplicated anchor
+                        if(!!node && $editable.find(`#${$(node).attr('id')}`).length > 0) {
+                            $(node).removeAttr('id').removeAttr('data-anchortext').removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`])
                         }
-                        else {
-                            self.$editAnchorContainer.show()
-                            self.resetEditAnchor()
-                        }
-                    });
+                        context.invoke("afterCommand");
+                    }, 1);
+                },
+                'summernote.codeview.toggled': function () {    // toggle edit anchor area
+                    let codeview = context.invoke('codeview.isActivated');
+                    if (codeview) {
+                        self.displayEdit = self.$editAnchorContainer.css('display') == 'none'
+                        self.$editAnchorContainer.hide()
+                    }
+                    else {
+                        !self.displayEdit && self.$editAnchorContainer.show()
+                        self.resetEditAnchor()
+                    }
+                },
+                'summernote.change': function () {
+                    self.resetHeight()
                 }
             }
 
-            this.resetEditAnchor = function ($target) {
+            this.resetHeight = function () {
                 // set edit anchor area height
                 let height = $editable.outerHeight()
                 self.$editAnchorContainer.height(height)
+            }
+
+            this.resetEditAnchor = function ($target) {
+                self.resetHeight()
 
                 // reset anchor list
                 var anchors = $editor.find(`.${prefix}-toc-anchor[id]`)
@@ -434,6 +453,7 @@
                 ui.hideDialog(this.$dialog);
                 this.$dialog.remove();
                 this.$editAnchorContainer.remove()
+                !!this.tempcss && this.tempcss.remove()
             };
         }
     })

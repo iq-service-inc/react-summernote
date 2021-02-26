@@ -59,8 +59,6 @@
                 }
             }
 
-            addStyleString(".scrollable-menu {height: auto; max-height: 200px; max-width:300px; overflow-x: hidden;}");
-
             var options = context.options,
                 lang = options.langInfo;
             context.memo('button.addclass', function () {
@@ -118,10 +116,12 @@
                 return $optionList;
             });
 
-            function addStyleString(str) {
+            function addStyleString(str, id) {
                 var node = document.createElement('style');
                 node.innerHTML = str;
-                document.body.appendChild(node);
+                node.setAttribute('id', id)
+                document.head.appendChild(node);
+                return node
             }
 
             // This events will be attached when editor is initialized.
@@ -139,7 +139,9 @@
             // This method will be called when editor is initialized by $('..').summernote();
             // You can create elements for plugin
             this.initialize = function () {
-
+                if ($('#summernote-addClass-style').length == 0) {
+                    this.css = addStyleString(".scrollable-menu {height: auto; max-height: 200px; max-width:300px; overflow-x: hidden;}", 'summernote-addClass-style');
+                }
             };
 
             // This methods will be called when editor is destroyed by $('..').summernote('destroy');
@@ -147,6 +149,7 @@
             this.destroy = function () {
                 /*  this.$panel.remove();
                  this.$panel = null; */
+                 !!this.css && this.css.remove()
             };
         }
     });
