@@ -1,4 +1,8 @@
 # Changelog
+## `2.0.9`
+* 新增 打包過的 [plugin](/plugin)
+* ImportCode 改使用 [plugin](/plugin) 路徑
+* 修復文件連結網址
 
 ## `2.0.8`
 * 修復 檢視錨點無法正常顯示

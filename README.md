@@ -2,9 +2,9 @@
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
-* **Latest Version: `v2.0.8`**
+* **Latest Version: `v2.0.9`**
 * **Stable Version: `v2.0.5`**
-* 版本修改紀錄：[Changelog](http://10.9.173.136/SideProject/react-summernote/blob/master/CHANGELOG.md)
+* 版本修改紀錄：[Changelog](http://10.190.173.136/SideProject/react-summernote/blob/master/CHANGELOG.md)
 
 ## [Online Demo](http://10.9.173.130:5566/)
 
@@ -42,7 +42,7 @@ npm install --save bootstrap popper.js summernote jquery store
 #### 安裝 React SummerNote
 
 ```
-npm install --save git+http://10.9.173.136/SideProject/react-summernote.git
+npm install --save git+http://10.190.173.136/SideProject/react-summernote.git
 ```
 
 #### 設定 Webpack
@@ -207,7 +207,7 @@ class App extends Component {
 }
 ```
 
-![dd](http://10.9.173.136/uploads/-/system/personal_snippet/48/15d74641999a62e3979ef99d900cd546/dd.gif)
+![dd](http://10.190.173.136/uploads/-/system/personal_snippet/48/15d74641999a62e3979ef99d900cd546/dd.gif)
 
 ## Paste from Office Word
 
@@ -229,14 +229,14 @@ class App extends Component {
 }
 ```
 
-![Wordpaste](http://10.9.173.136/uploads/-/system/personal_snippet/48/e2b3193ab8a4d6d66879140931e52666/wordpaste.gif)
+![Wordpaste](http://10.190.173.136/uploads/-/system/personal_snippet/48/e2b3193ab8a4d6d66879140931e52666/wordpaste.gif)
 
 
 ## Paste from Office Excel
 
 貼上 Excel 內容時，SummerNote 會解析剪貼簿中的 HTML 內容，解析後會自動將樣式附加進去，但目前不支援包含 Excel 中的圖片，需額外逐一手動複製貼上
 
-![Excel](http://10.9.173.136/uploads/-/system/personal_snippet/40/58992bbadcc7e42f7095129be4845b0a/messageImage_1607666354357.jpg)
+![Excel](http://10.190.173.136/uploads/-/system/personal_snippet/40/58992bbadcc7e42f7095129be4845b0a/messageImage_1607666354357.jpg)
 
 ## 自行 import 必要依賴
 
@@ -261,8 +261,8 @@ require('summernote/dist/summernote-bs4.min.js')
 從 `2.0.4` 的版本開始，引入了 table plugin，可針對 table 元素進行更多操作
 
 ```js
-require('react-summernote/src/plugin/summernote-ext-table')
-require('react-summernote/src/plugin/summernote-ext-table.css')
+require('react-summernote/plugin/summernote-ext-table')
+require('react-summernote/plugin/summernote-ext-table.css')
 ```
 
 ### 其他 Plugin

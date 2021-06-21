@@ -1,6 +1,15 @@
 # Summernote Plugins
+## 打包 Plugins
+打包 [src/plugin](/src/plugin) 檔案到 [plugin](/plugin) 目錄
+
+```powershell
+cd src\plugin
+node .\bundle-plugins.js
+```
+
 ## Contents
 - [Summernote Plugins](#summernote-plugins)
+  - [打包 Plugins](#打包-plugins)
   - [Contents](#contents)
   - [import plugins](#import-plugins)
   - [Example](#example)
@@ -37,35 +46,35 @@
 
 ## import plugins
 ```js
-require('react-summernote/src/plugin/custom/summernote-custom')
-require('react-summernote/src/plugin/custom/summernote-toc')
+require('react-summernote/plugin/custom/summernote-custom')
+require('react-summernote/plugin/custom/summernote-toc')
 
-require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax')
-require('react-summernote/src/plugin/emoji/summernote-ext-emoji-ajax.css')
+require('react-summernote/plugin/emoji/summernote-ext-emoji-ajax')
+require('react-summernote/plugin/emoji/summernote-ext-emoji-ajax.css')
 
-require('react-summernote/src/plugin/formatting/summernote-addclass')
-require('react-summernote/src/plugin/formatting/summernote-case-converter')
-require('react-summernote/src/plugin/formatting/summernote-image-captionit')
-require('react-summernote/src/plugin/formatting/summernote-image-shapes')
-require('react-summernote/src/plugin/formatting/summernote-list-styles')
-require('react-summernote/src/plugin/formatting/summernote-list-styles.css')
-require('react-summernote/src/plugin/formatting/summernote-pagebreak')
-require('react-summernote/src/plugin/formatting/summernote-video-attributes')
+require('react-summernote/plugin/formatting/summernote-addclass')
+require('react-summernote/plugin/formatting/summernote-case-converter')
+require('react-summernote/plugin/formatting/summernote-image-captionit')
+require('react-summernote/plugin/formatting/summernote-image-shapes')
+require('react-summernote/plugin/formatting/summernote-list-styles')
+require('react-summernote/plugin/formatting/summernote-list-styles.css')
+require('react-summernote/plugin/formatting/summernote-pagebreak')
+require('react-summernote/plugin/formatting/summernote-video-attributes')
 
-require('react-summernote/src/plugin/insert/summernote-at-mention')
-require('react-summernote/src/plugin/insert/summernote-file')
-require('react-summernote/src/plugin/insert/summernote-element-template')
+require('react-summernote/plugin/insert/summernote-at-mention')
+require('react-summernote/plugin/insert/summernote-file')
+require('react-summernote/plugin/insert/summernote-element-template')
 
-require('react-summernote/src/plugin/misc/summernoteDrafts')  // see summernote-drafts to install store
-require('react-summernote/src/plugin/misc/summernote-ext-print')
-require('react-summernote/src/plugin/misc/summernote-text-findnreplace')
-require('react-summernote/src/plugin/misc/summernote-ext-table')
-require('react-summernote/src/plugin/misc/summernote-ext-table.css')
+require('react-summernote/plugin/misc/summernoteDrafts')  // see summernote-drafts to install store
+require('react-summernote/plugin/misc/summernote-ext-print')
+require('react-summernote/plugin/misc/summernote-text-findnreplace')
+require('react-summernote/plugin/misc/summernote-ext-table')
+require('react-summernote/plugin/misc/summernote-ext-table.css')
 
-require('react-summernote/src/plugin/special_characters/summernote-ext-specialchars')
+require('react-summernote/plugin/special_characters/summernote-ext-specialchars')
 
-require('react-summernote/src/plugin/syntax/summernote-ext-highlight')  // require run_prettify
-require('react-summernote/src/plugin/syntax/run_prettify')
+require('react-summernote/plugin/syntax/summernote-ext-highlight')  // require run_prettify
+require('react-summernote/plugin/syntax/run_prettify')
 ```
 
 ## Example
@@ -419,7 +428,7 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
 
 #### [summernote-ext-highlight](https://github.com/heyanlong/summernote-ext-highlight)
    - Based on code-prettify the summernote code highlighting plugin
-   - code prettify，使用 [Google code-prettify](https://github.com/googlearchive/code-prettify)，`react-summernote/src/plugin/syntax/run_prettify`
+   - code prettify，使用 [Google code-prettify](https://github.com/googlearchive/code-prettify)，`react-summernote/plugin/syntax/run_prettify`
    - `toolbar` button: `highlight`
      - `highlight`: 插入程式碼片段
 
