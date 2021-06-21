@@ -34,7 +34,7 @@ let styleFiles = []
 pluginList.forEach(folder => {
   fs.readdirSync(path.resolve(__dirname, folder), {withFileTypes: true})
   .forEach(file => {
-    if (file.isFile() && file.name.match(/\.(js)$/)) {
+    if (file.isFile() && file.name.match(/summernote(.)*\.(js)$/)) {
       entry[`${folder}/${file.name}`] = `./${folder}/${file.name}`;
     }
     else {
@@ -44,8 +44,8 @@ pluginList.forEach(folder => {
     }
   });
 })
-
 const callback = (err, stats) => {
+  console.log(styleFiles)
   // Callback Function
   styleFiles.forEach(f => {
     copy(f.src, f.dest)
