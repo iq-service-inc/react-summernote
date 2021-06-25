@@ -1,4 +1,7 @@
 # Changelog
+## `2.0.10`
+* 修復 ie 不支援 Element.remove() 語法
+
 ## `2.0.9`
 * 新增 打包過的 [plugin](/plugin)
 * ImportCode 改使用 [plugin](/plugin) 路徑
