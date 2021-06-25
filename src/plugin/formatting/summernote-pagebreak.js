@@ -49,7 +49,7 @@
           }
         }
         this.destroy = function () {
-            !!this.css && this.css.remove()
+            !!this.css && $(this.css).remove()
         };
         context.memo('button.pagebreak',function() {
           var button = ui.button({

@@ -154,7 +154,7 @@
         this.findnreplace();
       };
       this.destroy = function () {
-          !!this.css && this.css.remove()
+          !!this.css && $(this.css).remove()
           this.fnrBody.remove()
       };
     }

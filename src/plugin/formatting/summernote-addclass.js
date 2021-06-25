@@ -149,7 +149,7 @@
             this.destroy = function () {
                 /*  this.$panel.remove();
                  this.$panel = null; */
-                 !!this.css && this.css.remove()
+                 !!this.css && $(this.css).remove()
             };
         }
     });

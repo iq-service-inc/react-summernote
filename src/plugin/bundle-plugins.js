@@ -45,7 +45,7 @@ pluginList.forEach(folder => {
   });
 })
 const callback = (err, stats) => {
-  console.log(styleFiles)
+  // console.log(styleFiles)
   // Callback Function
   styleFiles.forEach(f => {
     copy(f.src, f.dest)

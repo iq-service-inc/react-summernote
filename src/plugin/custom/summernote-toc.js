@@ -453,7 +453,7 @@
                 ui.hideDialog(this.$dialog);
                 this.$dialog.remove();
                 this.$editAnchorContainer.remove()
-                !!this.tempcss && this.tempcss.remove()
+                !!this.tempcss && $(this.tempcss).remove()
             };
         }
     })

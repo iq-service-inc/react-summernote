@@ -43,7 +43,7 @@ export default {
 
     removeImage: function (table) {
         // remove excel img tag
-        var imgs = table.getElementsByTagName('img')
+        var imgs = $(table).find('img')
         for (let index = 0; index < imgs.length; index++) {
             const el = imgs[index]
             el.remove()
