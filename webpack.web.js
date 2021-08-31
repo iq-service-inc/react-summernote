@@ -11,7 +11,7 @@ module.exports = merge(common, {
     output: {
         path: __dirname + '/docs/',
         filename: '[name].[chunkhash].js',
-        publicPath: '/',
+        publicPath: '',
     },
     optimization: {
         minimizer: [
