@@ -4,7 +4,7 @@ React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於
 
 * **Latest Version: `v2.0.10`**
 * **Stable Version: `v2.0.5`**
-* 版本修改紀錄：[Changelog](http://10.190.173.136/SideProject/react-summernote/blob/master/CHANGELOG.md)
+* 版本修改紀錄：[Changelog](CHANGELOG.md)
 
 ## [Online Demo](http://10.9.173.130:5566/)
 
@@ -207,7 +207,7 @@ class App extends Component {
 }
 ```
 
-![dd](http://10.190.173.136/uploads/-/system/personal_snippet/48/15d74641999a62e3979ef99d900cd546/dd.gif)
+![1](https://support6.iqs-t.com/img/react-summernote-1.gif)
 
 ## Paste from Office Word
 
@@ -229,14 +229,14 @@ class App extends Component {
 }
 ```
 
-![Wordpaste](http://10.190.173.136/uploads/-/system/personal_snippet/48/e2b3193ab8a4d6d66879140931e52666/wordpaste.gif)
+![Wordpaste](https://support6.iqs-t.com/img/react-summernote-2.gif)
 
 
 ## Paste from Office Excel
 
 貼上 Excel 內容時，SummerNote 會解析剪貼簿中的 HTML 內容，解析後會自動將樣式附加進去，但目前不支援包含 Excel 中的圖片，需額外逐一手動複製貼上
 
-![Excel](http://10.190.173.136/uploads/-/system/personal_snippet/40/58992bbadcc7e42f7095129be4845b0a/messageImage_1607666354357.jpg)
+![Excel](https://support6.iqs-t.com/img/react-summernote-3.jpg)
 
 ## 自行 import 必要依賴
 
@@ -270,7 +270,18 @@ require('react-summernote/plugin/summernote-ext-table.css')
 若要自行引入 plugin 可參考 [Plugin 介紹](/src/plugin)
 
 
+## For contributor
+
+npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼，可以參考使用：
+
+
+* `npm run build`：用於打包整個套件，輸出到 `dist` 目錄下的一個 `main.js` 檔案，用於發布新的套件版本
+* `npm run web`：以 `src/start.js` 為起始，打包出一個 demo 網站，輸出到 `docs`，並且使用 production 產品模式執行，用於發布成 Repo 的 Page 網站
+* `npm run dev`：以 `src/start.js` 為起始，打包出一個 demo 網站，輸出到 `docs`，並且使用 dev 開發模式執行，用於發布成 Repo 的 Page 網站
+* `npm run test`：啟動一個 `webpack-dev-server`，以 `src/test.js` 為起始，用於測試直接引用打包 (build) 後的 summernote ，觀察引用打包後的程式執行起來是否有問題
+* `npm start`：開發人員主要模式，啟動一個 `webpack-dev-server`，以 `src/start.js` 為起始，用於測試原始程式執行起來是否有問題，並開發新功能
+
 ## License
 
-The MIT License (MIT)  
-Copyright (c) 2020 Zap
+The [MIT](LICENSE.md) License (MIT)  
+Copyright (c) 2021 Zap
