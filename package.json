@@ -67,5 +67,8 @@
     "editor",
     "wysiwyg",
     "node"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
