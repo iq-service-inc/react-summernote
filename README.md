@@ -1,4 +1,4 @@
-# React SummerNote
+# [React SummerNote](https://www.npmjs.com/package/@iqs/react-summernote)
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
