@@ -36,13 +36,13 @@ React SummerNote 依賴以下套件
 #### 必要依賴安裝
 
 ```
-npm install --save bootstrap popper.js summernote jquery store
+npm i bootstrap popper.js summernote jquery store --save
 ```
 
 #### 安裝 React SummerNote
 
 ```
-npm install --save git+http://10.190.173.136/SideProject/react-summernote.git
+npm i @iqs/react-summernote --save 
 ```
 
 #### 設定 Webpack
@@ -267,7 +267,7 @@ require('react-summernote/plugin/summernote-ext-table.css')
 
 ### 其他 Plugin
 
-若要自行引入 plugin 可參考 [Plugin 介紹](/src/plugin)
+若要自行引入 plugin 可參考 [Plugin 介紹](src/plugin/README.md)
 
 
 ## For contributor
