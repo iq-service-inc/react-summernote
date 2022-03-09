@@ -34,6 +34,6 @@ module.exports = function(){
 
     require('react-summernote/plugin/special_characters/summernote-ext-specialchars')
 
-    require('react-summernote/plugin/syntax/summernote-ext-highlight')
-    require('react-summernote/plugin/syntax/run_prettify')
+    //require('react-summernote/plugin/syntax/summernote-ext-highlight')
+    //require('react-summernote/plugin/syntax/run_prettify')
 }

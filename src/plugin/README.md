@@ -41,8 +41,8 @@ node .\bundle-plugins.js
       - [summernote-ext-table](#summernote-ext-table)
     - [Special Characters & Icons](#special-characters--icons)
       - [summernote-ext-specialchars](#summernote-ext-specialchars)
-    - [Syntax](#syntax)
-      - [summernote-ext-highlight](#summernote-ext-highlight)
+    - ~~[Syntax](#syntax) ~~ (棄用)
+      - ~~[summernote-ext-highlight](#summernote-ext-highlight)~~ (棄用)
 
 ## import plugins
 ```js
@@ -73,8 +73,8 @@ require('react-summernote/plugin/misc/summernote-ext-table.css')
 
 require('react-summernote/plugin/special_characters/summernote-ext-specialchars')
 
-require('react-summernote/plugin/syntax/summernote-ext-highlight')  // require run_prettify
-require('react-summernote/plugin/syntax/run_prettify')
+//require('react-summernote/plugin/syntax/summernote-ext-highlight')  // require run_prettify
+//require('react-summernote/plugin/syntax/run_prettify')
 ```
 
 ## Example
@@ -92,7 +92,7 @@ options = {{
     [`insert`, [`link`, `picture`, 'videoAttributes', 'audio', 'file', 'template']],
     [`print`, [`pagebreak`, `print`]],
     ['misc', ['sDraftsLoad', 'sDraftsSave', 'findnreplace']],
-    ['syntax', ['highlight']],
+    //['syntax', ['highlight']],
     ['toc', ['anchor', 'toc', 'editAnchor', 'markAnchor']],
     [`view`, [`fullscreen`, `codeview`]],
   ],
@@ -193,9 +193,9 @@ options = {{
    - summernote-ext-specialchars
      - `specialChar`: 插入特殊符號
 
--  [Syntax](#syntax)
-   - summernote-ext-highlight
-     - `highlight`: 插入程式碼片段
+-  ~~[Syntax](#syntax)~~  (棄用)
+   - ~~summernote-ext-highlight~~
+     - ~~`highlight`: 插入程式碼片段~~
 
 ## Plugin 簡介
 ### Custom
@@ -424,11 +424,11 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
    - `toolbar` button: `specialChar`
      - `specialChar`: 插入特殊符號
 
-### Syntax
+### Syntax  (棄用)
 
-#### [summernote-ext-highlight](https://github.com/heyanlong/summernote-ext-highlight)
-   - Based on code-prettify the summernote code highlighting plugin
-   - code prettify，使用 [Google code-prettify](https://github.com/googlearchive/code-prettify)，`react-summernote/plugin/syntax/run_prettify`
-   - `toolbar` button: `highlight`
-     - `highlight`: 插入程式碼片段
+#### ~~[summernote-ext-highlight](https://github.com/heyanlong/summernote-ext-highlight)~~
+   - ~~Based on code-prettify the summernote code highlighting plugin~~
+   - ~~code prettify，使用 [Google code-prettify](https://github.com/googlearchive/code-prettify)，`react-summernote/plugin/syntax/run_prettify`~~
+   - ~~`toolbar` button: `highlight`~~
+     - ~~`highlight`: 插入程式碼片段~~
 
