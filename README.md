@@ -284,4 +284,4 @@ npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼�
 ## License
 
 The [MIT](LICENSE.md) License (MIT)  
-Copyright (c) 2021 Zap
+Copyright (c) 2022 Zap

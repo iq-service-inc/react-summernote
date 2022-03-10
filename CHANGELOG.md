@@ -1,4 +1,9 @@
 # Changelog
+
+## `2.1.2`
+* 刪除 syntax plugin
+* 修正引用錯誤問題
+
 ## `2.0.10`
 * 修復 ie 不支援 Element.remove() 語法
 
