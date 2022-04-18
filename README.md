@@ -270,6 +270,35 @@ require('react-summernote/plugin/summernote-ext-table.css')
 若要自行引入 plugin 可參考 [Plugin 介紹](src/plugin/README.md)
 
 
+## XSS 白名單
+
+summernote 包含一個原始碼的 xss 過濾機制，規則如下：
+
+```js
+/<\/*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|ilayer|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|t(?:itle|extarea)|xml)[^>]*?>/gi
+```
+
+在 `options` 中修改內建白名單，即可客製化保留部分 tag 不被過濾
+
+```jsx
+<SummerNote value="Default value"
+    options={{
+        height: 350,
+        toolbar: [
+            ['view', ['fullscreen', 'codeview']],
+        ],
+        // 白名單
+        codeviewFilterRegex: /<\/*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|ilayer|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|t(?:itle|extarea)|xml)[^>]*?>/gi, 
+        // 白名單
+        codeviewFilter: true, // 是否開啟白名單過濾
+        codeviewIframeFilter: false // 是否開啟 iframe src 網址過濾
+    }}
+/>
+, document.getElementById('root')
+```
+
+更多詳細設定可以參閱[官方文件](https://summernote.org/deep-dive/#xss-protection-for-codeview)
+
 ## For contributor
 
 npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼，可以參考使用：
