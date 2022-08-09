@@ -386,7 +386,8 @@ class InnerReactSummernote extends React.Component {
 			onKeydown: props.onKeyDown,
 			onPaste: this.handlePaste,
 			onChange: this.handleChange,
-			onImageUpload: this.onImageUpload
+			onImageUpload: this.onImageUpload,
+			onChangeCodeview: this.handleChange,
 		};
 	}
 
