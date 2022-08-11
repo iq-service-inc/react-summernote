@@ -26,7 +26,7 @@ React SummerNote 依賴以下套件
 
 * `bootstrap`: ^4.3.1
 * `popper.js`: ^1.15.0
-* `summernote`: ^0.8.12
+* `summernote`: ^0.8.16
 * `jquery`: ^3.4.1
 * `store`: ^2.0.12
 
