@@ -1,5 +1,8 @@
 # Changelog
 
+## `2.2.0`
+* 新增 onChangeCodeView 令原始碼模式修改時也會觸發 onChange 事件
+
 ## `2.1.2`
 * 刪除 syntax plugin
 * 修正引用錯誤問題
