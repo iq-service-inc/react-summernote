@@ -1,5 +1,8 @@
 # Changelog
 
+## `2.2.1`
+* 更新 summernote 版本 0.8.16 → 0.8.18
+
 ## `2.2.0`
 * 新增 onChangeCodeView 令原始碼模式修改時也會觸發 onChange 事件
 
