@@ -49,18 +49,6 @@
                     }),
                 }).render();
             });
-
-            // this.events = {
-            //     'summernote.init': function (_, layoutInfo) {
-            //         /**
-            //          * toolbar close color palette
-            //          */
-            //         layoutInfo.toolbar.on('mousedown', '.note-color-btn', function (event) {
-            //             var $target = $(event.target).closest('.dropdown-menu')
-            //             $target.dropdown(false)
-            //         })
-            //     }
-            // }
         }
     })
     $.extend(true, $.summernote.lang, {
