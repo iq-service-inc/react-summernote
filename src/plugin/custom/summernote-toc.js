@@ -259,7 +259,7 @@
                     })
 
                     $del.click(self.wrapCommand(function (event) {
-                        $editor.find(`#${id}`).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`]).removeAttr('id')
+                        $editor.find(`#${id}`).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`]).removeAttr('data-anchortext').removeAttr('id')
                         self.resetEditAnchor()
                     }))
 
