@@ -259,7 +259,9 @@
                     })
 
                     $del.click(self.wrapCommand(function (event) {
-                        $editor.find(`#${id}`).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`]).removeAttr('data-anchortext').removeAttr('id')
+                        $editor.find(`#${id}`).removeClass([`${prefix}-toc-anchor`, `${prefix}-toc-mark`]).removeAttr('data-anchortext')
+                        if (self.$toc.find(`#${id}`).length) self.$toc.find(`#${id}`).remove()
+                        $editor.find(`#${id}`).removeAttr('id')
                         self.resetEditAnchor()
                     }))
 
@@ -380,7 +382,7 @@
                     // 產生 TOC
                     var anchor = $('<a>').attr('href', '#' + id)
                     anchor.text(text)
-                    var li = $('<li>').append(anchor)
+                    var li = $('<li>').attr('id', id).append(anchor)
                     self.$toc.append(li)
                 })
             }
