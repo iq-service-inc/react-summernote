@@ -1841,11 +1841,11 @@
                     };
 
                     event.stopPropagation();
-                    // prevent default selection
-                    if (isMSIE) {
-                        $table.toggleClass('unselectable', true)
-                        $table.attr('unselectable', 'on')
-                    }
+                    // remove this to make content selectable
+                    // if (isMSIE) {
+                    //     $table.toggleClass('unselectable', true)
+                    //     $table.attr('unselectable', 'on')
+                    // }
                 });
 
                 /**
@@ -1914,7 +1914,8 @@
 
                 layoutInfo.editingArea.on('mousemove mousedown touchstart', '.note-editable', function (event) {
                     if (!tableBlock.pressed) return true;
-                    event.preventDefault();
+                    // content inside a cell should be selectable
+                    // event.preventDefault();
                 });
 
                 /**
