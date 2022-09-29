@@ -1529,19 +1529,26 @@
              */
             var innerHTML = '',
                 table = colgroup.closest('table')
-            table.removeAttr('width')
-            table.removeAttr('style')
+
             for (let index = 0; index < colgroup.length; index++) {
                 var col = colgroup[index];
                 var span = col.span
                 col.removeAttribute('width')
-                var attr = self.recoverAttributes(col)
+                // set col width from computed width to prevent resizing
+                var oldWidth = col.offsetWidth
+                var oldHeight = col.offsetHeight
+                var attr = `style="width:${oldWidth}px; height=${oldHeight}px"`
                 while (span > 0) {
                     innerHTML = innerHTML.concat(`<col ${attr} />`)
                     span = span - 1
                 }
             }
             colgroup.closest('colgroup').html(innerHTML)
+
+            // let table width be controlled by colgroup element
+            table.removeAttr('width')
+            table.css('width', '')
+            table.css('table-layout', 'fixed')
         }
 
         self.events = {
