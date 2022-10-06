@@ -1,6 +1,6 @@
 # Changelog
-## `2.2.7`
-* Rollback jquery 至 3.4.1
+## `2.2.7-beta1`
+* Hotfix: rollback jquery 至 3.4.1
 
 ## `2.2.6`
 * 更新 dependency
