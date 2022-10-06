@@ -1,6 +1,6 @@
 {
   "name": "@iqs/react-summernote",
-  "version": "2.2.6",
+  "version": "2.2.7-beta1",
   "description": "Summernote (Super simple WYSIWYG editor) adaptation for react http://summernote.org",
   "main": "dist/main.js",
   "scripts": {
@@ -17,7 +17,6 @@
   "author": "zap",
   "license": "MIT",
   "dependencies": {
-    "jquery": "^3.4.1",
     "store": "^2.0.12"
   },
   "peerDependencies": {
