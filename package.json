@@ -1,6 +1,6 @@
 {
   "name": "@iqs/react-summernote",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Summernote (Super simple WYSIWYG editor) adaptation for react http://summernote.org",
   "main": "dist/main.js",
   "scripts": {
