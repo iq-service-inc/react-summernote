@@ -17,7 +17,6 @@
   "author": "zap",
   "license": "MIT",
   "dependencies": {
-    "jquery": "^3.4.1",
     "store": "^2.0.12"
   },
   "peerDependencies": {
