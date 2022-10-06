@@ -1,4 +1,10 @@
 # Changelog
+## `2.2.6`
+* 更新 dependency
+  * jquery: 3.6.1
+  * bootstrap: 4.6.2
+  * popper.js: 1.16.1
+
 ## `2.2.5`
 * 修復 table plugin
     * 從HTML原始碼貼上表格，第一次拖動調整表格寬高時，可以正常拉動
