@@ -25,7 +25,7 @@
     });
     $.extend($.summernote.options, {
       imageShapes: {
-        icon: '<i class="note-icon-picture"/>',
+        icon: '<i class="note-icon-picture"></i>',
         /* Must keep the same order as in lang.imageAttributes.tooltipShapeOptions */
         shapes: ['img-fluid', 'rounded', 'rounded-circle', 'img-thumbnail', '']
       }
