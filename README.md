@@ -24,10 +24,10 @@ React SummerNote 依賴以下套件
 
 #### 第三方套件 
 
-* `bootstrap`: ^4.3.1
-* `popper.js`: ^1.15.0
+* `bootstrap`: ^4.6.2
+* `popper.js`: ^1.16.1
 * `summernote`: ^0.8.18
-* `jquery`: ^3.4.1
+* `jquery`: ^3.6.1
 * `store`: ^2.0.12
 
 
