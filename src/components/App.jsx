@@ -73,7 +73,7 @@ class App extends Component {
 					onImageUpload={this.onImageUpload1}
 					onImagePasteFromWord={onImagePasteFromWord}
 					//onPaste={onPaste}
-					onInit={e => console.log("--------- onInit --------", e)}
+					onInit={e => console.log(`Using jquery version ${$().jquery}`)}
 					ref={this.editor1}
 				/>
 				<SummerNote2 id='editor2' onImageUpload={this.onImageUpload2} ref={this.editor2} options={{
