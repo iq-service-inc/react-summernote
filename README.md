@@ -2,7 +2,7 @@
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
-* **Stable Version: `v2.2.5`**
+* **Stable Version: `v2.2.8`**
 
 * 版本修改紀錄：[Changelog](CHANGELOG.md)
 
@@ -269,6 +269,15 @@ require('react-summernote/plugin/summernote-ext-table.css')
 
 若要自行引入 plugin 可參考 [Plugin 介紹](src/plugin/README.md)
 
+### 如果 Plugin 無法載入
+
+請嘗試引用 `src/plugin` 裡面的 plugin
+
+以 table plugin 為例
+```js
+require('@iqs/react-summernote/src/plugin/misc/summernote-ext-table')
+require('@iqs/react-summernote/src/plugin/misc/summernote-ext-table.css')
+```
 
 ## XSS 白名單
 

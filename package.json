@@ -35,7 +35,6 @@
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
-    "@iqs/react-summernote": "^2.2.8-beta1",
     "autoprefixer": "^9.4.10",
     "babel-loader": "^8.0.5",
     "bootstrap": "^4.3.1",
