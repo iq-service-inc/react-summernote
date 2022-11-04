@@ -2,7 +2,7 @@
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
-* **Stable Version: `v2.2.8`**
+* **Stable Version: `v2.2.9`**
 
 * 版本修改紀錄：[Changelog](CHANGELOG.md)
 
@@ -318,6 +318,10 @@ npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼�
 * `npm run dev`：以 `src/start.js` 為起始，打包出一個 demo 網站，輸出到 `docs`，並且使用 dev 開發模式執行，用於發布成 Repo 的 Page 網站
 * `npm run test`：啟動一個 `webpack-dev-server`，以 `src/test.js` 為起始，用於測試直接引用打包 (build) 後的 summernote ，觀察引用打包後的程式執行起來是否有問題
 * `npm start`：開發人員主要模式，啟動一個 `webpack-dev-server`，以 `src/start.js` 為起始，用於測試原始程式執行起來是否有問題，並開發新功能
+
+## For repo admins
+
+本 repo 現已與 GitHub Actions 連動，因此未來要發布新版時，只需要把新版本 push 上來之後發布一個 Release，GitHub Actions 就會自動將套件發布至 npm registry
 
 ## License
 

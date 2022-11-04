@@ -18,8 +18,6 @@ node .\bundle-plugins.js
     - [Custom](#custom)
       - [summernote-custom](#summernote-custom)
       - [summernote-toc](#summernote-toc)
-    - [Emojis](#emojis)
-      - [summernote-ext-emoji-ajax](#summernote-ext-emoji-ajax)
     - [Formatting](#formatting)
       - [summernote-addclass](#summernote-addclass)
       - [summernote-case-converter](#summernote-case-converter)
@@ -48,9 +46,6 @@ node .\bundle-plugins.js
 ```js
 require('react-summernote/plugin/custom/summernote-custom')
 require('react-summernote/plugin/custom/summernote-toc')
-
-require('react-summernote/plugin/emoji/summernote-ext-emoji-ajax')
-require('react-summernote/plugin/emoji/summernote-ext-emoji-ajax.css')
 
 require('react-summernote/plugin/formatting/summernote-addclass')
 require('react-summernote/plugin/formatting/summernote-case-converter')
@@ -145,10 +140,6 @@ options = {{
      - `anchor`: 插入錨點
      - `toc`: 產生 TOC ，置於 toolbar
      - `markAnchor`: 顯示錨點
-  
--  [Emoji](#emoji)
-   - summernote-ext-emoji-ajax
-     - `emoji`: 插入 emoji
 
 -  [Formatting](#formatting)
    - summernote-addclass
@@ -233,14 +224,6 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
     $('#selector').append(li)
 })
 ```
-
-### Emojis
-
-#### [summernote-ext-emoji-ajax](https://github.com/tylerecouture/summernote-ext-emoji-ajax/)
-   - Uses the github emoji api and loads them via ajax.
-   - 從 [github api](https://api.github.com/emojis) 取得 emoji
-   - `toolbar` button: `emoji`
-     - `emoji`: 插入 emoji
 
 ### Formatting
 
