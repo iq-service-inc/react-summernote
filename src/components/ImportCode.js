@@ -10,8 +10,8 @@ module.exports = function () {
 
     require('../plugin/custom/summernote-custom')
     require('../plugin/custom/summernote-toc')
-    require('../plugin/emoji/summernote-ext-emoji-ajax')
-    require('../plugin/emoji/summernote-ext-emoji-ajax.css')
+    // require('../plugin/emoji/summernote-ext-emoji-ajax')
+    // require('../plugin/emoji/summernote-ext-emoji-ajax.css')
     require('../plugin/formatting/summernote-addclass')
     require('../plugin/formatting/summernote-case-converter')
     require('../plugin/formatting/summernote-image-captionit')

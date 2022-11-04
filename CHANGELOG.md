@@ -1,4 +1,7 @@
 # Changelog
+## `2.2.9`
+* 移除 Emoji Plugin
+
 ## `2.2.8`
 * 修復 v2.2.6 版本更新導致 jTable plugin 無法使用的問題
 * `README.md`中新增 plugin 無法正確載入時的解決方法
