@@ -1537,7 +1537,7 @@
                 // set col width from computed width to prevent resizing
                 var oldWidth = col.offsetWidth
                 var oldHeight = col.offsetHeight
-                var attr = `style="width:${oldWidth}px; height=${oldHeight}px"`
+                var attr = `style="width:${oldWidth}px; height:${oldHeight}px"`
                 while (span > 0) {
                     innerHTML = innerHTML.concat(`<col ${attr} />`)
                     span = span - 1
@@ -1988,8 +1988,9 @@
 
                     /**
                      * expand colgroup col span
+                     * select current level only
                      */
-                    var colgroup = $table.find('col')
+                    var colgroup = $table.children('colgroup').children('col')
                     self.expandColgroup(colgroup)
 
                     /**
