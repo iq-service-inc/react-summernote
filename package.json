@@ -1,8 +1,9 @@
 {
   "name": "@iqs/react-summernote",
-  "version": "2.2.10-beta.0",
+  "version": "2.2.10-beta.2",
   "description": "Summernote (Super simple WYSIWYG editor) adaptation for react http://summernote.org",
   "main": "dist/main.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "test": "webpack-dev-server --open --watch --progress --config webpack.test.js",
     "prebuild": "cd src/plugin && node bundle-plugins.js",
