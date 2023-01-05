@@ -2,7 +2,7 @@
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
-* **Stable Version: `v2.2.9`**
+* **Stable Version: `v2.2.10`**
 
 * 版本修改紀錄：[Changelog](CHANGELOG.md)
 
@@ -55,7 +55,7 @@ npm i @iqs/react-summernote --save
     plugins: [
         new webpack.ProvidePlugin({
             $: "jquery",
-			jQuery: "jquery",
+            jQuery: "jquery",
             store: "store",
         })
     ] 
@@ -157,8 +157,8 @@ import SummerNote from './SummerNote'
 class App extends Component {
 
     constructor(props) {
-		super(props)
-		this.editor = React.createRef()
+        super(props)
+        this.editor = React.createRef()
     }
 
     componentDidMount(){
@@ -171,7 +171,7 @@ class App extends Component {
         editor.insertImage()                // 插入圖片 (詳情可參考下一個段落)
         editor.insertNode(/* html node */)  // 插入 HTML 節點    
         editor.insertText('')               // 插入純文字 
-	}
+    }
     render() {
         return (<SummerNote ref={this.editor}/>)
     }
@@ -189,8 +189,8 @@ import SummerNote from './SummerNote'
 class App extends Component {
 
     constructor(props) {
-		super(props)
-		this.editor = React.createRef();
+        super(props)
+        this.editor = React.createRef();
     }
     
     onImageUpload = file => {

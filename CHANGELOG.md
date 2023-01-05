@@ -1,4 +1,8 @@
 # Changelog
+## `2.2.10`
+* 修復 jTable plugin 在處理多層表格時的跑版問題
+* 增加 TypeScript 類型定義檔
+
 ## `2.2.9`
 * 移除 Emoji Plugin
 
