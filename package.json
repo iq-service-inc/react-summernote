@@ -1,15 +1,17 @@
 {
   "name": "@iqs/react-summernote",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "Summernote (Super simple WYSIWYG editor) adaptation for react http://summernote.org",
   "main": "dist/main.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "test": "webpack-dev-server --open --watch --progress --config webpack.test.js",
     "prebuild": "cd src/plugin && node bundle-plugins.js",
     "build": "webpack --progress --config webpack.prod.js",
     "web": "webpack --progress --config webpack.web.js",
     "dev": "webpack --open --watch --progress --config webpack.dev.js",
-    "start": "webpack-dev-server --open --watch --progress --config webpack.dev.js"
+    "start": "webpack-dev-server --open --watch --progress --config webpack.dev.js",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
