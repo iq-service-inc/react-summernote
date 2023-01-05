@@ -32,6 +32,7 @@ export interface SummerNoteProps {
     onImageUpload?: (file: File) => void
     onImagePasteFromWord?: (imgs: unknown) => void
     onChange?: (e: React.ChangeEvent<HTMLDivElement>) => void
+    onPaste?: (e: any) => void
 }
 
 declare class SummerNote extends React.Component<SummerNoteProps> {
