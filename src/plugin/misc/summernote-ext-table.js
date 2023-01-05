@@ -1619,7 +1619,7 @@
                         var expandTable = $this.find('table').not('.jtable-expanded')
                         for (let t = 0; t < expandTable.length; t++) {
                             const table = $(expandTable[t]);
-                            if (!table.find('col').length) {
+                            if (!table.children('colgroup').children('col').length) {
                                 var vTable = new TableResultAction(this, undefined, undefined, expandTable[t]);
                                 var virtualTable = vTable.getVirtualTable();
                                 var colgroup = document.createElement('colgroup')
@@ -1637,7 +1637,7 @@
                                 table.prepend(colgroup)
                             }
                             else {
-                                var colgroup = table.find('col')
+                                var colgroup = table.children('colgroup').children('col')
                                 self.expandColgroup(colgroup)
                                 table.toggleClass('jtable-expanded', true)
                             }
