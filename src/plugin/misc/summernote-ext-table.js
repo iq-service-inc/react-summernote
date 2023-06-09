@@ -1855,6 +1855,41 @@
                     // }
                 });
 
+                layoutInfo.editingArea.on('mouseup', 'td', function (event) {
+                    var $this = $(this);
+                    if (!tableBlock.pressed) return true;
+
+                    var $table = $this.closest('table');
+                    var cellPosition = getCellPosition(this, $table[0]);
+                    var currentTdElIsEnd = tableBlock.currentTdPosition.row < cellPosition.row || tableBlock.currentTdPosition.col < cellPosition.col
+
+                    var targetTop = currentTdElIsEnd ? tableBlock.currentTdTop : $this.offset().top;
+                    var targetLeft = currentTdElIsEnd ? tableBlock.currentTdLeft : $this.offset().left;
+                    var targetWidth = $this.outerWidth();
+                    var targetHeight = $this.outerHeight();
+                    var targetRight = currentTdElIsEnd ? tableBlock.currentTdRight : targetLeft + targetWidth;
+                    var targetBottom = currentTdElIsEnd ? tableBlock.currentTdBottom : targetTop + targetHeight;
+
+                    tableBlock = {
+                        ...tableBlock,
+                        pressed: false,
+                        currentTableEl: currentTdElIsEnd ? tableBlock.currentTableEl : $table[0],
+                        currentTdEl: currentTdElIsEnd ? tableBlock.currentTdEl : this,
+                        currentTdLeft: targetLeft,
+                        currentTdRight: targetRight,
+                        currentTdTop: targetTop,
+                        currentTdBottom: targetBottom,
+                        currentTdPosition: {
+                            row: cellPosition.row,
+                            col: cellPosition.col,
+                        },
+                        width: targetRight,
+                        height: targetBottom,
+                        top: targetTop,
+                        left: targetLeft,
+                    };
+                });
+                
                 /**
                  * select table cell
                  */
