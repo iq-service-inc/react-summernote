@@ -1130,7 +1130,6 @@
                 var $tr = $($trList[i]);
                 var $cellList = $tr.find('td, th');
                 if(!$cellList.length)   $tr.remove();
-                // console.log('aaaaaaaaa');
             }
 
             self.afterCommand();
@@ -1978,12 +1977,117 @@
                     if ($target.length) modules.tablePopover.update($target[0]);
 
                 });
+
+                // 拿來比對新的 table
+                var oldTable = null;
+
+                // 每次透過 popover 向左向右增加 column 時補上 <colgroup> 內的 <col>
+                function fillInColgroup() {
+                    var $this = $(this);
+                    var $table = $this.closest('.note-editor').find('table');
+                    var vTable = new TableResultAction(undefined, undefined, undefined, $table[0]);
+                    var virtualTable = vTable.getVirtualTable();
+
+                    // 標記那些欄位有增加，但若只是 colspan 加大則無法判斷
+                    var tableMark = virtualTable.map((tr, trIndex) => {
+                        return tr.map((td) => {
+                            return oldTable[trIndex].reduce((acc, oldTd) => {
+                                if (oldTd.baseCell === td.baseCell) return true
+                                return acc 
+                            }, false)
+                        })
+                    })
+
+                    // 哪一個 tr 內的 td 最多，就拿哪一個當標準
+                    var maxTdOfTr = tableMark.reduce((acc, tr, trIdx) => {
+                        if (tr.length >= acc.length) {
+                            var haveChange = tr.reduce((change, td) => {
+                                return !td || change
+                            }, false)
+                            if (haveChange) {
+                                return {
+                                    trIdx,
+                                    length: tr.length
+                                }
+                            }
+                        }
+                        return acc
+                    }, { trIdx: -1, length: 0 })
+
+                    var colgroup = $table.children('colgroup').children('col')
+                    var colgroupIdx = 0
+                    if (!tableMark[maxTdOfTr.trIdx]) return
+                    var colgroupHTML = tableMark[maxTdOfTr.trIdx].reduce((acc, td) => {
+                        if (!td) return acc + `<col style="width: 100px;" />`
+                        var newColgroupHTML = acc + colgroup[colgroupIdx].outerHTML
+                        colgroupIdx++
+                        return newColgroupHTML
+                    }, '')
+                    colgroup.closest('colgroup').html(colgroupHTML)                    
+                    resetTableBlock($table);
+                }
+
+                // 每次透過 popover 減少 column 時也一併減少 <colgroup> 內的 <col>
+                function deleteColOfColgroup() {
+                    var $this = $(this);
+                    var $table = $this.closest('.note-editor').find('table');
+                    var vTable = new TableResultAction(undefined, undefined, undefined, $table[0]);
+                    var virtualTable = vTable.getVirtualTable();
+
+                    var tableMark = oldTable.map((tr, trIndex) => {
+                        return tr.map((td) => {
+                            return virtualTable[trIndex].reduce((acc, oldTd) => {
+                                if (oldTd.baseCell === td.baseCell) return true
+                                return acc 
+                            }, false)
+                        })
+                    })
+                    console.log('tableMark', tableMark)
+                    console.log('maxTdOfTr', maxTdOfTr)
+                    var maxTdOfTr = tableMark.reduce((acc, tr, trIdx) => {
+                        if (tr.length >= acc.length) {
+                            var haveChange = tr.reduce((change, td) => {
+                                return !td || change
+                            }, false)
+                            if (haveChange) {
+                                return {
+                                    trIdx,
+                                    length: tr.length
+                                }
+                            }
+                        }
+                        return acc
+                    }, { trIdx: -1, length: 0 })
+
+                    var colgroup = $table.children('colgroup').children('col')
+                    if (!tableMark[maxTdOfTr.trIdx]) return
+                    var colgroupHTML = tableMark[maxTdOfTr.trIdx].reduce((acc, td, tdIdx) => {
+                        if (!!td) {
+                            return acc + colgroup[tdIdx].outerHTML
+                        } 
+                        return acc
+                    }, '')
+                    colgroup.closest('colgroup').html(colgroupHTML)
+                    resetTableBlock($table);
+                }
+
                 /**
                  * get table resize info
                  */
                 layoutInfo.editingArea.on('mousedown', 'td', function (event) {
                     var $this = $(this);
                     var $table = $this.closest('table');
+                    var vTable = new TableResultAction(this, undefined, undefined, $table[0]);
+                    var virtualTable = vTable.getVirtualTable();
+                    oldTable = virtualTable
+
+                    $('[aria-label="Add column left"]').off('click', fillInColgroup)
+                    $('[aria-label="Add column right"]').off('click', fillInColgroup)
+                    $('[aria-label="Delete column"]').off('click', deleteColOfColgroup)
+                    $('[aria-label="Add column left"]').on('click', fillInColgroup)
+                    $('[aria-label="Add column right"]').on('click', fillInColgroup)
+                    $('[aria-label="Delete column"]').on('click', deleteColOfColgroup)
+                    
                     var $tr = $this.closest('tr');
                     var targetLeft = $this.offset().left;
                     var targetWidth = $this.outerWidth();
@@ -2037,10 +2141,7 @@
                         if (!!td.width) td.width = ''
                         if (!!td.style.width) td.style.width = ''
                     }
-
-                    var vTable = new TableResultAction(this, undefined, undefined, $table[0]);
-                    var virtualTable = vTable.getVirtualTable();
-
+                    
                     var trIndex = $tr[0].rowIndex;
 
                     var cellHasColspan = (this.colSpan > 1);
