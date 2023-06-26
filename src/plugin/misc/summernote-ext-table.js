@@ -2071,6 +2071,16 @@
                     resetTableBlock($table);
                 }
 
+                layoutInfo.editor.on('click', '[aria-label="Add column left"]', fillInColgroup)
+                layoutInfo.editor.on('click', '[aria-label="左方插入欄"]', fillInColgroup)
+
+                layoutInfo.editor.on('click', '[aria-label="Add column right"]', fillInColgroup)
+                layoutInfo.editor.on('click', '[aria-label="右方插入欄"]', fillInColgroup)
+
+                layoutInfo.editor.on('click', '[aria-label="Delete column"]', deleteColOfColgroup)
+                layoutInfo.editor.on('click', '[aria-label="刪除欄"]', deleteColOfColgroup)
+
+
                 /**
                  * get table resize info
                  */
@@ -2080,13 +2090,6 @@
                     var vTable = new TableResultAction(this, undefined, undefined, $table[0]);
                     var virtualTable = vTable.getVirtualTable();
                     oldTable = virtualTable
-
-                    $('[aria-label="Add column left"]').off('click', fillInColgroup)
-                    $('[aria-label="Add column right"]').off('click', fillInColgroup)
-                    $('[aria-label="Delete column"]').off('click', deleteColOfColgroup)
-                    $('[aria-label="Add column left"]').on('click', fillInColgroup)
-                    $('[aria-label="Add column right"]').on('click', fillInColgroup)
-                    $('[aria-label="Delete column"]').on('click', deleteColOfColgroup)
                     
                     var $tr = $this.closest('tr');
                     var targetLeft = $this.offset().left;
