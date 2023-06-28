@@ -103,7 +103,7 @@ class InnerReactSummernote extends React.Component {
 		}
 
 		if (typeof innerRef === 'function') innerRef(this)
-		else if (typeof innerRef === 'object') innerRef.current = this
+		else if (typeof innerRef === 'object' && !!innerRef) innerRef.current = this
 	};
 
 	//componentDidMount() {

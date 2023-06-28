@@ -1998,6 +1998,42 @@
                         })
                     })
 
+                    var copyTableMark = [...tableMark]
+                    var tbody = $table.children('tbody')
+
+                    // 確認 table 那些欄位出錯了，正常一次只能增加一個 column
+                    var errorTdIdxList = copyTableMark.reduce((errorIdxList, tr, trIdx) => {
+                        var tdIdxStart = -1
+                        var tdIdxEnd = -1
+                        var hasError = false
+                        tr.forEach((td, idx) => {
+                            if (tdIdxStart === -1 && td === false) tdIdxStart = idx
+                            if (tdIdxStart > -1 && td === false && tdIdxStart + 1 === idx) {
+                                hasError = true
+                                tdIdxEnd = idx
+                            } 
+                        });
+
+                        if (hasError) {
+                            // 把不正確的 table 都先濾掉
+                            tableMark = tableMark.reduce((list, tr, trIndex) => {
+                                if (trIndex === trIdx) {
+                                    var newList = tableMark[trIdx].filter((td, idx) => {
+                                        return !(idx >= tdIdxStart && idx <= tdIdxEnd)
+                                    })
+                                    return [...list, newList]
+                                }
+                                return [...list, tr]
+                            }, [])
+
+                            if (!tbody[0]) return
+                            tbody[0].childNodes[trIdx].childNodes[tdIdxStart].remove()
+                            tbody[0].childNodes[trIdx].childNodes[tdIdxStart].colSpan = tbody[0].childNodes[trIdx].childNodes[tdIdxStart].colSpan + 1
+                        }
+
+                        return [...errorIdxList, { tdIdxStart, tdIdxEnd, hasError }]
+                    }, [])
+
                     // 哪一個 tr 內的 td 最多，就拿哪一個當標準
                     var maxTdOfTr = tableMark.reduce((acc, tr, trIdx) => {
                         if (tr.length >= acc.length) {
@@ -2023,6 +2059,7 @@
                         colgroupIdx++
                         return newColgroupHTML
                     }, '')
+
                     colgroup.closest('colgroup').html(colgroupHTML)                    
                     resetTableBlock($table);
                 }
@@ -2042,8 +2079,7 @@
                             }, false)
                         })
                     })
-                    console.log('tableMark', tableMark)
-                    console.log('maxTdOfTr', maxTdOfTr)
+
                     var maxTdOfTr = tableMark.reduce((acc, tr, trIdx) => {
                         if (tr.length >= acc.length) {
                             var haveChange = tr.reduce((change, td) => {
@@ -2071,6 +2107,16 @@
                     resetTableBlock($table);
                 }
 
+                layoutInfo.editor.on('click', '[aria-label="Add column left"]', fillInColgroup)
+                layoutInfo.editor.on('click', '[aria-label="左方插入欄"]', fillInColgroup)
+
+                layoutInfo.editor.on('click', '[aria-label="Add column right"]', fillInColgroup)
+                layoutInfo.editor.on('click', '[aria-label="右方插入欄"]', fillInColgroup)
+
+                layoutInfo.editor.on('click', '[aria-label="Delete column"]', deleteColOfColgroup)
+                layoutInfo.editor.on('click', '[aria-label="刪除欄"]', deleteColOfColgroup)
+
+
                 /**
                  * get table resize info
                  */
@@ -2080,13 +2126,6 @@
                     var vTable = new TableResultAction(this, undefined, undefined, $table[0]);
                     var virtualTable = vTable.getVirtualTable();
                     oldTable = virtualTable
-
-                    $('[aria-label="Add column left"]').off('click', fillInColgroup)
-                    $('[aria-label="Add column right"]').off('click', fillInColgroup)
-                    $('[aria-label="Delete column"]').off('click', deleteColOfColgroup)
-                    $('[aria-label="Add column left"]').on('click', fillInColgroup)
-                    $('[aria-label="Add column right"]').on('click', fillInColgroup)
-                    $('[aria-label="Delete column"]').on('click', deleteColOfColgroup)
                     
                     var $tr = $this.closest('tr');
                     var targetLeft = $this.offset().left;
