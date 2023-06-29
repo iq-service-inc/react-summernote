@@ -48,7 +48,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="demo">
-				<div className="rb" style={{textAlign:'right', height: '60px'}}><a href="https://github.com/iq-service-inc/react-summernote"><img loading="lazy" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"/></a></div>
+				<div className="rb" style={{textAlign:'right', height: '60px'}}><a href="https://github.com/iq-service-inc/react-summernote"><img loading="lazy" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" className="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"/></a></div>
 				<h1>React SummerNote App</h1>
 				<SummerNote
 					id='editor1'
