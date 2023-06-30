@@ -1,5 +1,9 @@
 # Changelog
 
+## `2.2.15`
+
+* 修正 colgroup 計算錯誤的問題
+
 ## `2.2.14`
 * 修正 透過 popover 增加或減少 column 時沒有同步修改 colgroup 的問題
 * 修正 jMerge 由右向左 或 由下向上選取表格合併，會使表格突出並破壞結構的問題
