@@ -2012,6 +2012,9 @@
                                 hasError = true
                                 tdIdxEnd = idx
                             } 
+                            if (tdIdxEnd > -1 && td === false && tdIdxEnd + 1 === idx) {
+                                tdIdxEnd = idx
+                            } 
                         });
 
                         if (hasError) {
