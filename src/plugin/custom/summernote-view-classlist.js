@@ -8,6 +8,9 @@
     }
 }
     (function ($) {
+        $.extend($.summernote.options, {
+            canViewClasslist: false,
+        });
         $.extend($.summernote.plugins, {
             'view-classlist': function (context) {
                 var self = this,
@@ -17,6 +20,9 @@
                     $editable = context.layoutInfo.editable,
                     options = context.options,
                     lang = options.langInfo;
+
+                if (!options.canViewClasslist) return
+
                 this.events = {
                     'summernote.mousedown': function (we, e) {
                         var el = e.target;
@@ -27,6 +33,9 @@
                         } else {
                             $editor.find('.note-status-output').html('');
                         }
+                    },
+                    'summernote.keydown': function (we, e) {
+                        $editor.find('.note-status-output').html('');
                     },
                     'summernote.codeview.toggled': function (we, e) {
                         $editor.find('.note-status-output').html('');

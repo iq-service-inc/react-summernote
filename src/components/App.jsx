@@ -67,7 +67,8 @@ class App extends Component {
 							["insert", ["link", "picture", "video"]],
 							["view", ["fullscreen", "codeview"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
-						]
+						],
+						canViewClasslist: true,
 					}}
 					onChange={onChange}
 					onImageUpload={this.onImageUpload1}
