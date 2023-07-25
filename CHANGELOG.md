@@ -1,5 +1,9 @@
 # Changelog
 
+## `2.2.16`
+
+* 新增 click 編輯器中的元素，可以查看 class 的 plug-in `summernote-view-classlist`
+
 ## `2.2.15`
 
 * 修正 colgroup 計算錯誤的問題
