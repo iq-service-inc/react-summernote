@@ -1,5 +1,9 @@
 # Changelog
 
+## `2.2.17`
+
+* 移除 `summernoteDrafts`
+
 ## `2.2.16`
 
 * 新增 click 編輯器中的元素，可以查看 class 的 plug-in `summernote-view-classlist`
