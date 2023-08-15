@@ -24,7 +24,7 @@ module.exports = function () {
     require('../plugin/insert/summernote-at-mention')
     require('../plugin/insert/summernote-file')
     require('../plugin/insert/summernote-element-template')
-    require('../plugin/misc/summernoteDrafts')
+    // require('../plugin/misc/summernoteDrafts')
     require('../plugin/misc/summernote-ext-print')
     require('../plugin/misc/summernote-text-findnreplace')
     require('../plugin/misc/summernote-ext-table')
