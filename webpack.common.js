@@ -54,7 +54,8 @@ module.exports = {
 	resolve: {
 		alias: {
 			Config: `${__dirname}/config.json`,
-			'react-summernote': `${__dirname}`
+			'react-summernote': `${__dirname}`,
+            jQuery: "jquery",
 		},
 		extensions: ['.jsx', '.js', '.styl']
 	},
