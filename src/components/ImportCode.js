@@ -9,6 +9,7 @@ module.exports = function () {
     require('summernote/dist/lang/summernote-zh-TW')
 
     require('../plugin/custom/summernote-custom')
+    require('../plugin/custom/summernote-fontsize-input')
     require('../plugin/custom/summernote-toc')
     require('../plugin/custom/summernote-view-classlist')
     // require('../plugin/emoji/summernote-ext-emoji-ajax')

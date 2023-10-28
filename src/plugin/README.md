@@ -17,6 +17,7 @@ node .\bundle-plugins.js
   - [Plugin 簡介](#plugin-簡介)
     - [Custom](#custom)
       - [summernote-custom](#summernote-custom)
+      - [summernote-fontsize-input](#summernote-fontsize-input)
       - [summernote-toc](#summernote-toc)
     - [Formatting](#formatting)
       - [summernote-addclass](#summernote-addclass)
@@ -45,6 +46,7 @@ node .\bundle-plugins.js
 ## import plugins
 ```js
 require('react-summernote/plugin/custom/summernote-custom')
+require('react-summernote/plugin/custom/summernote-fontsize-input')
 require('react-summernote/plugin/custom/summernote-toc')
 
 require('react-summernote/plugin/formatting/summernote-addclass')
@@ -81,6 +83,7 @@ options = {{
     [`style`, [`style`, `addclass`]],
     [`font`, [`caseConverter`, `bold`, `underline`, `clear`]],
     [`fontname`, [`fontname`]],
+    ['fontsize', ['fontsizeInput']],
     ['color', ['color']],
     [`para`, [`customUL`, `ol`, 'listStyles', `paragraph`]],
     [`table`, [`jTable`, `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jTableInfo`, `jWidthHeightReset`, `jAddDeleteRowCol`]],
@@ -128,6 +131,11 @@ options = {{
       'bussiness letter': $(ReactDOMServer.renderToString(<BussinessLetter Date={new Date().toLocaleString()}/>))
       // render at initial
     }
+  },
+  fontsizeInput: {
+      max: 200,
+      min: 5,
+      sizes: ['8', '9', '10', '11', '12', '14', '16', '18', '26', '42', '74']
   },
 }}
 ```
@@ -195,6 +203,20 @@ options = {{
 - custom ul button, close toolbar colorplette, table popover language zh-TW
 - `toolbar` button: `customUL`
 - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
+
+#### summernote-fontsize-input
+- 以輸入框和下拉選單更新 fontsize
+- `toolbar` button: `fontsizeInput`
+  - `fontsizeInput`: 更新字號
+
+    ```js
+    // options
+    fontsizeInput: {
+        max: 200,   // input 最大值 (px)
+        min: 5,     // input 最小值 (px)
+        sizes: ['8', '9', '10', '11', '12', '14', '16', '18', '26', '42', '74'] // dropdown 選項 (px)
+    }
+    ```
 
 #### summernote-toc
 - 插入 anchor 快捷鍵 `ctrl` + `shift` + `a`
