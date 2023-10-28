@@ -9,6 +9,7 @@ module.exports = function () {
     require('summernote/dist/lang/summernote-zh-TW')
 
     require('../plugin/custom/summernote-custom')
+    require('../plugin/custom/summernote-custom-specialchars')
     require('../plugin/custom/summernote-fontsize-input')
     require('../plugin/custom/summernote-toc')
     require('../plugin/custom/summernote-view-classlist')
@@ -30,7 +31,7 @@ module.exports = function () {
     require('../plugin/misc/summernote-text-findnreplace')
     require('../plugin/misc/summernote-ext-table')
     require('../plugin/misc/summernote-ext-table.css')
-    require('../plugin/special_characters/summernote-ext-specialchars')
+    // require('../plugin/special_characters/summernote-ext-specialchars')
 
     //require('react-summernote/plugin/syntax/summernote-ext-highlight')
     //require('react-summernote/plugin/syntax/run_prettify')

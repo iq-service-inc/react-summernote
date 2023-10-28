@@ -65,7 +65,7 @@ class App extends Component {
                             ["fontsize", ["fontsizeInput"]],
 							["para", ["ul", "ol", "paragraph"]],
 							["table", ["table"]],
-							["insert", ["link", "picture", "video"]],
+							["insert", ["link", "picture", "video", "customSpecialChar"]],
 							["view", ["fullscreen", "codeview"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
 						],
@@ -87,7 +87,7 @@ class App extends Component {
 						['color', ['color']],
 						["para", ["ul", "ol", "paragraph"]],
 						["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
-						["insert", ["link", "picture", "video"]],
+						["insert", ["link", "picture", "video", "customSpecialChar"]],
 						["view", ["fullscreen", "codeview"]],
 					],
 					tableClassName: 'jtable table-bordered'

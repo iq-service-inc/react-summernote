@@ -17,6 +17,7 @@ node .\bundle-plugins.js
   - [Plugin 簡介](#plugin-簡介)
     - [Custom](#custom)
       - [summernote-custom](#summernote-custom)
+      - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-fontsize-input](#summernote-fontsize-input)
       - [summernote-toc](#summernote-toc)
     - [Formatting](#formatting)
@@ -38,10 +39,10 @@ node .\bundle-plugins.js
       - [summernote-ext-print](#summernote-ext-print)
       - [summernote-text-findnreplace](#summernote-text-findnreplace)
       - [summernote-ext-table](#summernote-ext-table)
-    - [Special Characters & Icons](#special-characters--icons)
+    - [Special Characters \& Icons](#special-characters--icons)
       - [summernote-ext-specialchars](#summernote-ext-specialchars)
-    - ~~[Syntax](#syntax) ~~ (棄用)
-      - ~~[summernote-ext-highlight](#summernote-ext-highlight)~~ (棄用)
+    - [Syntax  (棄用)](#syntax--棄用)
+      - [~~summernote-ext-highlight~~](#summernote-ext-highlight)
 
 ## import plugins
 ```js
@@ -144,6 +145,10 @@ options = {{
 -  [Custom](#custom)
    - summernote-custom
      - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
+   - summernote-custom-specialchars
+     - `customSpecialChar`: 插入特殊符號
+   - summernote-fontsize-input
+     - `fontsizeInput`: 更新字號
    - summernote-toc
      - `anchor`: 插入錨點
      - `toc`: 產生 TOC ，置於 toolbar
@@ -203,6 +208,13 @@ options = {{
 - custom ul button, close toolbar colorplette, table popover language zh-TW
 - `toolbar` button: `customUL`
 - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
+
+#### summernote-custom-specialchars
+- 改寫自 [summernote-ext-specialchars](https://github.com/JustinEldracher/summernote-plugins/tree/master/summernote-ext-specialchars)
+- Few tweaks to the official specialchars plugin, revising the view and making it more mobile-friendly
+- 插入特殊符號
+- `toolbar` button: `customSpecialChar`
+ - `customSpecialChar`: 插入特殊符號
 
 #### summernote-fontsize-input
 - 以輸入框和下拉選單更新 fontsize
