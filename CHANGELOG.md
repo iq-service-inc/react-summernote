@@ -1,5 +1,9 @@
 # Changelog
 
+## `2.2.18`
+
+* 新增 `summernote-fontsize-input`
+
 ## `2.2.17`
 
 * 移除 `summernoteDrafts`
