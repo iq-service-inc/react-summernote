@@ -298,6 +298,7 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
 #### [summernote-list-styles](https://github.com/tylerecouture/summernote-list-styles)
    - Adds a toolbar dropdown menu to change the number/bullet style of HTML lists.
    - 更多項目符號、編號樣式 (都使用 `ol` 表現)
+   - 括弧類項目符號需要 css 才能顯示，參考 [summernote-list-styles.css](formatting/summernote-list-styles.css)
    - `toolbar` button: `listStyles`
      - `listStyles`: 變更項目符號
 
