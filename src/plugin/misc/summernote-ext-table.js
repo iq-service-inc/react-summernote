@@ -1020,6 +1020,7 @@
             var rng = modules.editor.getLastRange.call(modules.editor)
             var $table = $(dom.ancestor(rng.ec, dom.isTable))
             $table.find('colgroup col').css('width', '')
+            resetTableBlock($table);
             self.afterCommand()
         }
 
@@ -1028,6 +1029,7 @@
             var rng = modules.editor.getLastRange.call(modules.editor)
             var $table = $(dom.ancestor(rng.ec, dom.isTable))
             $table.css('width', '100%')
+            resetTableBlock($table);
             self.afterCommand()
         }
 
@@ -1036,6 +1038,7 @@
             var rng = modules.editor.getLastRange.call(modules.editor)
             var $table = $(dom.ancestor(rng.ec, dom.isTable))
             $table.css('overflow-wrap', 'anywhere')
+            resetTableBlock($table);
             self.afterCommand()
         }
 
