@@ -88,6 +88,8 @@ options = {{
     ['color', ['color']],
     [`para`, [`customUL`, `ol`, 'listStyles', `paragraph`]],
     [`table`, [`jTable`, `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAutoFit`, `jTableInfo`, `jWidthHeightReset`, `jAddDeleteRowCol`]],
+    ["tableRow", ["jRowHeight"]],
+    ["tableCol", ["jColWidth"]],
     [`insert`, [`link`, `picture`, 'videoAttributes', 'audio', 'file', 'template']],
     [`print`, [`pagebreak`, `print`]],
     ['misc', ['sDraftsLoad', 'sDraftsSave', 'findnreplace']],
@@ -191,6 +193,8 @@ options = {{
      - `jBorderColor`: 整個表格 border 顏色，`toolbar` & `table popover`
      - `jAlign`: cell 的對齊方式，`toolbar` & `table popover`
      - `jAutoFit`: 自動調整 table 欄寬，`toolbar` & `table popover`
+     - `jRowHeight`: 輸入框調整列高
+     - `jColWidth`: 輸入框調整欄寬
      - `jTableInfo`: 調整整個 table 的 margin，`toolbar` & `table popover`
      - `jWidthHeightReset`: 重設 cell 寬高，`toolbar` & `table popover`
 
@@ -426,13 +430,15 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
 #### [summernote-ext-table](https://github.com/ksy11/summernote-ext-table)
    - Adds table column/row resize, cell background-color change, cell merge, cell unmerge, border-color change, table margin change, table width/height reset.
    - table 功能
-   - `toolbar` and `table popover` button: `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jTableInfo`, `jWidthHeightReset`
+   - `toolbar` and `table popover` button: `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`
      - `jTable`: 新增適用於 table resizing 的表格
      - `jMerge`: 框選後合併 cell
      - `jBackcolor`: cell 的背景色
      - `jBorderColor`: 整個表格 border 顏色
      - `jAlign`: cell 的對齊方式
      - `jAutoFit`: 自動調整 table 欄寬提供「自動調整成內容大小」、「自動調整成視窗大小」、「固定欄寬」三種模式
+     - `jRowHeight`: 輸入框調整列高
+     - `jColWidth`: 輸入框調整欄寬
      - `jTableInfo`: 調整整個 table 的 margin
      - `jWidthHeightReset`: 重設 cell 寬高
 
