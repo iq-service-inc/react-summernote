@@ -1019,6 +1019,7 @@
             self.beforeCommand()
             var rng = modules.editor.getLastRange.call(modules.editor)
             var $table = $(dom.ancestor(rng.ec, dom.isTable))
+            $table.css('width', 'auto')
             $table.find('colgroup col').css('width', '')
             resetTableBlock($table);
             self.afterCommand()
@@ -1037,7 +1038,15 @@
             self.beforeCommand()
             var rng = modules.editor.getLastRange.call(modules.editor)
             var $table = $(dom.ancestor(rng.ec, dom.isTable))
-            $table.css('overflow-wrap', 'anywhere')
+            $table.find('colgroup col').css('width', function () {
+                // whether dom element have self width
+                if (!this.style.width) {
+                    // jquery css width will return current view width
+                    let autoWidth = $(this).css('width')
+                    $(this).css('width', autoWidth || '100px')
+                }
+            })
+            $table.css({'overflowWrap': 'anywhere', 'width': 'auto'})
             resetTableBlock($table);
             self.afterCommand()
         }
