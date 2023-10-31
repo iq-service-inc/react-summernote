@@ -34,6 +34,7 @@
 .jtable-cell-split-dropdown {
     /* width: 36px; */
     min-width: auto !important;
+    padding: 5px;
 }
 
 .jtable-cell-split-button-group {
@@ -43,6 +44,7 @@
 .jtable-add-del-row-col-dropdown {
     width: 145px;
     min-width: auto !important;
+    padding: 5px;
 }
 
 .jtable-add-row-col-button-group {
@@ -54,8 +56,8 @@
 }
 
 .jtable-align-dropdown {
-    width: 142px;
     min-width: auto !important;
+    padding: 5px;
 }
 
 .jtable-horizontal-align-button-group {

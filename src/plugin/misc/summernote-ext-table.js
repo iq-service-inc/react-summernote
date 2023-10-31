@@ -141,7 +141,7 @@
             var $button = $(event.target).closest('button'),
                 $toggle = $button.closest('.dropdown-toggle')
             var rng = modules.editor.getLastRange.call(modules.editor)
-            var cell = dom.ancestor(rng.commonAncestor(), dom.isCell)
+            var cell = dom.ancestor(rng.ec, dom.isCell)
 
             if ($button.closest('.popover').length) {
                 var left = $button.closest('.popover').css('left'),
@@ -1887,6 +1887,10 @@
                         top: targetTop,
                         left: targetLeft,
                     };
+
+                    var $target = $(event.target).closest('td');
+                    if (!$target.length) $target = $(event.target).closest('th');
+                    if ($target.length) modules.tablePopover.update($target[0]);
                 });
                 
                 /**
@@ -1971,10 +1975,10 @@
 
                     if (!tableBlock.pressed) return true;
                     tableBlock.pressed = false;
-
-                    var $target = $(event.target).closest('td');
-                    if (!$target.length) $target = $(event.target).closest('th');
-                    if ($target.length) modules.tablePopover.update($target[0]);
+                    
+                    // var $target = $(event.target).closest('td');
+                    // if (!$target.length) $target = $(event.target).closest('th');
+                    // if ($target.length) modules.tablePopover.update($target[0]);
 
                 });
 
