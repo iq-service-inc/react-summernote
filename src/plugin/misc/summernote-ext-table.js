@@ -23,6 +23,7 @@
             modules = context.modules,
             options = context.options,
             $editable = context.layoutInfo.editable,
+            $toolbar = context.layoutInfo.toolbar,
             lang = options.langInfo,
             $mergeDialog,
             $tableInfoDialog;
@@ -1635,6 +1636,228 @@
             }
         };
 
+        context.memo('button.jRowHeight', () => {
+            // input-group
+            var $rowHeight = $(`<div>`)
+                .addClass(["input-group", "input-group-sm", "jtable-row-height-input-group", "jtable-display"])
+
+            // icon
+            var $inputPrepend = $(`<div>`).addClass("input-group-prepend")
+            var $icon = $(`<span>`).addClass("input-group-text")
+                .append($(`<i>`).addClass("jtable-icon-row-height")
+                    .html(`<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path transform="rotate(-90 5.31113 14.2238)" stroke-width="0" d="m5.48908,11q0.2111,0 0.37246,0.15312l0.31041,0.31041q0.15712,0.1572 0.15712,0.37653q0,0.22349 -0.15712,0.37246l-1.21252,1.21676l2.91344,0q0.21517,0 0.34959,0.15512q0.13457,0.1552 0.13457,0.37453l0,0.52974q0,0.21933 -0.13457,0.37453q-0.13441,0.1552 -0.34959,0.1552l-2.91344,0l1.21252,1.21668q0.15712,0.14897 0.15712,0.37246t-0.15712,0.37246l-0.31041,0.31041q-0.15728,0.1572 -0.37246,0.1572q-0.21925,0 -0.37661,-0.1572l-2.69403,-2.69411q-0.1532,-0.14489 -0.1532,-0.37246q0,-0.22349 0.1532,-0.37661l2.69403,-2.69411q0.16144,-0.15312 0.37661,-0.15312z" id="svg_5" stroke="#007fff" fill="#007fff"/>
+                    <path transform="rotate(90 5.31113 6.2238)" stroke-width="0" d="m5.48908,3q0.21109,0 0.37245,0.15312l0.31041,0.31041q0.15712,0.1572 0.15712,0.37653q0,0.22349 -0.15712,0.37246l-1.21252,1.21675l2.91344,0q0.21517,0 0.34959,0.15513q0.13457,0.1552 0.13457,0.37453l0,0.52974q0,0.21933 -0.13457,0.37453q-0.13442,0.15521 -0.34959,0.15521l-2.91344,0l1.21252,1.21667q0.15712,0.14897 0.15712,0.37246t-0.15712,0.37246l-0.31041,0.3104q-0.15728,0.1572 -0.37245,0.1572q-0.21925,0 -0.37661,-0.1572l-2.69403,-2.6941q-0.1532,-0.14489 -0.1532,-0.37246q0,-0.22349 0.1532,-0.37661l2.69403,-2.69411q0.16144,-0.15312 0.37661,-0.15312z" id="svg_3" stroke="#007fff" fill="#007fff"/>
+                    <rect x="13" y="3" width="4" height="14" id="svg_19" fill="#000000" fill-opacity="0" stroke="#000000"/>
+                    <rect x="8.5" y="17" width="3" height="0.1" id="svg_20" stroke="#000000"/>
+                    <rect x="8.5" y="3" width="3" height="0.1" id="svg_21" stroke="#000000"/>
+                </svg>`))
+
+            $inputPrepend.append($icon)
+            $rowHeight.append($inputPrepend)
+
+            // input
+            var $rowHeightInput = $(`<input min="27" type=number />`)
+                .addClass("jtable-row-height-input")
+                .css({
+                    "width": "3em",
+                    "line-height": "1em",
+                    "text-align": "center",
+                    "border": "1px solid #ced4da",
+                    "border-radius": "0 0.2rem 0.2rem 0",
+                    "font-size": "13px"
+                })
+
+            // input event
+            $rowHeightInput.on('focus', function (event) {   // keep selection in editor
+                context.invoke("editor.saveRange")
+            })
+            $rowHeightInput.on('blur', function (event) {    // restore selection in editor
+                context.invoke("editor.restoreRange")
+            })
+            $rowHeightInput.on('keydown', function (event) {
+                if (event.keyCode === 13) { // Enter
+                    context.invoke("beforeCommand")
+                    event.preventDefault()
+                    let $target = $(event.target)
+                    context.invoke("jTable.setCellsWidthHeight", "height", $target.val())    // update selection rows height
+                    context.invoke("afterCommand")
+                }
+                else if (event.keyCode === 27) {    // ESC
+                    context.invoke("beforeCommand")
+                    event.preventDefault()
+                    context.invoke('jTable.updateCellsWidthHeight') // restore value
+                    context.invoke("afterCommand")
+                }
+            })
+            $rowHeight.append($rowHeightInput)
+
+            $rowHeight.attr({
+                title: lang.jTable.resize.rowHeight,
+                'aria-label': lang.jTable.resize.rowHeight,
+            }).tooltip({
+                container: options.container,
+                trigger: 'hover',
+                placement: 'bottom',
+            }).on('click', (e) => {
+                $(e.currentTarget).tooltip('hide');
+            });
+            return $rowHeight
+        });
+
+        context.memo('button.jColWidth', () => {
+            // input-group
+            var $colWidth = $(`<div>`)
+                .addClass(["input-group", "input-group-sm", "jtable-col-width-input-group", "jtable-display"])
+
+            // icon
+            var $inputPrepend = $(`<div>`).addClass("input-group-prepend")
+            var $icon = $(`<span>`).addClass("input-group-text")
+                .append($(`<i>`).addClass("jtable-icon-col-width")
+                    .html(`<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path transform="rotate(-180 14.0889 14.2325)" fill="#007fff" stroke="#007fff" id="svg_5" d="m14.26689,11.00874q0.2111,0 0.37246,0.15312l0.31041,0.31041q0.15712,0.1572 0.15712,0.37653q0,0.22349 -0.15712,0.37246l-1.21252,1.21676l2.91344,0q0.21517,0 0.34959,0.15512q0.13457,0.1552 0.13457,0.37453l0,0.52974q0,0.21933 -0.13457,0.37453q-0.13441,0.1552 -0.34959,0.1552l-2.91344,0l1.21252,1.21668q0.15712,0.14897 0.15712,0.37246t-0.15712,0.37246l-0.31041,0.31041q-0.15728,0.1572 -0.37246,0.1572q-0.21925,0 -0.37661,-0.1572l-2.69403,-2.69411q-0.1532,-0.14489 -0.1532,-0.37246q0,-0.22349 0.1532,-0.37661l2.69403,-2.69411q0.16144,-0.15312 0.37661,-0.15312z" stroke-width="0"/>
+                    <path fill="#007fff" stroke="#007fff" id="svg_3" d="m6.26691,11.00873q0.21109,0 0.37245,0.15312l0.31041,0.31041q0.15712,0.1572 0.15712,0.37653q0,0.22349 -0.15712,0.37246l-1.21252,1.21675l2.91344,0q0.21517,0 0.34959,0.15513q0.13457,0.1552 0.13457,0.37453l0,0.52974q0,0.21933 -0.13457,0.37453q-0.13442,0.15521 -0.34959,0.15521l-2.91344,0l1.21252,1.21667q0.15712,0.14897 0.15712,0.37246t-0.15712,0.37246l-0.31041,0.3104q-0.15728,0.1572 -0.37245,0.1572q-0.21925,0 -0.37661,-0.1572l-2.69403,-2.6941q-0.1532,-0.14489 -0.1532,-0.37246q0,-0.22349 0.1532,-0.37661l2.69403,-2.69411q0.16144,-0.15312 0.37661,-0.15312z" stroke-width="0"/>
+                    <rect transform="rotate(-90 9.86516 4.54366)" stroke="#000000" fill-opacity="0" fill="#000000" id="svg_19" height="14" width="4" y="-2.45634" x="7.86516"/>
+                    <rect transform="rotate(-90 16.9152 9.54366)" stroke="#000000" id="svg_20" height="0.1" width="3" y="9.49367" x="15.41515"/>
+                    <rect transform="rotate(-90 2.91516 9.54366)" stroke="#000000" id="svg_21" height="0.1" width="3" y="9.49366" x="1.41516"/>
+                </svg>`))
+
+            $inputPrepend.append($icon)
+            $colWidth.append($inputPrepend)
+
+            // input
+            var $colWidthInput = $(`<input min="27" type=number />`)
+                .addClass("jtable-col-width-input")
+                .css({
+                    "width": "3em",
+                    "line-height": "1em",
+                    "text-align": "center",
+                    "border": "1px solid #ced4da",
+                    "border-radius": "0 0.2rem 0.2rem 0",
+                    "font-size": "13px"
+                })
+
+            // input event
+            $colWidthInput.on('focus', function (event) {   // keep selection in editor
+                context.invoke("editor.saveRange")
+            })
+            $colWidthInput.on('blur', function (event) {    // restore selection in editor
+                context.invoke("editor.restoreRange")
+            })
+            $colWidthInput.on('keydown', function (event) {
+                if (event.keyCode === 13) { // Enter
+                    context.invoke("beforeCommand")
+                    event.preventDefault()
+                    let $target = $(event.target)
+                    context.invoke("jTable.setCellsWidthHeight", "width", $target.val())    // update selection columns width
+                    context.invoke("afterCommand")
+                }
+                else if (event.keyCode === 27) {    // ESC
+                    context.invoke("beforeCommand")
+                    event.preventDefault()
+                    context.invoke('jTable.updateCellsWidthHeight') // restore value
+                    context.invoke("afterCommand")
+                }
+            })
+            $colWidth.append($colWidthInput)
+
+            $colWidth.attr({
+                title: lang.jTable.resize.colWidth,
+                'aria-label': lang.jTable.resize.colWidth,
+            }).tooltip({
+                container: options.container,
+                trigger: 'hover',
+                placement: 'bottom',
+            }).on('click', (e) => {
+                $(e.currentTarget).tooltip('hide');
+            });
+            return $colWidth
+        });
+
+        self.setCellsWidthHeight = function (type, val) {
+            var cell = tableBlock.currentTdEl;
+            var $cell = $(cell);
+            var $table = $cell.closest('table');
+            var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+            var matrixTable = vTable.getMatrixTable();
+
+            var effectRow = tableBlock.effect.row;
+            var effectCol = tableBlock.effect.col;
+
+            switch (type) {
+                case "width":
+                    for (var colIndex = effectCol.start; colIndex <= effectCol.end; colIndex++) {
+                        // change col
+                        $($table.find('colgroup:first col')[colIndex]).css('width', val)
+                    }
+                    break;
+                case "height":
+                    for (var rowIndex = effectRow.start; rowIndex <= effectRow.end; rowIndex++) {
+                        var virtualTd = matrixTable[rowIndex][effectCol.start];
+                        // change all td in tr
+                        $(virtualTd.baseCell).closest('tr').find('td').css('height', val);
+                    }
+                    break;
+            }
+
+            resetTableBlock($table);
+        }
+
+        self.updateCellsWidthHeight = function () {
+            var rng = modules.editor.getLastRange.call(modules.editor);
+            var effectRow = tableBlock.effect.row;
+            var effectCol = tableBlock.effect.col;
+            var cell = tableBlock.currentTdEl || dom.ancestor(rng.commonAncestor(), dom.isCell);
+            if (!cell) return   // cusror not on table
+
+            // find inputs
+            var $rowHeightInput = $toolbar.find(".jtable-row-height-input")
+            var $colWidthInput = $toolbar.find(".jtable-col-width-input")
+            
+            var $cell = $(cell);
+            var $table = $cell.closest('table');
+            var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+            var matrixTable = vTable.getMatrixTable();
+
+            // test if any fields have different height
+            let diffHeightFlag = false
+            const recordHeight = $cell.css('height')
+            for (var rowIndex = effectRow.start; rowIndex <= effectRow.end; rowIndex++) {
+                var virtualTd = matrixTable[rowIndex][effectCol.start];
+                const cellHeight = $(virtualTd.baseCell).css('height')
+                if (cellHeight !== recordHeight) {
+                    diffHeightFlag = true
+                }
+            }
+
+            // test if any fields have different width
+            let diffWidthFlag = false
+            const recordWidth = $($table.find('colgroup:first col')[effectCol.start]).css('width')
+            for (var colIndex = effectCol.start; colIndex <= effectCol.end; colIndex++) {
+                const cellWidth = $($table.find('colgroup:first col')[colIndex]).css('width')
+                if (cellWidth !== recordWidth) {
+                    diffWidthFlag = true
+                }
+            }
+            
+            // update input value
+            if (diffHeightFlag) {   // rows exist different height
+                $rowHeightInput.val("")
+            }
+            else {
+                var currentHeight = recordHeight? parseInt(recordHeight.replace(/\D/g, ""), 10) : ""
+                $rowHeightInput.val(currentHeight)
+            }
+
+            if (diffWidthFlag) {    // columns exist different width
+                $colWidthInput.val("")
+            }
+            else { 
+                var currentWidth = recordWidth? parseInt(recordWidth.replace(/\D/g, ""), 10) : ""
+                $colWidthInput.val(currentWidth)
+            }
+        }
+
         self.expandColgroup = function (colgroup) {
             /**
              * expand colgroup col span
@@ -1664,6 +1887,9 @@
         }
 
         self.events = {
+            'summernote.keyup summernote.mouseup summernote.change': function () {
+                context.invoke('jTable.updateCellsWidthHeight')
+            },
             'summernote.init': function (_, layoutInfo) {
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
                 layoutInfo.toolbar.find('.jtable-display').hide()
@@ -2409,6 +2635,12 @@
         };
 
         self.initialize = function () {
+            // remove input number spin button
+            if ($(`#input-spin-buton`).length == 0) {
+                this.$css = $('<style>').html(`input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;} input[type=number] {-moz-appearance: textfield;}`)
+                this.$css.attr('id', `input-spin-buton`)
+                $(document.head).append(this.$css)
+            }
         };
 
         self.destroy = function () {
@@ -2927,6 +3159,10 @@
                     window: '自動調整成視窗大小',
                     fixed: '固定欄寬',
                 },
+                resize: {
+                    rowHeight: '列高 (px)',
+                    colWidth: '欄寬 (px)',
+                },
                 apply          : '套用',
                 addDeleteRowCOl: '欄/列(插入/刪除)',
                 areaReset      : '清除格式',
@@ -2957,6 +3193,10 @@
                     contents: 'autofit contents',
                     window: 'autofit window',
                     fixed: 'fixed column',
+                },
+                resize: {
+                    rowHeight: 'row height (px)',
+                    colWidth: 'col width (px)',
                 },
                 apply          : 'apply',
                 addDeleteRowCOl: 'Row/Col(Add/Del)',

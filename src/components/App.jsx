@@ -65,6 +65,8 @@ class App extends Component {
                             ["fontsize", ["fontsizeInput"]],
 							["para", ["ul", "ol", "listStyles", "paragraph"]],
 							["table", ["jTable"]],
+                            ["tableRow", ["jRowHeight"]],
+                            ["tableCol", ["jColWidth"]],
 							["insert", ["link", "picture", "video", "customSpecialChar"]],
 							["view", ["fullscreen", "codeview"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
@@ -88,6 +90,8 @@ class App extends Component {
 						['color', ['color']],
                         ["para", ["ul", "ol", "listStyles", "paragraph"]],
 						["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
+                        ["tableRow", ["jRowHeight"]],
+                        ["tableCol", ["jColWidth"]],
 						["insert", ["link", "picture", "video", "customSpecialChar"]],
 						["view", ["fullscreen", "codeview"]],
 					],
