@@ -71,7 +71,12 @@ class InnerReactSummernote extends React.Component {
 			],
 			table: [
 			  ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
-			  ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+			  ['delete', ['deleteRow', 'deleteCol']],
+            //   ['columrow', ['jAddDeleteRowCol']],
+              ['color', ['jBackcolor', 'jBorderColor' ]],
+              ['style', ['jAlign', 'jMerge' ]],
+              ['info', ['jAutoFit', 'jTableInfo']],
+              ['delete', ['jWidthHeightReset', 'deleteTable']],
 			],
 			air: [
 			  ['color', ['color']],

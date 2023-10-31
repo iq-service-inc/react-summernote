@@ -938,6 +938,107 @@
             }).render();
         });
 
+        context.memo('button.jAutoFit', function () {
+            var icon = {
+                IconAutofitContents: `<svg width="16" height="20" viewBox="0 0 20 25" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke="null" d="m0.40456,23.71451l0,-15.4604l5.98412,0l1.2128,0l4.79816,0l1.21167,0l5.98412,0l0,15.4604l-19.19087,0l0,0zm13.20675,-1.18003l4.79577,0l0,-3.56933l-4.79577,0l0,3.56933zm4.79577,-4.75652l0,-3.56102l-4.79577,0l0,3.56102l4.79577,0zm-10.80559,4.75652l4.79816,0l0,-3.56933l-4.79816,0l0,3.56933zm4.79816,-4.75652l0,-3.56102l-4.79816,0l0,3.56102l4.79816,0zm-10.80406,4.75652l4.7931,0l0,-3.56933l-4.7931,0l0,3.56933zm4.7931,-4.75652l0,-3.56102l-4.7931,0l0,3.56102l4.7931,0zm-4.7931,-8.32662l0,3.57783l4.7931,0l0,-3.57783l-4.7931,0zm6.0059,0l0,3.57783l4.79816,0l0,-3.57783l-4.79816,0zm6.00982,0l0,3.57783l4.79577,0l0,-3.57783l-4.79577,0z" class="cls-1" fill="#000" fill-rule="evenodd"/>
+                    <line stroke="#000" x1="0.99834" y1="1.28549" x2="0.99834" y2="7.9574" id="svg_6"/>
+                    <line stroke="#000" x1="19.04735" y1="1.28549" x2="19.04735" y2="7.9574" id="svg_5"/>
+                    <line stroke="#000" x1="6.61898" y1="4.69242" x2="1.08942" y2="4.69242" id="svg_4"/>
+                    <line stroke="#000" x1="18.96992" y1="4.69242" x2="13.44035" y2="4.69242" id="svg_3"/>
+                    <line stroke="#007fff" x1="7.64112" y1="2.12549" x2="12.35887" y2="6.84324" id="svg_2"/>
+                    <line stroke="#007fff" x1="12.40457" y1="2.07979" x2="7.68682" y2="6.79754" id="svg_1"/>
+                </svg>`,
+                IconAutofitWindow: `<svg width="16" height="20" viewBox="0 0 20 25" xmlns="http://www.w3.org/2000/svg">
+                <text stroke-width="0" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="7" id="svg_3" y="7" x="6.51394" stroke="#007fff" fill="#007fff">%</text>
+                    <path stroke="null" id="svg_4" d="m0.17556,24.29515l0,-15.82937l6.12694,0l1.24175,0l4.91267,0l1.24058,0l6.12694,0l0,15.82937l-19.64887,0l0,0zm13.52193,-1.20819l4.91022,0l0,-3.65452l-4.91022,0l0,3.65452zm4.91022,-4.87004l0,-3.64601l-4.91022,0l0,3.64601l4.91022,0zm-11.06347,4.87004l4.91267,0l0,-3.65452l-4.91267,0l0,3.65452zm4.91267,-4.87004l0,-3.64601l-4.91267,0l0,3.64601l4.91267,0zm-11.0619,4.87004l4.90749,0l0,-3.65452l-4.90749,0l0,3.65452zm4.90749,-4.87004l0,-3.64601l-4.90749,0l0,3.64601l4.90749,0zm-4.90749,-8.52534l0,3.66321l4.90749,0l0,-3.66321l-4.90749,0zm6.14923,0l0,3.66321l4.91267,0l0,-3.66321l-4.91267,0zm6.15325,0l0,3.66321l4.91022,0l0,-3.66321l-4.91022,0z" class="cls-1" fill="#000" fill-rule="evenodd"/>
+                    <line stroke="#000" x1="0.78351" y1="1.33085" x2="0.78351" y2="8.16198" id="svg_1"/>
+                    <line stroke="#000" x1="19.26327" y1="1.33085" x2="19.26327" y2="8.16198" id="svg_2"/>
+                    <line stroke="#000" x1="6.53829" y1="4.81908" x2="0.87676" y2="4.81908" id="svg_9"/>
+                    <line stroke="#000" x1="19.18399" y1="4.81909" x2="13.52246" y2="4.81909" id="svg_10"/>
+                </svg>`,
+                IconFixedColumnWidth: `<svg width="16" height="20" viewBox="0 0 20 25" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke="null" id="svg_4" d="m0.49693,23.60655l0,-15.31157l5.92652,0l1.20113,0l4.75197,0l1.2,0l5.92652,0l0,15.31157l-19.00613,0l0,0zm13.07961,-1.16867l4.7496,0l0,-3.53497l-4.7496,0l0,3.53497zm4.7496,-4.71073l0,-3.52674l-4.7496,0l0,3.52674l4.7496,0zm-10.70157,4.71073l4.75197,0l0,-3.53497l-4.75197,0l0,3.53497zm4.75197,-4.71073l0,-3.52674l-4.75197,0l0,3.52674l4.75197,0zm-10.70005,4.71073l4.74696,0l0,-3.53497l-4.74696,0l0,3.53497zm4.74696,-4.71073l0,-3.52674l-4.74696,0l0,3.52674l4.74696,0zm-4.74696,-8.24647l0,3.54339l4.74696,0l0,-3.54339l-4.74696,0zm5.94809,0l0,3.54339l4.75197,0l0,-3.54339l-4.75197,0zm5.95197,0l0,3.54339l4.7496,0l0,-3.54339l-4.7496,0z" class="cls-1" fill="#000" fill-rule="evenodd"/>
+                    <line stroke="#000" x1="0.88616" y1="1.39345" x2="0.88616" y2="8.00112" id="svg_1"/>
+                    <line stroke="#000" x1="18.76142" y1="1.39345" x2="18.76142" y2="8.00112" id="svg_2"/>
+                    <line stroke="#007fff" x1="2.92815" y1="4.38208" x2="2.92815" y2="7.32357" id="svg_14"/>
+                    <line stroke="#007fff" x1="5.19084" y1="4.38208" x2="5.19084" y2="7.32357" id="svg_15"/>
+                    <line stroke="#007fff" x1="7.45353" y1="4.38208" x2="7.45353" y2="7.32357" id="svg_16"/>
+                    <line stroke="#007fff" x1="9.71623" y1="4.38208" x2="9.71623" y2="7.32357" id="svg_17"/>
+                    <line stroke="#007fff" x1="11.97892" y1="4.38208" x2="11.97892" y2="7.32357" id="svg_22"/>
+                    <line stroke="#007fff" x1="14.24161" y1="4.38208" x2="14.24161" y2="7.32357" id="svg_23"/>
+                    <line stroke="#007fff" x1="16.5043" y1="4.38208" x2="16.5043" y2="7.32357" id="svg_27"/>
+                    <line stroke="#000" x1="18.67122" y1="7.4828" x2="1.11211" y2="7.4828" id="svg_13"/>
+                </svg>`
+            }
+            return ui.buttonGroup([
+                ui.button({
+                    className: 'dropdown-toggle jtable-display',
+                    contents :`<i class="note-icon jtable-icon-autofit-contents">${icon.IconAutofitContents}</i>`,
+                    tooltip  : lang.jTable.autofit.autofit,
+                    container: options.container,
+                    data     : {
+                        toggle: 'dropdown',
+                    },
+                    click: function (event) {
+                        self.recoverPopover(event)
+                    }
+                }),
+                ui.dropdown({
+                    className: 'jtable-autofit-dropdown',
+                    children : [
+                        ui.buttonGroup([
+                            ui.button({
+                                className: 'note-btn-jtable-autofit-contents',
+                                contents : `<i class="note-icon jtable-icon-autofit-contents">${icon.IconAutofitContents}</i>`,
+                                tooltip  : lang.jTable.autofit.contents,
+                                container: options.container,
+                                click    : context.createInvokeHandler('jTable.autofitContents'),
+                            }),
+                            ui.button({
+                                className: 'note-btn-jtable-autofit-window',
+                                contents : `<i class="note-icon jtable-icon-autofit-window">${icon.IconAutofitWindow}</i>`,
+                                tooltip  : lang.jTable.autofit.window,
+                                container: options.container,
+                                click    : context.createInvokeHandler('jTable.autofitWindow'),
+                            }),
+                            ui.button({
+                                className: 'note-btn-jtable-fixed-column-width',
+                                contents : `<i class="note-icon jtable-icon-fixed-column-width">${icon.IconFixedColumnWidth} </i>`,
+                                tooltip  : lang.jTable.autofit.fixed,
+                                container: options.container,
+                                click    : context.createInvokeHandler('jTable.fixedColumnWidth'),
+                            }),
+                        ])
+                    ]
+                }),
+            ]).render();
+        });
+
+        self.autofitContents = function () {
+            self.beforeCommand()
+            var rng = modules.editor.getLastRange.call(modules.editor)
+            var $table = $(dom.ancestor(rng.ec, dom.isTable))
+            $table.find('colgroup col').css('width', '')
+            self.afterCommand()
+        }
+
+        self.autofitWindow = function () {
+            self.beforeCommand()
+            var rng = modules.editor.getLastRange.call(modules.editor)
+            var $table = $(dom.ancestor(rng.ec, dom.isTable))
+            $table.css('width', '100%')
+            self.afterCommand()
+        }
+
+        self.fixedColumnWidth = function () {
+            self.beforeCommand()
+            var rng = modules.editor.getLastRange.call(modules.editor)
+            var $table = $(dom.ancestor(rng.ec, dom.isTable))
+            $table.css('overflow-wrap', 'anywhere')
+            self.afterCommand()
+        }
+
 
         var mergeBody = [
             '<div class="form-group">',
@@ -2808,6 +2909,12 @@
                     info  : 'table info',
                     margin: '邊界'
                 },
+                autofit: {
+                    autofit: '自動調整',
+                    contents: '自動調整成內容大小',
+                    window: '自動調整成視窗大小',
+                    fixed: '固定欄寬',
+                },
                 apply          : '套用',
                 addDeleteRowCOl: '欄/列(插入/刪除)',
                 areaReset      : '清除格式',
@@ -2832,6 +2939,12 @@
                 info           : {
                     info  : 'table info',
                     margin: 'margin'
+                },
+                autofit: {
+                    autofit: 'autofit',
+                    contents: 'autofit contents',
+                    window: 'autofit window',
+                    fixed: 'fixed column',
                 },
                 apply          : 'apply',
                 addDeleteRowCOl: 'Row/Col(Add/Del)',

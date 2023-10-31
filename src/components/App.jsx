@@ -64,12 +64,13 @@ class App extends Component {
 							["fontname", ["fontname"]],
                             ["fontsize", ["fontsizeInput"]],
 							["para", ["ul", "ol", "listStyles", "paragraph"]],
-							["table", ["table"]],
+							["table", ["jTable"]],
 							["insert", ["link", "picture", "video", "customSpecialChar"]],
 							["view", ["fullscreen", "codeview"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
 						],
 						canViewClasslist: true,
+                        tableClassName: 'jtable table-bordered'
 					}}
 					onChange={onChange}
 					onImageUpload={this.onImageUpload1}

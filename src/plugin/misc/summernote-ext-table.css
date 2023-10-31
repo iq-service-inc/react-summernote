@@ -198,3 +198,8 @@
 .jtable td, .jtable th {
     border: 1px solid #dee2e6;
 }
+
+.jtable-autofit-dropdown {
+    min-width: auto !important;
+    padding: 5px;
+}
