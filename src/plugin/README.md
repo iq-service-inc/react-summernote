@@ -102,15 +102,29 @@ options = {{
   popover: {
     image: [
       ['custom', ['imageAttributes', 'captionIt', 'imageShapes']],
-      ['float', ['floatLeft', 'floatRight']],
-      ['remove', ['removeMedia']]
+      ['resize', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+      ['float', ['floatLeft', 'floatRight', 'floatNone']],
+      ['remove', ['removeMedia']],
+    ],
+    link: [
+      ['link', ['linkDialogShow', 'unlink']],
     ],
     table: [
-      ['merge', ['jMerge']],
-      ['style', ['jBackcolor', 'jBorderColor', 'jAlign', 'jAddDeleteRowCol']],
+      ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+      ['delete', ['deleteRow', 'deleteCol']],
+      ['color', ['jBackcolor', 'jBorderColor' ]],
+      ['style', ['jAlign', 'jMerge' ]],
       ['info', ['jAutoFit', 'jTableInfo']],
       ['delete', ['jWidthHeightReset', 'deleteTable']],
-    ]
+    ],
+    air: [
+      ['color', ['color']],
+      ['font', ['bold', 'underline', 'clear']],
+      ['para', ['ul', 'paragraph']],
+      ['table', ['table']],
+      ['insert', ['link', 'picture']],
+      ['view', ['fullscreen', 'codeview']],
+    ],
   },
   tableClassName: 'jtable table-bordered',
   callbacks: {
