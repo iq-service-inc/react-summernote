@@ -317,6 +317,13 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
    - 圖片標題
    - `image popover` button: `captionIt`
      - `captionIt`: 插入圖片標題
+     
+    ```js
+    // options
+    captionIt: {
+      captionInAnchor: false
+    },
+    ```
 
 #### [summernote-image-shapes](https://github.com/DiemenDesign/summernote-image-shapes)
    - Adds option with dropdown to the Image Popover to add or remove Bootstrap Image Classes for styling the look and behaviour of images.
