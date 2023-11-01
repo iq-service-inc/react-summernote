@@ -23,6 +23,7 @@ node .\bundle-plugins.js
     - [Formatting](#formatting)
       - [summernote-addclass](#summernote-addclass)
       - [summernote-case-converter](#summernote-case-converter)
+      - [summernote-image-attributes](#summernote-image-attributes)
       - [summernote-image-captionit](#summernote-image-captionit)
       - [summernote-image-shapes](#summernote-image-shapes)
       - [summernote-list-styles](#summernote-list-styles)
@@ -52,6 +53,7 @@ require('react-summernote/plugin/custom/summernote-toc')
 
 require('react-summernote/plugin/formatting/summernote-addclass')
 require('react-summernote/plugin/formatting/summernote-case-converter')
+require('react-summernote/plugin/formatting/summernote-image-attributes')
 require('react-summernote/plugin/formatting/summernote-image-captionit')
 require('react-summernote/plugin/formatting/summernote-image-shapes')
 require('react-summernote/plugin/formatting/summernote-list-styles')
@@ -99,7 +101,7 @@ options = {{
   ],
   popover: {
     image: [
-      ['custom', ['captionIt', 'imageShapes']],
+      ['custom', ['imageAttributes', 'captionIt', 'imageShapes']],
       ['float', ['floatLeft', 'floatRight']],
       ['remove', ['removeMedia']]
     ],
@@ -161,6 +163,8 @@ options = {{
      - `addclass`: 套用 class 樣式
    - summernote-case-converter
      - `caseConverter`: 切換文字大小寫
+   - summernote-image-attributes
+     - `imageAttributes`: 編輯圖片屬性，`image popover`
    - summernote-image-captionit
      - `captionIt`: 插入圖片標題，`image popover`
    - summernote-image-shapes
@@ -287,6 +291,12 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
    - 文字大小寫轉換
    - `toolbar` button: `caseConverter`
      - `caseConverter`: 切換文字大小寫
+
+#### [summernote-image-attributes](https://github.com/DiemenDesign/summernote-image-attributes)
+   - This is a forked and extended version of "summernote-image-title", for those that want a little more control over editable attributes for Images.
+   - 圖片屬性
+   - `image popover` button: `imageAttributes`
+     - `imageAttributes`: 編輯圖片屬性
 
 #### [summernote-image-captionit](https://github.com/DiemenDesign/summernote-image-captionit)
    - Allows adding figure and figcaption to images, with removal when selected twice.

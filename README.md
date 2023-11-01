@@ -251,6 +251,7 @@ require('bootstrap/dist/css/bootstrap.min.css')
 require('bootstrap/js/dist/modal')
 require('bootstrap/js/dist/dropdown')
 require('bootstrap/js/dist/tooltip')
+require('bootstrap/js/dist/tab')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
 

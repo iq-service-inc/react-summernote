@@ -3,6 +3,7 @@ module.exports = function () {
     require('bootstrap/js/dist/modal')
     require('bootstrap/js/dist/dropdown')
     require('bootstrap/js/dist/tooltip')
+    require('bootstrap/js/dist/tab')
 
     require('summernote/dist/summernote-bs4.css')
     require('summernote/dist/summernote-bs4.js')
@@ -17,6 +18,7 @@ module.exports = function () {
     // require('../plugin/emoji/summernote-ext-emoji-ajax.css')
     require('../plugin/formatting/summernote-addclass')
     require('../plugin/formatting/summernote-case-converter')
+    require('../plugin/formatting/summernote-image-attributes')
     require('../plugin/formatting/summernote-image-captionit')
     require('../plugin/formatting/summernote-image-shapes')
     require('../plugin/formatting/summernote-list-styles')

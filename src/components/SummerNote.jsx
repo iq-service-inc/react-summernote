@@ -62,6 +62,7 @@ class InnerReactSummernote extends React.Component {
 		// default popover
 		var initPopover = {
 			image: [
+              ['custom', ['imageAttributes']],
 			  ['resize', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
 			  ['float', ['floatLeft', 'floatRight', 'floatNone']],
 			  ['remove', ['removeMedia']],
