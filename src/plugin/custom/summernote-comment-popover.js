@@ -78,27 +78,27 @@
                 let titleMaxAttr = !!titleMaxLength? `maxlength="${titleMaxLength}"`: ""
                 let contentMaxAttr = !!contentMaxLength? `maxlength="${contentMaxLength}"`: ""
                 this.$dialog = ui.dialog({
-                    title: `${lang.editPopover.addPopover}`,
+                    title: `${lang.commentPopover.addPopover}`,
                     className: 'summernote-comment-popover-dialog',
                     fade: options.dialogsFade,
                     body: [
                         '<div class="form-group summernote-comment-popover-form-group">',
-                        `<label for="summernote-comment-popover-image-url-${options.id}" class="note-form-label" >${lang.editPopover.imgurl}</label>`,
+                        `<label for="summernote-comment-popover-image-url-${options.id}" class="note-form-label" >${lang.commentPopover.imgurl}</label>`,
                         `<input id="summernote-comment-popover-image-url-${options.id}" class="summernote-comment-popover-image-url form-control note-form-control note-input" type="url" pattern="${urlPattern.source}" />`,
-                        `<div class="invalid-feedback">${lang.editPopover.invalidUrl}</div>`,
+                        `<div class="invalid-feedback">${lang.commentPopover.invalidUrl}</div>`,
                         '</div>',
                         '<div class="form-group summernote-comment-popover-form-group">',
-                        `<label for="summernote-comment-popover-title-text-${options.id}" class="note-form-label" >${lang.editPopover.title}</label>`,
+                        `<label for="summernote-comment-popover-title-text-${options.id}" class="note-form-label" >${lang.commentPopover.title}</label>`,
                         `<input ${titleMaxAttr} id="summernote-comment-popover-title-text-${options.id}" class="summernote-comment-popover-title-text form-control note-form-control note-input" type="text" />`,
-                        `<div class="invalid-feedback">${lang.editPopover.invalidContent}</div>`,
+                        `<div class="invalid-feedback">${lang.commentPopover.invalidContent}</div>`,
                         '</div>',
                         '<div class="form-group summernote-comment-popover-form-group">',
-                        `<label for="summernote-comment-popover-content-text-${options.id}" class="note-form-label" >${lang.editPopover.content}</label>`,
+                        `<label for="summernote-comment-popover-content-text-${options.id}" class="note-form-label" >${lang.commentPopover.content}</label>`,
                         `<textarea ${contentMaxAttr} id="summernote-comment-popover-content-text-${options.id}" class="summernote-comment-popover-content-text form-control note-form-control note-input" rows="3"></textarea>`,
-                        `<div class="invalid-feedback">${lang.editPopover.invalidContent}</div>`,
+                        `<div class="invalid-feedback">${lang.commentPopover.invalidContent}</div>`,
                         '</div>',
                     ].join(''),
-                    footer: `<button href="#" class="btn btn-primary summernote-comment-popover-btn">${lang.editPopover.ok}</button>`,
+                    footer: `<button href="#" class="btn btn-primary summernote-comment-popover-btn">${lang.commentPopover.ok}</button>`,
                 }).render().appendTo(options.container);
                 this.$dialog.find('.modal-body').addClass("summernote-comment-popover-form-container")
             }
@@ -119,7 +119,7 @@
             context.memo('button.editPopover', function () {
                 return ui.button({
                     contents: `<i class="note-icon">${editPopoverIcon}</i>`,
-                    tooltip: lang.editPopover.addPopover,
+                    tooltip: lang.commentPopover.addPopover,
                     click: function () {
                         // console.log(range.create(), context.invoke('editor.getLastRange'))
                         self.showDialog()
@@ -130,7 +130,7 @@
             context.memo('button.removePopover', function () {
                 return ui.button({
                     contents: `<i class="note-icon">${deletePopoverIcon}</i>`,
-                    tooltip: lang.editPopover.removePopover,
+                    tooltip: lang.commentPopover.removePopover,
                     click: function () {
                         self.wrapCommand(self.removePopover())
                         // console.log(context.invoke('editor.getLastRange'))
@@ -500,7 +500,7 @@
     })
     $.extend(true, $.summernote.lang, {
         'zh-TW': {
-            editPopover: {
+            commentPopover: {
                 addPopover: '新增註解',
                 removePopover: '刪除註解',
                 imgurl: '圖片連結',
@@ -512,7 +512,7 @@
             }
         },
         'en-US': {
-            editPopover: {
+            commentPopover: {
                 addPopover: 'Add Comment',
                 removePopover: 'Remove Comment',
                 imgurl: 'Image URL',
