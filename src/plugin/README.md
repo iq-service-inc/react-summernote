@@ -20,6 +20,7 @@ node .\bundle-plugins.js
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-fontsize-input](#summernote-fontsize-input)
+      - [summernote-pastehtml](#summernote-pastehtml)
       - [summernote-toc](#summernote-toc)
     - [Formatting](#formatting)
       - [summernote-addclass](#summernote-addclass)
@@ -171,6 +172,8 @@ options = {{
      - `customSpecialChar`: 插入特殊符號
    - summernote-fontsize-input
      - `fontsizeInput`: 更新字號
+   - summernote-pastehtml
+     - `pasteHTML`: 插入 HTML
    - summernote-toc
      - `anchor`: 插入錨點
      - `toc`: 產生 TOC ，置於 toolbar
@@ -273,6 +276,12 @@ options = {{
         sizes: ['8', '9', '10', '11', '12', '14', '16', '18', '26', '42', '74'] // dropdown 選項 (px)
     }
     ```
+
+#### summernote-pasteHTML
+- 在游標位置插入 HTML
+- `toolbar` button: `pasteHTML`
+  - `pasteHTML`: 插入 HTML
+
 
 #### summernote-toc
 - 插入 anchor 快捷鍵 `ctrl` + `shift` + `a`

@@ -67,7 +67,7 @@ class App extends Component {
 							["table", ["jTable"]],
                             ["tableRow", ["jRowHeight"]],
                             ["tableCol", ["jColWidth"]],
-							["insert", ["link", "picture", "video", "customSpecialChar"]],
+							["insert", ["pasteHTML", "link", "picture", "video", "customSpecialChar"]],
 							["view", ["fullscreen", "codeview"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]],
                             ["comment", ["editPopover", "removePopover"]]
@@ -93,7 +93,7 @@ class App extends Component {
 						["table", ["jTable", "jMerge", "jBackcolor", "jBorderColor", "jAlign", "jTableInfo", "jWidthHeightReset"]],
                         ["tableRow", ["jRowHeight"]],
                         ["tableCol", ["jColWidth"]],
-						["insert", ["link", "picture", "video", "customSpecialChar"]],
+                        ["insert", ["pasteHTML", "link", "picture", "video", "customSpecialChar"]],
 						["view", ["fullscreen", "codeview"]],
                         ["comment", ["editPopover", "removePopover"]]
 					],
