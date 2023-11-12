@@ -16,6 +16,7 @@ node .\bundle-plugins.js
   - [Button 功能](#button-功能)
   - [Plugin 簡介](#plugin-簡介)
     - [Custom](#custom)
+      - [summernote-comment-popover](#summernote-comment-popover)
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-fontsize-input](#summernote-fontsize-input)
@@ -161,6 +162,9 @@ options = {{
 
 ## Button 功能
 -  [Custom](#custom)
+   - summernote-comment-popover
+     - `editPopover`: 插入註解 popover
+     - `removePopover`: 移除註解 popover
    - summernote-custom
      - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
    - summernote-custom-specialchars
@@ -226,6 +230,22 @@ options = {{
 
 ## Plugin 簡介
 ### Custom
+
+#### summernote-comment-popover
+- 框選文字段落加上註解 popover，依賴於 bootstrap popover
+- `toolbar` button: `editPopover`, `removePopover`
+  - `editPopover`: 插入註解 popover
+  - `removePopover`: 移除註解 popover
+
+    ```js
+    // options
+    commentPopover: {
+        className: 'summernote-comment-popover',  // popover classname
+        urlPattern: /https?:\/\/(?:[\w\u00a1-\uffff]+\.?)+(?::\d{2,5})?(?:\/[^\s]*)?/,  // test image url validity
+        titleMaxLength: 100,  // title input maxlength
+        contentMaxLength: 100,  // content input maxlength
+    }
+    ```
 
 #### summernote-custom
 - custom ul button, close toolbar colorplette, table popover language zh-TW

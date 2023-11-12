@@ -69,7 +69,8 @@ class App extends Component {
                             ["tableCol", ["jColWidth"]],
 							["insert", ["link", "picture", "video", "customSpecialChar"]],
 							["view", ["fullscreen", "codeview"]],
-							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]]
+							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]],
+                            ["comment", ["editPopover", "removePopover"]]
 						],
 						canViewClasslist: true,
                         tableClassName: 'jtable table-bordered'
