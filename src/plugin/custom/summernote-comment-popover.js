@@ -67,6 +67,16 @@
                 <path stroke="null" id="svg_3" d="m12.45892,12.36059l1.80144,-1.80144l1.91364,1.91362l1.91364,-1.91362l1.80145,1.80144l-1.91364,1.91364l1.91364,1.91364l-1.80145,1.80145l-1.91364,-1.91364l-1.91364,1.91364l-1.80144,-1.80145l1.91362,-1.91364l-1.91362,-1.91364z" fill="#000000"/>
             </svg>`
 
+            this.events = {
+                // initial all popover
+                'summernote.init': function (_, layoutInfo) {
+                    layoutInfo.editor.one('mouseenter', function (event) {
+                        let $edit = layoutInfo.editingArea
+                        let $allPopover = $edit.find(`a.${className}`)
+                        $allPopover.popover()
+                    })
+                }
+            }
             
             this.initialize = function () {
                 if ($('#summernote-comment-popover').length == 0) {
