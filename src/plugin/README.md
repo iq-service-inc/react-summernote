@@ -232,7 +232,8 @@ options = {{
 ### Custom
 
 #### summernote-comment-popover
-- 框選文字段落加上註解 popover，依賴於 bootstrap popover
+- 框選文字段落加上註解 popover
+- 若要在編輯器以外顯示需要依賴 bootstrap popover，使用 options 設定的 className 初始化 popover (e.g. `$(.summernote-comment-popover).popover()`)
 - `toolbar` button: `editPopover`, `removePopover`
   - `editPopover`: 插入註解 popover
   - `removePopover`: 移除註解 popover
