@@ -70,7 +70,8 @@ class App extends Component {
 							["insert", ["pasteHTML", "link", "picture", "video", "customSpecialChar"]],
 							["view", ["fullscreen", "codeview"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]],
-                            ["comment", ["editPopover", "removePopover"]]
+                            ["comment", ["editPopover", "removePopover"]],
+							["view", ["fullscreen", "codeview", "help"]],
 						],
 						canViewClasslist: true,
                         tableClassName: 'jtable table-bordered'
@@ -95,7 +96,8 @@ class App extends Component {
                         ["tableCol", ["jColWidth"]],
                         ["insert", ["pasteHTML", "link", "picture", "video", "customSpecialChar"]],
 						["view", ["fullscreen", "codeview"]],
-                        ["comment", ["editPopover", "removePopover"]]
+                        ["comment", ["editPopover", "removePopover"]],
+                        ["view", ["fullscreen", "codeview", "help"]],
 					],
 					tableClassName: 'jtable table-bordered'
 				}}/>

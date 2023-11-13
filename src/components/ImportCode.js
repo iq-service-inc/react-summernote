@@ -9,7 +9,8 @@ module.exports = function () {
 
     require('summernote/dist/summernote-bs4.css')
     require('summernote/dist/summernote-bs4.js')
-    require('summernote/dist/lang/summernote-zh-TW')
+    // require('summernote/dist/lang/summernote-zh-TW')
+    require('../plugin/lang/summernote-zh-TW')
 
     require('../plugin/custom/summernote-custom')
     require('../plugin/custom/summernote-custom-specialchars')

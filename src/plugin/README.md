@@ -15,6 +15,8 @@ node .\bundle-plugins.js
   - [Example](#example)
   - [Button 功能](#button-功能)
   - [Plugin 簡介](#plugin-簡介)
+    - [Lang](#lang)
+      - [summernote-zh-TW](#summernote-zh-TW)
     - [Custom](#custom)
       - [summernote-comment-popover](#summernote-comment-popover)
       - [summernote-custom](#summernote-custom)
@@ -49,6 +51,8 @@ node .\bundle-plugins.js
 
 ## import plugins
 ```js
+require('react-summernote/plugin/lang/summernote-zh-TW')
+
 require('react-summernote/plugin/custom/summernote-custom')
 require('react-summernote/plugin/custom/summernote-fontsize-input')
 require('react-summernote/plugin/custom/summernote-toc')
@@ -232,6 +236,11 @@ options = {{
      - ~~`highlight`: 插入程式碼片段~~
 
 ## Plugin 簡介
+### Lang
+
+#### [summernote-zh-TW](https://github.com/summernote/summernote/blob/c54e1dc220bdceff7a416fb42cad1b5812323afa/src/lang/summernote-zh-TW.js)
+    - 更新 summernote 繁中翻譯
+
 ### Custom
 
 #### summernote-comment-popover
