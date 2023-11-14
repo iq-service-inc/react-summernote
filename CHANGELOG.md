@@ -1,5 +1,30 @@
 # Changelog
 
+## `2.2.19`
+### feat
+* 更新 zh-TW 翻譯
+* 新增 summernote-pastehtml，可在游標位置插入 HTML
+* 新增 summernote-comment-popover，為文字段落加上註解 popover
+* 更新 summernote-image-captionit 可設定標題在圖片連結裡
+* 新增 summernote-image-attributes，編輯圖片標題、說明、連結等屬性
+* 新增 summernote-ext-table jRowHeight, jColWidth，可調整 rowHeight, colWidth 功能
+* 新增 summernote-ext-table jAutoFit，自動調整 table 欄寬
+* 更新 summernote-list-styles，新增更多項目符號
+* 新增 summernote-custom-specialchar，改寫自 summernote-ext-specialchars 可插入特殊符號
+
+### fix
+* 修復 summernote-ext-table popover 顯示
+
+### perf
+* 更新 summernote-fontsize-input 輸入框外觀
+
+### build
+* 更新 bundle-plugin 自動取得 plugin 資料夾
+
+### ci
+* 新增 deploy-pages 流程
+
+
 ## `2.2.18`
 
 * 新增 `summernote-fontsize-input`
