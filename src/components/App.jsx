@@ -20,19 +20,29 @@ class App extends Component {
 		// console.log( 'constructor this.editor2 ',this.editor2 )
 	}
 
-	// componentDidMount(){
-	// }
+    convertFileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onload = () => resolve(reader.result)
+            reader.onerror = () => reject(console.log('FileReader Error: ', error))
+        })
 
+    }
 
-	onImageUpload1 = (file, cb, e) => {
+	onImageUpload1 = (f, cb, e) => {
 		//console.log("--------- onImageUpload --------", file, cb, e);
-		let image = file[0];
 
-		console.log(this.editor1)
-		this.editor1.current.insertImage("https://i.imgur.com/JOOEENx.png", $image => {
-			$image.css("width", Math.floor($image.width() / 2));
-			$image.attr("title", image.name);
-		});
+        console.log(this.editor1)
+
+        let file = f
+        if (file.length) {
+            file = f[0]
+        }
+        this.convertFileToBase64(file).then(src => {
+            const $image = $('<img>').attr('src', src).wrap('div')
+            this.editor1.current.insertNode($image[0])
+        })
 	}
 
 	onImageUpload2 = (file, cb, e) => {
@@ -60,15 +70,15 @@ class App extends Component {
 						dialogsInBody: true,
 						toolbar: [
 							["style", ["style"]],
-							["font", ["bold", "underline", "clear"]],
+							["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear"]],
 							["fontname", ["fontname"]],
                             ["fontsize", ["fontsizeInput"]],
+                            ['color', ['forecolor', 'backcolor']],
 							["para", ["ul", "ol", "listStyles", "paragraph"]],
 							["table", ["jTable"]],
                             ["tableRow", ["jRowHeight"]],
                             ["tableCol", ["jColWidth"]],
-							["insert", ["pasteHTML", "link", "picture", "video", "customSpecialChar"]],
-							["view", ["fullscreen", "codeview"]],
+							["insert", ["pasteHTML", "link", "unlink", "picture", "video", "customSpecialChar"]],
 							["anchor",["anchor", "toc", "markAnchor", "editAnchor"]],
                             ["comment", ["editPopover", "removePopover"]],
 							["view", ["fullscreen", "codeview", "help"]],
