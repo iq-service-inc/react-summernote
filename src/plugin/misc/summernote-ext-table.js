@@ -593,6 +593,89 @@
 
             self.afterCommand();
         };
+        context.memo('button.jInsertTableDialog', function () {
+            return ui.button({
+                contents: ui.icon(options.icons.table),
+                tooltip: lang.table.table,
+                container: options.container,
+                click: context.createInvokeHandler('jTable.insertTableDialogShow'),
+            }).render();
+        });
+
+        this.$insertTableDialog = ui.dialog({
+            title: lang.jTable.table.insertTable,
+            fade: options.dialogsFade,
+            body: [
+                '<div class="form-group row jtable-insert-table-form-group">',
+                `<label for="jtable-insert-table-row-${options.id}" class="note-form-label col-form-label col-sm-4" >${lang.jTable.table.row}</label>`,
+                '<div class="col-sm-6">',
+                `<input id="jtable-insert-table-row-${options.id}" class="jtable-insert-table-row form-control note-form-control note-input" type="number" min="1" value="1" />`,
+                '</div>',
+                '</div>',
+                '<div class="form-group row jtable-insert-table-form-group">',
+                `<label for="jtable-insert-table-col-${options.id}" class="note-form-label col-form-label col-sm-4" >${lang.jTable.table.col}</label>`,
+                '<div class="col-sm-6">',
+                `<input id="jtable-insert-table-col-${options.id}" class="jtable-insert-table-col form-control note-form-control note-input" type="number" min="1" value="1" />`,
+                '</div>',
+                '</div>',
+            ].join(''),
+            footer: '<input type="button" href="#" class="btn btn-primary note-btn note-btn-primary jtable-insert-table-btn" value="' + lang.jTable.apply + '" >'
+
+        }).render().appendTo(options.container);
+        this.$insertTableDialog.find('.modal-dialog').addClass('modal-sm')
+
+        this.showInsertTableDialog = function () {
+            return $.Deferred((deferred) => {
+                var $okBtn = this.$insertTableDialog.find('.modal-footer .jtable-insert-table-btn')
+                ui.onDialogShown(this.$insertTableDialog, () => {
+                    context.triggerEvent('dialog.shown')
+                    $okBtn.one('click', (event) => {
+                        event.preventDefault()
+                        var $rowInput = this.$insertTableDialog.find('.modal-body .jtable-insert-table-row')
+                        var $colInput = this.$insertTableDialog.find('.modal-body .jtable-insert-table-col')
+
+                        let row = parseInt($rowInput.val(), 10)
+                        let col = parseInt($colInput.val(), 10)
+
+                        ui.hideDialog(this.$insertTableDialog)
+
+                        context.invoke('editor.restoreRange')
+                        var rng = modules.editor.getLastRange().deleteContents();
+                        var tableDivEl = this.createTable(col, row, options);
+                        rng.insertNode(tableDivEl, rng.isOnCell())
+
+                        deferred.resolve({
+                            row,
+                            col,
+                        });
+                        ui.hideDialog(this.$insertTableDialog);
+                    })
+                })
+
+                // when close dialog remove button event and restore range
+                ui.onDialogHidden(this.$insertTableDialog, function () {
+                    context.invoke('editor.restoreRange');
+                    $okBtn.off();
+                    if (deferred.state() === 'pending') {
+                        deferred.reject();
+                    }
+                });
+                ui.showDialog(this.$insertTableDialog)
+            }).promise()
+        }
+
+        this.insertTableDialogShow = function () {
+            context.invoke('editor.saveRange');
+            this.showInsertTableDialog().then(({ row, col }) => {
+                context.invoke('editor.restoreRange');
+                if (row > 0 || col > 0) {
+                    var tableDivEl = self.createTable(row, col, options)
+                    rng.insertNode(tableDivEl, rng.isOnCell())
+                }
+            }).fail(() => {
+                context.invoke('editor.restoreRange');
+            });
+        }
 
         self.createTable = function (colCount, rowCount, options) {
             var colgroup = [];
@@ -2650,6 +2733,9 @@
         };
 
         self.destroy = function () {
+            ui.hideDialog(self.$insertTableDialog);
+            self.$insertTableDialog.remove();
+
             ui.hideDialog($mergeDialog);
             $mergeDialog.remove();
 
@@ -3143,6 +3229,11 @@
         'zh-TW': {
             jTable: {
                 borderColor    : '外框顏色',
+                table: {
+                    row: '列',
+                    col: '欄',
+                    insertTable: '插入表格',
+                },
                 merge          : {
                     merge  : '合併儲存格',
                     colspan: '欄',
@@ -3178,6 +3269,11 @@
         'en-US': {
             jTable: {
                 borderColor    : 'Border color',
+                table: {
+                    row: 'row',
+                    col: 'column',
+                    insertTable: 'Insert Table'
+                },
                 merge          : {
                     merge  : 'cell merge',
                     colspan: 'colspan',

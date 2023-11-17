@@ -95,7 +95,7 @@ options = {{
     ['fontsize', ['fontsizeInput']],
     ['color', ['color']],
     [`para`, [`customUL`, `ol`, 'listStyles', `paragraph`]],
-    [`table`, [`jTable`, `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAutoFit`, `jTableInfo`, `jWidthHeightReset`, `jAddDeleteRowCol`]],
+    [`table`, [`jTable`, `jInsertTableDialog`, `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAutoFit`, `jTableInfo`, `jWidthHeightReset`, `jAddDeleteRowCol`]],
     ["tableRow", ["jRowHeight"]],
     ["tableCol", ["jColWidth"]],
     [`insert`, [`link`, `picture`, 'videoAttributes', 'audio', 'file', 'template']],
@@ -217,6 +217,7 @@ options = {{
      - `findnreplace`: 開啟搜尋與取代
    - summernote-ext-table
      - `jTable`: 新增適用於 table resizing 的表格，`toolbar` & `table popover`
+     - `jInsertTableDialog`: 透過 dialog 新增適用於 table resizing 的表格，`toolbar` & `table popover`
      - `jMerge`: 框選後合併 cell，`toolbar` & `table popover`
      - `jBackcolor`: cell 的背景色，`toolbar` & `table popover`
      - `jBorderColor`: 整個表格 border 顏色，`toolbar` & `table popover`
@@ -500,8 +501,9 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
 #### [summernote-ext-table](https://github.com/ksy11/summernote-ext-table)
    - Adds table column/row resize, cell background-color change, cell merge, cell unmerge, border-color change, table margin change, table width/height reset.
    - table 功能
-   - `toolbar` and `table popover` button: `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`
+   - `toolbar` and `table popover` button: `jTable` `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`
      - `jTable`: 新增適用於 table resizing 的表格
+     - `jInsertTableDialog`: 透過 dialog 新增適用於 table resizing 的表格
      - `jMerge`: 框選後合併 cell
      - `jBackcolor`: cell 的背景色
      - `jBorderColor`: 整個表格 border 顏色
