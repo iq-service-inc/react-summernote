@@ -13,6 +13,7 @@ module.exports = function () {
     require('../plugin/lang/summernote-zh-TW')
 
     require('../plugin/custom/summernote-custom')
+    require('../plugin/custom/summernote-custom-contextmenu')
     require('../plugin/custom/summernote-custom-specialchars')
     require('../plugin/custom/summernote-fontsize-input')
     require('../plugin/custom/summernote-comment-popover')
