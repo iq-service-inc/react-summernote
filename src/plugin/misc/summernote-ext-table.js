@@ -1816,6 +1816,12 @@
             
             var $cell = $(cell);
             var $table = $cell.closest('table');
+            if (!$table.length) {
+                // cell deleted
+                $rowHeightInput.val("")
+                $colWidthInput.val("")
+                return
+            }
             var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
             var matrixTable = vTable.getMatrixTable();
 
