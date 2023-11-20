@@ -117,6 +117,46 @@
             })
         ];
 
+        context.memo('jTable.jAddRowTop', function () {
+            return ui.button({
+                className: 'btn-md',
+                contents : ui.icon(options.icons.rowAbove),
+                tooltip  : lang.table.addRowAbove,
+                container: options.container,
+                click    : context.createInvokeHandler('jTable.jAddRow', 'top'),
+            }).render()
+        })
+
+        context.memo('jTable.jAddRowBottom', function () {
+            return ui.button({
+                className: 'btn-md',
+                contents : ui.icon(options.icons.rowBelow),
+                tooltip  : lang.table.addRowBelow,
+                container: options.container,
+                click    : context.createInvokeHandler('jTable.jAddRow', 'bottom'),
+            }).render()
+        })
+
+        context.memo('jTable.jAddColLeft', function () {
+            return ui.button({
+                className: 'btn-md',
+                contents : ui.icon(options.icons.colBefore),
+                tooltip  : lang.table.addColLeft,
+                container: options.container,
+                click    : context.createInvokeHandler('jTable.jAddCol', 'left'),
+            }).render()
+        })
+
+        context.memo('jTable.jAddColRight', function () {
+            return ui.button({
+                className: 'btn-md',
+                contents : ui.icon(options.icons.colAfter),
+                tooltip  : lang.table.addColRight,
+                container: options.container,
+                click    : context.createInvokeHandler('jTable.jAddCol', 'right'),
+            }).render()
+        })
+
         var deleteRowCol = [
             ui.button({
                 className: 'btn-md',
@@ -208,6 +248,24 @@
                 ]
             }).render();
         });
+
+        context.memo('button.jDeleteRow', function () {
+            return ui.button({
+                className: 'btn-md',
+                contents: ui.icon(options.icons.rowRemove),
+                tooltip: lang.table.delRow,
+                click: context.createInvokeHandler('jTable.jDeleteRow'),
+            }).render()
+        })
+
+        context.memo('button.jDeleteCol', function () {
+            return ui.button({
+                className: 'btn-md',
+                contents: ui.icon(options.icons.colRemove),
+                tooltip: lang.table.delCol,
+                click: context.createInvokeHandler('jTable.jDeleteCol'),
+            }).render()
+        })
 
         self.jAddRow = function (position) {
             var rng = modules.editor.getLastRange.call(modules.editor);
@@ -1280,6 +1338,25 @@
                 ],
             }).render();
         });
+
+        context.memo('button.jCellMerge', function () {
+            return ui.button({
+                contents: ui.icon('note-icon-table-merge'),
+                tooltip: lang.jTable.merge.merge,
+                container: options.container,
+                click: context.createInvokeHandler('jTable.cellMerge'),
+            }).render()
+        })
+
+        context.memo('button.jCellSplit', function () {
+            return ui.button({
+                className: 'note-btn-jtable-cell-split',
+                contents: ui.icon('note-icon-table-cell-split'),
+                tooltip: lang.jTable.merge.split,
+                container: options.container,
+                click: context.createInvokeHandler('jTable.cellSplit'),
+            }).render()
+        })
 
         self.cellMerge = function () {
             if(options.jTable.mergeMode == 'drag') {
@@ -3302,7 +3379,7 @@
                     merge  : '合併儲存格',
                     colspan: '欄',
                     rowspan: '列',
-                    split  : '取消合併儲存格',
+                    split  : '分割儲存格',
                 },
                 align          : {
                     top     : '靠上對齊',
@@ -3326,6 +3403,7 @@
                 },
                 apply          : '套用',
                 addDeleteRowCOl: '欄/列(插入/刪除)',
+                deleteCell     : '刪除儲存格',
                 areaReset      : '清除格式',
                 message        : '<b>取消合併儲存格才可使用</br>',
             }
@@ -3366,6 +3444,7 @@
                 },
                 apply          : 'apply',
                 addDeleteRowCOl: 'Row/Col(Add/Del)',
+                deleteCell     : 'Delete Cell',
                 areaReset      : 'area Reset',
                 message        : '<b>Available after unmerge<br/>current or surrounding cells</br>',
             }

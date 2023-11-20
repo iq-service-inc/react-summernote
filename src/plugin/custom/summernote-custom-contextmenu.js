@@ -1,10 +1,30 @@
 /**
  * options={{
         customContextMenu: {
-            className: 'summernote-comment-popover',
+            className: 'summernote-custom-contextmenu',
+            menuBtns: [
+                [
+                    { key: 'cut', name: lang.customContextMenu.cut, },
+                ],
+                [
+                    {
+                        key: 'jDeleteRowCol', name: lang.jTable.deleteCell,
+                        contents: ui.icon(options.icons.rowRemove),
+                        toggle: 'table',
+                        submenu: [
+                            { key: 'jDeleteRow', name: lang.table.delRow, },
+                            { key: 'jDeleteCol', name: lang.table.delCol, },
+                        ]
+                    },
+                ]
+            ],
+            onContextMenuOpen: function (contextMenu) {
+                // toggle button
+            },
+            shouldInitialize: true,
         }
     }}
- * add comment popover
+ * add button to custom context menu
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -21,6 +41,9 @@
     $.extend($.summernote.options, {
         customContextMenu: {
             className: null,
+            menuBtns: null,
+            onContextMenuOpen: null,
+            shouldInitialize: true,
         }
     })
     $.extend($.summernote.plugins, {
@@ -40,17 +63,50 @@
                 lang = options.langInfo;
 
             this.clipboardPermission = false
+            this.listenButtons = []
 
-            const menuBtns = [
+            const menuBtns = options.customContextMenu.menuBtns ||
                 [
-                    { key: 'cut', name: lang.customContextMenu.cut, },
-                    { key: 'copy', name: lang.customContextMenu.copy, },
-                    { key: 'paste', name: lang.customContextMenu.paste, },
-                    { key: 'pasteUnformat', name: lang.customContextMenu.pasteUnformat, },
-                ],
-            ]
+                    [
+                        { key: 'cut', name: lang.customContextMenu.cut, },
+                        { key: 'copy', name: lang.customContextMenu.copy, },
+                        { key: 'paste', name: lang.customContextMenu.paste, },
+                        { key: 'pasteUnformat', name: lang.customContextMenu.pasteUnformat, },
+                    ],
+                    [
+                        { key: 'link', name: lang.link.insert, shorcut: 'linkDialog.show' },
+                        { key: 'jInsertTableDialog', name: lang.jTable.table.insertTable },
+                        {
+                            key: 'jDeleteRowCol', name: lang.jTable.deleteCell,
+                            contents: ui.icon(options.icons.rowRemove),
+                            toggle: 'table',
+                            submenu: [
+                                { key: 'jDeleteRow', name: lang.table.delRow, },
+                                { key: 'jDeleteCol', name: lang.table.delCol, },
+                            ]
+                        },
+                        { key: 'jCellMerge', name: lang.jTable.merge.merge, toggle: 'table' },
+                        { key: 'jCellSplit', name: lang.jTable.merge.split, toggle: 'table' },
+                    ],
+                ]
 
             const className = options.customContextMenu.className || 'summernote-custom-contextmenu'
+            const onContextMenuOpen = options.customContextMenu.onContextMenuOpen ||
+                function toggleCellSplitBtn(contextMenu) {
+                    var rng = range.create()
+                    rng.isOnTable = rng.makeIsOn(dom.isTable)
+                    if (rng.isOnTable()) {
+                        var $cellSplitBtn = $(contextMenu).find('.note-btn-jtable-cell-split');
+                        var cellHasSpan = false;
+                        if (rng.isCollapsed() && rng.isOnCell()) {
+                            var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
+                            cellHasSpan = (cell.rowSpan > 1) || (cell.colSpan > 1);
+                        }
+                        $cellSplitBtn.toggleClass('disabled', !cellHasSpan);
+                        $cellSplitBtn.attr('disabled', !cellHasSpan);
+                    }
+                }
+            const shouldInitialize = options.customContextMenu.shouldInitialize
 
             const icon = {
                 cut: `
@@ -80,6 +136,9 @@
                 `,
             }
 
+            this.shouldInitialize = function () {
+                return shouldInitialize && !lists.isEmpty(menuBtns)
+            }
 
             this.events = {
                 'summernote.init': function (_, layoutInfo) {
@@ -87,7 +146,7 @@
                         event.preventDefault()
                         self.update(event)
                     })
-                    layoutInfo.editor.on('click', function (event) {
+                    layoutInfo.editable.on('mousedown', function (event) {
                         self.hide()
                     })
                 },
@@ -95,17 +154,49 @@
                     this.hide();
                 },
                 'summernote.blur': (we, event) => {
-                    if (event.originalEvent && event.originalEvent.relatedTarget) {
-                        if (!this.$popover[0].contains(event.originalEvent.relatedTarget)) {
-                            this.hide();
-                        }
-                    } else {
-                        this.hide();
-                    }
+                    this.hide();
                 },
             }
 
+            this.styleMenuButton = function ({ key, name, shorcut, contents = null, submenu, toggle }) {
+                var btn = context.memo(`button.${key}`)
+                if (!btn) {
+                    btn = function () {
+                        return ui.button({
+                            contents: contents || key,
+                            tooltip: name || key,
+                        }).render()
+                    }
+                }
+                var $btn = typeof btn === 'function' ? btn(context) : btn
+                $btn.find('i').addClass(['float-left', 'mr-2'])
+                // remove button tooltip
+                $btn.tooltip('dispose')
+                    .addClass(['dropdown-item', 'align-items-center', `${className}-btn`])
+                    .append(`<span>${name}</span>`)
+                if (!!toggle) {
+                    $btn.addClass(`${toggle}-toggle-btn`)
+                }
+                if (submenu) {
+                    $btn.append(`<span class="float-right ml-2 dropdown-submenu-toggle-icon note-icon-caret"></span>`)
+                }
+                else {
+                    $btn.append(`<span class="float-right ml-2">${context.invoke('buttons.representShortcut', shorcut || key)}</span>`)
+                }
+                return $btn
+            }
+
             this.initialize = function () {
+                if ($('#summernote-custom-contextmenu').length == 0) {
+                    style = [
+                        '.summernote-custom-contextmenu.dropdown-menu .dropdown-submenu {left: 100%; top: 100%; margin-top: -2.5rem;}',
+                        '.summernote-custom-contextmenu.dropdown-menu .dropdown-submenu-toggle .dropdown-submenu-toggle-icon.note-icon-caret::before{transform: rotate(270deg) translateX(2px);}',
+                    ].join('')
+                    this.css = $('<style>').html(style)
+                    this.css.attr('id', 'summernote-custom-contextmenu')
+                    $(document.head).append(this.css)
+                }
+
                 this.$contextMenu = ui.popover({
                     className: `${className} dropdown-menu`,
                     contents: [
@@ -117,16 +208,28 @@
                 const $content = this.$contextMenu.find('.dropdown-menu-content')
                 menuBtns.forEach((group, idx, array) => {
                     // add contextmenu button
-                    group.forEach(({ key, name, shorcut }) => {
-                        var btn = context.memo(`button.${key}`)
-                        var $btn = typeof btn === 'function' ? btn(context) : btn
-                        $btn.find('i').addClass(['float-left', 'mr-2'])
-                        // remove button tooltip
-                        $btn.tooltip('dispose')
-                            .addClass(['dropdown-item', 'align-items-center', `${className}-btn`])
-                            .append(`<span>${name}</span>`)
-                            .append(`<span class="float-right ml-2">${context.invoke('buttons.representShortcut', shorcut || key)}</span>`)
-                            .appendTo($content)
+                    group.forEach((btn) => {
+                        if (btn.submenu) {
+                            var $btn = this.styleMenuButton(btn)
+                            var $submenu = $('<div></div>').addClass([`${className}`, 'dropdown-menu', 'dropdown-submenu'])
+                            $btn.addClass(['dropdown-submenu-toggle', 'position-relative']).appendTo($content)
+                            $submenu.appendTo($btn)
+
+                            btn.submenu.forEach((b) => {
+                                var $b = this.styleMenuButton(b)
+                                $b.appendTo($submenu)
+                            })
+                            $btn.on('mouseenter', function (event) {
+                                $(event.currentTarget).find('.dropdown-submenu').show()
+                            })
+                            $btn.on('mouseleave', function (event) {
+                                $(event.currentTarget).find('.dropdown-submenu').hide()
+                            })
+                            this.listenButtons.push($btn)
+                        }
+                        else {
+                            this.styleMenuButton(btn).appendTo($content)
+                        }
                     })
                     if (idx === array.length - 1) return
                     // add group divider
@@ -137,7 +240,12 @@
             }
 
             this.destroy = function () {
+                !!this.css && $(this.css).remove()
+                this.$contextMenu.off();
                 this.$contextMenu.remove();
+                this.listenButtons.forEach(($btn) => {
+                    $btn.off()
+                })
             };
 
             this.wrapCommand = function (fn) {
@@ -148,12 +256,57 @@
                 }
             }
 
+            /**
+             * Toggle context menu Table button
+             */
+            this.toggleTableButton = function () {
+                var rng = range.create()
+                rng.isOnTable = rng.makeIsOn(dom.isTable)
+                let disabled = !rng.isOnTable()
+                $editor.find('.table-toggle-btn').prop('disabled', disabled)
+                modules.tablePopover.hide()
+            }
+            /**
+             * Toggle context menu Anchor button
+             */
+            this.toggleAnchorButton = function () {
+                var rng = range.create()
+                let disabled = !rng.isOnAnchor()
+                $editor.find('.anchor-toggle-btn').prop('disabled', disabled)
+                modules.linkPopover.hide()
+            }
+            /**
+             * Toggle context menu List button
+             */
+            this.toggleListButton = function () {
+                var rng = range.create()
+                let disabled = !rng.isOnList()
+                $editor.find('.list-toggle-btn').prop('disabled', disabled)
+            }
+            /**
+             * Toggle context menu Img button
+             */
+            this.toggleImgButton = function () {
+                var rng = range.create()
+                rng.isOnImg = rng.makeIsOn(dom.isImg)
+                let disabled = !rng.isOnImg()
+                $editor.find('.img-toggle-btn').prop('disabled', disabled)
+                modules.imagePopover.hide()
+            }
+
             this.update = function (event) {
                 // Prevent focusing on editable when invoke('code') is executed
                 if (!context.invoke('editor.hasFocus')) {
                     this.hide();
                     return;
                 }
+
+                // toggle button
+                this.toggleTableButton()
+                this.toggleAnchorButton()
+                this.toggleListButton()
+                this.toggleImgButton()
+
                 const pos = { left: event.pageX, top: event.pageY }
                 const containerOffset = $(options.container).offset();
                 pos.top -= containerOffset.top;
@@ -164,10 +317,15 @@
                     left: pos.left,
                     top: pos.top,
                 });
+
+                if (typeof onContextMenuOpen === 'function') {
+                    onContextMenuOpen(this.$contextMenu)
+                }
             }
 
             this.hide = function () {
                 this.$contextMenu.hide();
+                this.$contextMenu.find('.dropdown-submenu').hide()
             }
 
             this.cut = function () {
