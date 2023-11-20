@@ -177,56 +177,12 @@
                         },
                         click    : function (event) {
                             var $parent = $(this).closest('.jtable-add-del-row-col');
-                            var $btns = $parent.find('.btn-md');
-
-                            var hasSpan = false;
-
-                            var rng = modules.editor.getLastRange.call(modules.editor);
-                            if (rng.isCollapsed() && rng.isOnCell()) {
-                                var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
-                                hasSpan = (cell.rowSpan > 1) || (cell.colSpan > 1);
-
-                                if (!hasSpan) {
-                                    var $table = $(cell).closest('table');
-                                    var $tr = $(cell).closest('tr');
-                                    var trIndex = $tr[0].rowIndex;
-
-                                    var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
-                                    var matrixTable = vTable.getMatrixTable();
-                                    var tdList = matrixTable[trIndex];
-
-                                    var currentTdIndex = 0;
-                                    for (var colIndex = 0; colIndex < tdList.length; colIndex++) {
-                                        var virtualTd = tdList[colIndex];
-                                        if (!virtualTd.isVirtual && cell == virtualTd.baseCell) currentTdIndex = colIndex;
-                                        if (virtualTd.baseCell.colSpan > 1 || virtualTd.baseCell.rowSpan > 1) {
-                                            hasSpan = true;
-                                        }
-                                    }
-
-                                    for (var rowIndex = 0; rowIndex < matrixTable.length; rowIndex++) {
-                                        var virtualTd = matrixTable[rowIndex][currentTdIndex];
-                                        if (virtualTd.baseCell.colSpan > 1 || virtualTd.baseCell.rowSpan > 1) {
-                                            hasSpan = true;
-                                        }
-                                    }
-                                }
-                            }
-
-                            $btns.toggleClass('disabled', hasSpan);
-                            $btns.attr('disabled', hasSpan);
-
                             var $btnGroup = $parent.find('.jtable-add-row-col-button-group, .jtable-del-row-col-button-group');
                             var $message = $parent.find('.jtable-dropdown-message');
                             var $dropdown = $parent.find('.jtable-add-del-row-col-dropdown');
-                            if (hasSpan) {
-                                $btnGroup.hide();
-                                $message.show();
-                            } else {
-                                $btnGroup.show();
-                                $message.hide();
-                                $dropdown.css('width', '');
-                            }
+                            $btnGroup.show();
+                            $message.hide();
+                            $dropdown.css('width', 'auto');
 
                             self.recoverPopover(event)
                         },
@@ -238,9 +194,6 @@
                                 className: 'jtable-dropdown-message',
                                 contents : lang.jTable.message,
                                 container: options.container,
-                                // callback : function($node) {
-                                //     console.log($node);
-                                // },
                             }),
                             ui.buttonGroup({
                                 className: 'jtable-add-row-col-button-group',
@@ -258,14 +211,42 @@
 
         self.jAddRow = function (position) {
             var rng = modules.editor.getLastRange.call(modules.editor);
-            if (rng.isCollapsed() && rng.isOnCell()) {
-                self.beforeCommand();
+            rng.isOnTable = rng.makeIsOn(dom.isTable)
 
+            self.beforeCommand();
+            if (rng.isCollapsed() && rng.isOnCell()) {
                 var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
                 self.addRow(cell, position)
-
-                self.afterCommand();
             }
+            else if (rng.isOnTable() && !!tableBlock.currentTableEl) {
+                var cell = tableBlock.currentTdEl;
+                var $cell = $(cell);
+                var $table = $cell.closest('table');
+
+                var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+                var matrixTable = vTable.getMatrixTable();
+
+                var effectRow = tableBlock.effect.row;
+                var effectCol = tableBlock.effect.col;
+                
+                switch (position) {
+                    case 'top' :
+                        var rowIndex = effectRow.start;
+                        var colIndex = effectCol.start;
+                        break;
+                    case 'bottom' :
+                        var rowIndex = effectRow.end;
+                        var colIndex = effectCol.end;
+                        break;
+                }
+
+                var virtualTd = matrixTable[rowIndex][colIndex]
+                var baseCell = virtualTd.baseCell
+                self.addRow(baseCell, position)
+
+                resetTableBlock($table);
+            }
+            self.afterCommand();
         };
 
         self.addRow = function (cell, position) {
@@ -317,14 +298,43 @@
 
         self.jAddCol = function (position) {
             var rng = modules.editor.getLastRange.call(modules.editor);
+            rng.isOnTable = rng.makeIsOn(dom.isTable)
+            
+            self.beforeCommand();
             if (rng.isCollapsed() && rng.isOnCell()) {
-                self.beforeCommand();
-
                 var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
                 self.addCol(cell, position)
-
-                self.afterCommand();
             }
+            else if (rng.isOnTable() && !!tableBlock.currentTableEl) {
+                var cell = tableBlock.currentTdEl;
+                var $cell = $(cell);
+                var $table = $cell.closest('table');
+
+                var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+                var matrixTable = vTable.getMatrixTable();
+
+                var effectRow = tableBlock.effect.row;
+                var effectCol = tableBlock.effect.col;
+
+                switch (position) {
+                    case 'left' :
+                        var rowIndex = effectRow.start;
+                        var colIndex = effectCol.start;
+                        break;
+                    case 'right' :
+                        var rowIndex = effectRow.end;
+                        var colIndex = effectCol.end;
+                        break;
+                }
+
+                var virtualTd = matrixTable[rowIndex][colIndex]
+                var baseCell = virtualTd.baseCell
+                self.addCol(baseCell, position)
+
+                resetTableBlock($table);
+            }
+            
+            self.afterCommand();
         };
 
         self.addCol = function (cell, position) {
@@ -383,15 +393,43 @@
 
         self.jDeleteRow = function () {
             var rng = modules.editor.getLastRange.call(modules.editor);
+            rng.isOnTable = rng.makeIsOn(dom.isTable)
+            
+            self.beforeCommand();
+            // if Collapsed delete single row
             if (rng.isCollapsed() && rng.isOnCell()) {
-                self.beforeCommand();
-
                 var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
                 var row = $(cell).closest('tr');
                 var cellPos = row.children('td, th').index($(cell));
                 var rowPos = row[0].rowIndex;
+                deleteRow (cell, row, cellPos, rowPos)
+            }
+            // if Drag tableBlock delete effect rows
+            else if (rng.isOnTable() && !!tableBlock.currentTableEl){
+                var cell = tableBlock.currentTdEl;
+                var $cell = $(cell);
+                var $table = $cell.closest('table');
+
+                var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+                var matrixTable = vTable.getMatrixTable();
+
+                var effectRow = tableBlock.effect.row;
+                var effectCol = tableBlock.effect.col;
+
+                var colIndex = effectCol.start;
+                for (var rowIndex = effectRow.end; rowIndex >= effectRow.start; rowIndex--) {
+                    var virtualTd = matrixTable[rowIndex][colIndex];
+                    var baseCell = virtualTd.baseCell
+                    var baseRow = virtualTd.baseRow
+                    deleteRow(baseCell, baseRow, colIndex, rowIndex)
+                }
+
+                resetTableBlock($table);
+            }
+            self.afterCommand();
 
 
+            function deleteRow (cell, row, cellPos, rowPos) {
                 var vTable = new TableResultAction(cell, TableResultAction.where.Row,
                     TableResultAction.requestAction.Delete, $(row).closest('table')[0]);
                 var actions = vTable.getActionList();
@@ -451,21 +489,49 @@
                 }
                 row.remove();
 
-                self.afterCommand();
             }
         };
 
         self.jDeleteCol = function () {
             var rng = modules.editor.getLastRange.call(modules.editor);
-            if (rng.isCollapsed() && rng.isOnCell()) {
-                self.beforeCommand();
+            rng.isOnTable = rng.makeIsOn(dom.isTable)
 
+            self.beforeCommand();
+            // if Collapsed delete single column
+            if (rng.isCollapsed() && rng.isOnCell()) {
                 var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
                 var row = $(cell).closest('tr');
                 var cellPos = row.children('td, th').index($(cell));
                 var colgroup = $(row).closest('table').find('colgroup').children('col');
                 var tdIndex = row.children().index($(cell));
+                deleteCol(cell, row, cellPos, colgroup, tdIndex)
+            }
+            // if Drag tableBlock delete effect columns
+            else if (rng.isOnTable() && !!tableBlock.currentTableEl) {
+                var cell = tableBlock.currentTdEl;
+                var $cell = $(cell);
+                var $table = $cell.closest('table');
 
+                var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+                var matrixTable = vTable.getMatrixTable();
+
+                var effectRow = tableBlock.effect.row;
+                var effectCol = tableBlock.effect.col;
+                
+                var rowIndex = effectRow.start;
+                for (var colIndex = effectCol.end; colIndex >= effectCol.start; colIndex--) {
+                    var virtualTd = matrixTable[rowIndex][colIndex];
+                    var baseCell = virtualTd.baseCell
+                    var baseRow = virtualTd.baseRow
+                    var colgroup = $table.find('colgroup').children('col')
+                    deleteCol(baseCell, baseRow, colIndex, colgroup, colIndex)
+                }
+
+                resetTableBlock($table);
+            }
+            self.afterCommand();
+            
+            function deleteCol (cell, row, cellPos, colgroup, tdIndex) {
                 var vTable = new TableResultAction(cell, TableResultAction.where.Column,
                     TableResultAction.requestAction.Delete, $(row).closest('table')[0]);
                 var actions = vTable.getActionList();
@@ -507,8 +573,6 @@
                     var baseCol = colgroup[tdIndex];
                     $(baseCol).remove();
                 }
-
-                self.afterCommand();
             }
         };
 
@@ -2548,8 +2612,8 @@
                 layoutInfo.editor.on('click', '[aria-label="Add column right"]', fillInColgroup)
                 layoutInfo.editor.on('click', '[aria-label="右方插入欄"]', fillInColgroup)
 
-                layoutInfo.editor.on('click', '[aria-label="Delete column"]', deleteColOfColgroup)
-                layoutInfo.editor.on('click', '[aria-label="刪除欄"]', deleteColOfColgroup)
+                // layoutInfo.editor.on('click', '[aria-label="Delete column"]', deleteColOfColgroup)
+                // layoutInfo.editor.on('click', '[aria-label="刪除欄"]', deleteColOfColgroup)
 
 
                 /**
