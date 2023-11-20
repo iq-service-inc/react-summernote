@@ -2371,6 +2371,7 @@
                  * get table block info
                  */
                 layoutInfo.editingArea.on('mousedown', 'td', function (event) {
+                    if (event.which === 3) return
                     if (tableBlock.pressed) return true;
                     var $this = $(this);
                     resetTableBlock($this);
@@ -2522,6 +2523,7 @@
                  * when onblur table hide jtable-block(cell selection)
                  */
                 layoutInfo.editingArea.on('mousedown', '.note-editable', function (event) {
+                    if (event.which === 3) return
                     var $block = $(event.target).closest('.note-editable').next('.jtable-block')
                     $block.hide()
                 })
@@ -2697,6 +2699,7 @@
                  * get table resize info
                  */
                 layoutInfo.editingArea.on('mousedown', 'td', function (event) {
+                    if (event.which === 3) return
                     var $this = $(this);
                     var $table = $this.closest('table');
                     var vTable = new TableResultAction(this, undefined, undefined, $table[0]);
