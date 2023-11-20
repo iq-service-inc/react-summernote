@@ -19,6 +19,7 @@ node .\bundle-plugins.js
       - [summernote-zh-TW](#summernote-zh-TW)
     - [Custom](#custom)
       - [summernote-comment-popover](#summernote-comment-popover)
+      - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-fontsize-input](#summernote-fontsize-input)
@@ -218,15 +219,24 @@ options = {{
    - summernote-ext-table
      - `jTable`: 新增適用於 table resizing 的表格，`toolbar` & `table popover`
      - `jInsertTableDialog`: 透過 dialog 新增適用於 table resizing 的表格，`toolbar` & `table popover`
-     - `jMerge`: 框選後合併 cell，`toolbar` & `table popover`
+     - `jAddDeleteRowCol`: 框選 新增/刪除 欄/列，`toolbar` & `table popover`
+     - `jMerge`: 框選後合併/分割 cell，`toolbar` & `table popover`
      - `jBackcolor`: cell 的背景色，`toolbar` & `table popover`
      - `jBorderColor`: 整個表格 border 顏色，`toolbar` & `table popover`
      - `jAlign`: cell 的對齊方式，`toolbar` & `table popover`
      - `jAutoFit`: 自動調整 table 欄寬，`toolbar` & `table popover`
-     - `jRowHeight`: 輸入框調整列高
-     - `jColWidth`: 輸入框調整欄寬
+     - `jRowHeight`: 輸入框調整列高，`toolbar`
+     - `jColWidth`: 輸入框調整欄寬，`toolbar`
      - `jTableInfo`: 調整整個 table 的 margin，`toolbar` & `table popover`
      - `jWidthHeightReset`: 重設 cell 寬高，`toolbar` & `table popover`
+     - `jAddRowTop`: 在上方插入列
+     - `jAddRowBottom`: 在下方插入列
+     - `jAddColLeft`: 在左方插入欄
+     - `jAddColRight`: 在右方插入欄
+     - `jDeleteRow`: 刪除列
+     - `jDeleteCol`: 刪除欄
+     - `jCellMerge`: 合併儲存格
+     - `jCellSplit`: 分割儲存格
 
 -  [Special Characters & Icons](#special-characters-icons)
    - summernote-ext-specialchars
@@ -258,6 +268,46 @@ options = {{
         urlPattern: /https?:\/\/(?:[\w\u00a1-\uffff]+\.?)+(?::\d{2,5})?(?:\/[^\s]*)?/,  // test image url validity
         titleMaxLength: 100,  // title input maxlength
         contentMaxLength: 100,  // content input maxlength
+    }
+    ```
+
+#### summernote-custom-contextmenu
+- 自定義右鍵功能列表
+- 可將已定義的按鈕加入右鍵功能列表
+
+    ```js
+    // options
+        customContextMenu: {
+        className: 'summernote-custom-contextmenu',
+        menuBtns: [
+            // group
+            [
+                // button
+                { key: 'cut', name: lang.customContextMenu.cut, },
+            ],
+            [
+                {
+                    // key: button key
+                    // name: button text
+                    // contents: if this button not in memo use contents to build new button
+                    // toggle: this button only available on (Table, Anchor, List, Img)
+                    // submenu: define submenu toggle on hover
+                    key: 'jDeleteRowCol', name: lang.jTable.deleteCell,
+                    contents: ui.icon(options.icons.rowRemove),
+                    toggle: 'table',
+                    submenu: [
+                        { key: 'jDeleteRow', name: lang.table.delRow, },
+                        { key: 'jDeleteCol', name: lang.table.delCol, },
+                    ]
+                },
+            ]
+        ],
+        // open context menu callback function
+        onContextMenuOpen: function (contextMenu) {
+            // toggle button
+        },
+        // should initialize this plugin
+        shouldInitialize: true,
     }
     ```
 
@@ -504,7 +554,8 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
    - `toolbar` and `table popover` button: `jTable` `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`
      - `jTable`: 新增適用於 table resizing 的表格
      - `jInsertTableDialog`: 透過 dialog 新增適用於 table resizing 的表格
-     - `jMerge`: 框選後合併 cell
+     - `jAddDeleteRowCol`: 框選 新增/刪除 欄/列
+     - `jMerge`: 框選後合併/分割 cell
      - `jBackcolor`: cell 的背景色
      - `jBorderColor`: 整個表格 border 顏色
      - `jAlign`: cell 的對齊方式
@@ -513,6 +564,14 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
      - `jColWidth`: 輸入框調整欄寬
      - `jTableInfo`: 調整整個 table 的 margin
      - `jWidthHeightReset`: 重設 cell 寬高
+     - `jAddRowTop`: 在上方插入列
+     - `jAddRowBottom`: 在下方插入列
+     - `jAddColLeft`: 在左方插入欄
+     - `jAddColRight`: 在右方插入欄
+     - `jDeleteRow`: 刪除列
+     - `jDeleteCol`: 刪除欄
+     - `jCellMerge`: 合併儲存格
+     - `jCellSplit`: 分割儲存格
 
 ### Special Characters & Icons
 
