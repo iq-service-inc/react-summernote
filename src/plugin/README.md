@@ -54,9 +54,14 @@ node .\bundle-plugins.js
 ```js
 require('react-summernote/plugin/lang/summernote-zh-TW')
 
+require('react-summernote/plugin/custom/summernote-comment-popover')
+require('react-summernote/plugin/custom/summernote-custom-contextmenu')
+require('react-summernote/plugin/custom/summernote-custom-specialchars')
 require('react-summernote/plugin/custom/summernote-custom')
 require('react-summernote/plugin/custom/summernote-fontsize-input')
+require('react-summernote/plugin/custom/summernote-pastehtml')
 require('react-summernote/plugin/custom/summernote-toc')
+require('react-summernote/plugin/custom/summernote-view-classlist')
 
 require('react-summernote/plugin/formatting/summernote-addclass')
 require('react-summernote/plugin/formatting/summernote-case-converter')
