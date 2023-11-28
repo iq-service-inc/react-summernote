@@ -23,6 +23,7 @@ node .\bundle-plugins.js
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-fontsize-input](#summernote-fontsize-input)
+      - [summernote-imagemap](#summernote-imagemap)
       - [summernote-pastehtml](#summernote-pastehtml)
       - [summernote-toc](#summernote-toc)
     - [Formatting](#formatting)
@@ -59,6 +60,7 @@ require('react-summernote/plugin/custom/summernote-custom-contextmenu')
 require('react-summernote/plugin/custom/summernote-custom-specialchars')
 require('react-summernote/plugin/custom/summernote-custom')
 require('react-summernote/plugin/custom/summernote-fontsize-input')
+require('react-summernote/plugin/custom/summernote-imagemap')
 require('react-summernote/plugin/custom/summernote-pastehtml')
 require('react-summernote/plugin/custom/summernote-toc')
 require('react-summernote/plugin/custom/summernote-view-classlist')
@@ -104,7 +106,7 @@ options = {{
     [`table`, [`jTable`, `jInsertTableDialog`, `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAutoFit`, `jTableInfo`, `jWidthHeightReset`, `jAddDeleteRowCol`]],
     ["tableRow", ["jRowHeight"]],
     ["tableCol", ["jColWidth"]],
-    [`insert`, [`link`, `picture`, 'videoAttributes', 'audio', 'file', 'template']],
+    [`insert`, [`link`, `picture`, 'imageMap', 'videoAttributes', 'audio', 'file', 'template']],
     [`print`, [`pagebreak`, `print`]],
     ['misc', ['sDraftsLoad', 'sDraftsSave', 'findnreplace']],
     //['syntax', ['highlight']],
@@ -113,7 +115,7 @@ options = {{
   ],
   popover: {
     image: [
-      ['custom', ['imageAttributes', 'captionIt', 'imageShapes']],
+      ['custom', ['imageAttributes', 'captionIt', 'imageShapes', 'imageMap']],
       ['resize', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
       ['float', ['floatLeft', 'floatRight', 'floatNone']],
       ['remove', ['removeMedia']],
@@ -182,6 +184,8 @@ options = {{
      - `customSpecialChar`: 插入特殊符號
    - summernote-fontsize-input
      - `fontsizeInput`: 更新字號
+   - summernote-imagemap
+     - `imageMap`: 插入影像地圖，`toolbar` & `image popover`
    - summernote-pastehtml
      - `pasteHTML`: 插入 HTML
    - summernote-toc
@@ -339,6 +343,19 @@ options = {{
         max: 200,   // input 最大值 (px)
         min: 5,     // input 最小值 (px)
         sizes: ['8', '9', '10', '11', '12', '14', '16', '18', '26', '42', '74'] // dropdown 選項 (px)
+    }
+    ```
+
+#### summernote-imagemap
+- 編輯圖片影像地圖
+- 依賴 bootstrap collapse
+- `toolbar` and `image popover` button: `imageMap`
+  - `imageMap`: 插入影像地圖
+
+    ```js
+    // options
+    imageMap: {
+        maxArea: 30,    // 區域數量上限
     }
     ```
 

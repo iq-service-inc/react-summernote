@@ -5,6 +5,7 @@ module.exports = function () {
     require('bootstrap/js/dist/tooltip')
     require('bootstrap/js/dist/tab')
     require('bootstrap/js/dist/popover')
+    require('bootstrap/js/dist/collapse')
     require('popper.js/dist/popper.min.js')
 
     require('summernote/dist/summernote-bs4.css')
@@ -16,6 +17,7 @@ module.exports = function () {
     require('../plugin/custom/summernote-custom-contextmenu')
     require('../plugin/custom/summernote-custom-specialchars')
     require('../plugin/custom/summernote-fontsize-input')
+    require('../plugin/custom/summernote-imagemap')
     require('../plugin/custom/summernote-comment-popover')
     require('../plugin/custom/summernote-pastehtml')
     require('../plugin/custom/summernote-toc')
