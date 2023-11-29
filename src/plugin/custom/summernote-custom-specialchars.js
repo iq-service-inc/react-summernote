@@ -203,7 +203,7 @@
             }
             context.memo('button.customSpecialChar', function () {
                 var button = ui.button({
-                    contents: 'á',
+                    contents: 'Ω',
                     container: options.container,
                     tooltip: lang.customSpecialChar.specialChar,
                     placement: options.placement,
