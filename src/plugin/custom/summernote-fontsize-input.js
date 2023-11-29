@@ -87,7 +87,17 @@
                         context.invoke("beforeCommand")
                         event.preventDefault()
                         let $target = $(event.target)
-                        context.invoke("editor.fontSize", $target.val())    // update selection text fontsize
+                        let value = parseFloat($target.val())
+                        // update selection text fontsize
+                        if (value < minFontSize) {  // lower than minFontSize
+                            context.invoke("editor.fontSize", minFontSize)
+                        }
+                        else if (value > maxFontSize) { // higher than maxFontSize
+                            context.invoke("editor.fontSize", maxFontSize)
+                        }
+                        else {
+                            context.invoke("editor.fontSize", value)
+                        }
                         context.invoke("afterCommand")
                     }
                     else if (event.keyCode === 27) {    // ESC
