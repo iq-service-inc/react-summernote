@@ -90,15 +90,17 @@
             this.initialize = function () {
                 if ($('#summernote-imagemap').length == 0) {
                     this.css = $('<style>').html([
-                        'map[name]:after { content: "ImgMap"; position: absolute; writing-mode: vertical-lr; opacity: 0.7; }',
+                        '.note-editable map[name]:after { content: "ImgMap"; position: absolute; writing-mode: vertical-lr; opacity: 0.7; }',
 
-                        '.summernote-imagemap-dialog .modal-dialog { max-width: 95vw; max-height: calc(100vh - 3.5rem) }',
+                        '.summernote-imagemap-dialog .modal-dialog { max-width: 95vw; max-height: calc(100vh - 3.5rem); }',
                         '.summernote-imagemap-dialog .modal-header { max-height: 5rem; }',
                         '.summernote-imagemap-dialog .modal-body { padding: 0; }',
                         '.summernote-imagemap-dialog .modal-body:after { content: ""; width: 100%; height: 0.5rem; display: block; background: #8080801d; border-top: 1px solid rgba(0,0,0,.125); }',
 
                         '.summernote-imagemap-toolbar { padding: 2px; max-height: 3rem; }',
                         '.summernote-imagemap-toolbar .summernote-imagemap-alert { position: absolute; z-index: 2; top: 100%; margin-top: 3px; left: 3px; right: 3px }',
+                        '.summernote-imagemap-toolbar .note-toolbar-text { height: 2em; align-items: center; }',
+                        '.summernote-imagemap-toolbar button:disabled { color: #6c757d; }',
 
                         '.summernote-imagemap-editor { display: flex; }',
                         '.summernote-imagemap-editor .summernote-imagemap-attr { display: flex; position: relative; }',
@@ -155,10 +157,12 @@
             }
 
             context.memo('button.imageMap', function () {
-                let imageMapIcon = `<svg width="20" height="20" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <path d="m37.30085,37.52324l-34.76351,0c-1.12254,0 -2.03254,-1.03391 -2.03254,-2.30929l0,-28.80977c0,-1.27538 0.91,-2.30929 2.03254,-2.30929l34.76351,0c1.12254,0 2.03254,1.03391 2.03254,2.30929l0,28.80977c0,1.27538 -0.91,2.30929 -2.03254,2.30929zm-0.24978,-28.26755c0,-2.8406 -2.04627,-2.57177 -4.5705,-2.57177l-25.13775,0c-2.52423,0 -4.5705,-0.26886 -4.5705,2.57177l0,20.57317c0,2.84058 2.04627,5.14333 4.5705,5.14333l25.13775,0c2.52423,0 4.5705,-2.30276 4.5705,-5.14333l0,-20.57317z" fill="#000000"/>
-                    <path d="m19.91909,8.38475c-3.37737,0 -6.11509,2.73772 -6.11509,6.11509c0,2.73044 3.99665,7.70695 5.52785,9.51333c0.31012,0.36593 0.86485,0.36593 1.17449,0c1.5312,-1.80638 5.52785,-6.7829 5.52785,-9.51333c0,-3.37737 -2.73772,-6.11509 -6.11509,-6.11509zm0,8.15345c-1.12595,0 -2.03836,-0.91241 -2.03836,-2.03836s0.91241,-2.03836 2.03836,-2.03836s2.03836,0.91241 2.03836,2.03836s-0.91241,2.03836 -2.03836,2.03836zm-13.00087,2.32713a1.55333,1.55333 0 0 0 -0.97647,1.4419l0,12.14864c0,0.54939 0.55473,0.92503 1.0648,0.72119l6.70039,-3.04978l0,-11.31194c-0.42903,-0.77555 -0.77992,-1.53071 -1.03131,-2.25288l-5.7574,2.30286zm13.00087,6.97508c-0.68285,0 -1.32882,-0.29993 -1.77192,-0.82311c-0.95415,-1.12595 -1.96896,-2.40818 -2.8872,-3.72341l0,8.83291l9.31823,3.10608l0,-11.9385c-0.91823,1.31474 -1.93256,2.59746 -2.8872,3.72341c-0.4431,0.52269 -1.08907,0.82263 -1.77192,0.82263zm12.91254,-9.63418l-6.70039,3.04978l0,13.97735l6.78872,-2.71539a1.55284,1.55284 0 0 0 0.97647,-1.4419l0,-12.14864c0,-0.54939 -0.55473,-0.92503 -1.0648,-0.72119z"/>
-                </svg>`
+                let imageMapIcon = `<svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path d="m928.73232,829.54628l-867.21297,0c-28.00285,0 -50.70397,-22.70112 -50.70397,-50.70397l0,-632.56134c0,-28.00285 22.70112,-50.70397 50.70397,-50.70397l867.21297,0c28.00285,0 50.70397,22.70112 50.70397,50.70397l0,632.56134c0,28.00285 -22.70112,50.70397 -50.70397,50.70397zm-6.23104,-620.65621c0,-62.36984 -51.04622,-56.46679 -114.0158,-56.46679l-627.08769,0c-62.96958,0 -114.0158,-5.90305 -114.0158,56.46679l0,451.71454c0,62.36905 51.04622,112.92962 114.0158,112.92962l627.08769,0c62.96958,0 114.0158,-50.56057 114.0158,-112.92962l0,-451.71454z" fill="#000" fill-rule="evenodd"></path>
+                <path d="m767.1477,672.80969c35.35968,52.35423 9.58384,41.11379 -57.20992,41.11379l-455.7455,0c-66.8722,0 -98.45206,8.33288 -70.11646,-47.5215l109.87471,-217.32038c28.26113,-55.8734 81.72212,-59.58905 118.7891,-8.31783l108.26724,149.91263l30.24571,-59.66431c28.30232,-55.85438 80.39511,-58.74055 115.77618,-6.40771l100.11895,148.20533l-0.00001,-0.00002z"></path>
+                <path fill="#ffffff" d="m761.01931,656.85011c-208.86903,-302.88165 -247.68157,-333.93169 -247.68157,-445.19433c0,-152.37521 123.62516,-276.00037 276.00036,-276.00037s276.00036,123.62516 276.00036,276.00037c0,111.26264 -38.81254,142.31268 -247.68157,445.19433c-13.65627,19.83753 -42.9813,19.83753 -56.78132,0l0.14375,0z"></path>
+                <path fill="#000000" d="m766.04696,594.15151c-171.78709,-249.10902 -203.70899,-274.64654 -203.70899,-366.15598c0,-125.323 101.67715,-227.00015 227.00015,-227.00015s227.00015,101.67715 227.00015,227.00015c0,91.50944 -31.9219,117.04695 -203.70899,366.15598c-11.23178,16.31564 -35.35054,16.31564 -46.70055,0l0.11823,0zm23.29116,-271.57258c52.25733,0 94.5834,-42.32607 94.5834,-94.5834s-42.32607,-94.5834 -94.5834,-94.5834s-94.5834,42.32607 -94.5834,94.5834s42.32607,94.5834 94.5834,94.5834z"></path>
+              </svg>`
                 return ui.button({
                     className: 'summernote-image-display',
                     contents: `<i class="note-icon">${imageMapIcon}</i>`,
@@ -348,21 +352,20 @@
                     <ellipse stroke="#000000" ry="1.75858" rx="1.75858" id="svg_8" cy="14.35353" cx="16.78071" fill="#ffffff"/>
                     </svg>`
 
-                    let $rectBtn = ui.buttonGroup([
-                        ui.button({
-                            contents: `<i class="note-icon">${rectIcon}</i>`,
-                            tooltip: lang.imageMap.rect,
-                        }),
-                    ]).render()
+                    let $rectBtn = ui.button({
+                        contents: `<i class="note-icon">${rectIcon}</i>`,
+                        tooltip: lang.imageMap.rect,
+                    }).render()
                         .appendTo(this.$toolbar)
+                        .wrap('<div class="note-btn-group btn-group">')
 
-                    let $deletBtn = ui.buttonGroup([
-                        ui.button({
-                            contents: `<i class="note-icon-trash">`,
-                            tooltip: lang.imageMap.delete,
-                        })
-                    ]).render()
+                    this.$deletBtn = ui.button({
+                        contents: `<i class="note-icon-trash">`,
+                        tooltip: lang.imageMap.delete,
+                    }).render()
+                        .prop('disabled', true)
                         .appendTo(this.$toolbar)
+                        .wrap('<div class="note-btn-group btn-group">')
 
                     $alert = $(`<div class="summernote-imagemap-alert alert alert-danger fade" role="alert">${lang.imageMap.tooManyArea}</div>`)
                     $alert.prependTo(this.$toolbar)
@@ -372,9 +375,9 @@
                         if (this.$svg.find('g').length < maxArea) {
                             let $area = this.addArea('rect')
                             let $group = this.renderAreaSvg($area)
+                            this.updateToolbar()
                             $group.trigger('mousedown')
                             this.updateAttrEditor($area)
-                            this.updateToolbar()
                         }
                         else {
                             $alert.show().addClass('show')
@@ -383,22 +386,27 @@
                             }, 5000)
                         }
                     })
-                    $deletBtn.on('click', () => {
-                        let $target = this.$svg.data('edit-target')
+                    this.$deletBtn.on('click', () => {
+                        let $target = this.$activeElement
                         if (!$target) return
                         let $area = $target.data('area')
                         if (!$area) return
                         $area.remove()
                         $target.closest('g').remove()
+                        this.$activeElement = undefined
                         this.updateAttrEditor()
                         this.updateToolbar()
                     })
 
-                    this.$areaCount = $('<i>')
+                    this.$areaCount = $('<span>')
                         .appendTo(this.$toolbar)
-                        .wrap('<div class="note-btn-group btn-group float-right font-weight-bold mr-2">')
+                        .wrap('<div class="note-btn-group btn-group font-weight-bold ml-2 note-toolbar-text">')
                     this.updateToolbar()
 
+                    let $hint = $('<small>').text(lang.imageMap.hint)
+                        .addClass(['text-muted', 'font-italic'])
+                        .prependTo(this.$toolbar)
+                        .wrap('<div class="note-btn-group btn-group mr-3 note-toolbar-text float-right">')
                 }
 
                 /**
@@ -422,20 +430,20 @@
                         .addClass(['summernote-imagemap-attr-title', 'form-control', 'form-control-sm'])
                         .appendTo($attrContent)
                         .wrap('<div class="form-group"></div>')
-                        .before(`<label for="summernote-imagemap-title-${this.id}" class="note-form-label">title</label>`)
+                        .before(`<label for="summernote-imagemap-title-${this.id}" class="note-form-label">${lang.imageMap.title}</label>`)
 
                     this.$alt = $('<input>')
                         .addClass(['summernote-imagemap-attr-alt', 'form-control', 'form-control-sm'])
                         .attr('id', `summernote-imagemap-alt-${this.id}`)
                         .appendTo($attrContent)
                         .wrap('<div class="form-group"></div>')
-                        .before(`<label for="summernote-imagemap-alt-${this.id}" class="note-form-label">alt</label>`)
+                        .before(`<label for="summernote-imagemap-alt-${this.id}" class="note-form-label">${lang.imageMap.alt}</label>`)
 
                     this.$href = $('<input>')
                         .addClass(['summernote-imagemap-attr-href', 'form-control', 'form-control-sm'])
                         .appendTo($attrContent)
                         .wrap('<div class="form-group"></div>')
-                        .before(`<label for="summernote-imagemap-href-${this.id}" class="note-form-label">href</label>`)
+                        .before(`<label for="summernote-imagemap-href-${this.id}" class="note-form-label">${lang.imageMap.href}</label>`)
 
                     var $modifyBtnGroup = $('<div>')
                         .addClass(['summernote-imagemap-attr-btngroup', 'text-center'])
@@ -446,7 +454,7 @@
                         .addClass(['btn', 'btn-sm', 'btn-outline-primary'])
                         .appendTo($modifyBtnGroup)
                     this.$cancelBtn.on('click', (event) => {
-                        let $target = this.$svg.data('edit-target')
+                        let $target = this.$activeElement
                         let $area = $target.data('area')
                         this.updateAttrEditor($area)
                     })
@@ -456,7 +464,7 @@
                         .addClass(['btn', 'btn-sm', 'btn-primary'])
                         .appendTo($modifyBtnGroup)
                     this.$saveBtn.on('click', (event) => {
-                        let $target = this.$svg.data('edit-target')
+                        let $target = this.$activeElement
                         if (!$target) return
                         let $area = $target.data('area')
                         if (!$area) return
@@ -543,6 +551,7 @@
                             this.$activeElement = undefined
                         }
                         this.updateAttrEditor()
+                        this.updateToolbar()
                     })
 
                 }
@@ -552,6 +561,13 @@
                  */
                 updateToolbar() {
                     this.$areaCount.text(`${lang.imageMap.currentArea}: ${this.$map.find('area').length}/${maxArea}`)
+
+                    if (this.$activeElement) {
+                        this.$deletBtn.prop('disabled', false)
+                    }
+                    else {
+                        this.$deletBtn.prop('disabled', true)
+                    }
                 }
 
                 /**
@@ -585,8 +601,13 @@
                  * Apply editor map to real map
                  */
                 applyMap() {
-                    let $map = this.$map.clone().attr('name', `${this.originImageMap.id}`)
-                    this.originImageMap.$map.replaceWith($map)
+                    if (this.$map.find('area').length) {
+                        let $map = this.$map.clone().attr('name', `${this.originImageMap.id}`)
+                        this.originImageMap.$map.replaceWith($map)
+                    }
+                    else {
+                        this.originImageMap.$map.remove()
+                    }
                 }
 
                 /**
@@ -635,10 +656,9 @@
                         // add active class and record element to this.$activeElement
                         $element.addClass('active')
                         this.$activeElement = $element
-                        // record element to svg data('edit-target')
-                        this.$svg.data('edit-target', $element)
-                        // update AttrEditor Inputs
+                        // update AttrEditor Inputs and Toolbar
                         this.updateAttrEditor($area)
+                        this.updateToolbar()
 
                         // bring to front
                         if (!$group.is(':last-child')) {
@@ -997,6 +1017,10 @@
                 hide: '收合',
                 collapse: '展開',
                 currentArea: '當前區域數',
+                title: '提示文字 (title)',
+                alt: '備註 (alt)',
+                href: '超連結 (href)',
+                hint: '關閉對話框後自動套用當前修改',
             }
         },
         'en-US': {
@@ -1011,6 +1035,10 @@
                 hide: 'hide',
                 collapse: 'Collapse',
                 currentArea: 'Current Area',
+                title: 'title',
+                alt: 'alt',
+                href: 'href',
+                hint: 'Close dialog will automatically apply current changes',
             }
         },
     });
