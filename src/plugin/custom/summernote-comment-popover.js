@@ -5,7 +5,14 @@
         ],
         commentPopover: {
             className: 'summernote-comment-popover',
+            anchorClassName: 'summernote-comment-popover-anchor',
             urlPattern: /https?:\/\/(?:[\w\u00a1-\uffff]+\.?)+(?::\d{2,5})?(?:\/[^\s]*)?/,
+            titleMaxLength: 100,
+            contentMaxLength: 100,
+            disabledImage: false,
+            disabledTitle: true,
+            disabledContent: false,
+            displayDelay: 300,
         }
     }}
  * add comment popover
@@ -25,9 +32,14 @@
     $.extend($.summernote.options, {
         commentPopover: {
             className: null,
+            anchorClassName: null,
             urlPattern: null,
             titleMaxLength: 100,
             contentMaxLength: 100,
+            disabledImage: false,
+            disabledTitle: true,
+            disabledContent: false,
+            displayDelay: 300,
         }
     })
     $.extend($.summernote.plugins, {
@@ -49,7 +61,12 @@
             const titleMaxLength = options.commentPopover.titleMaxLength
             const contentMaxLength = options.commentPopover.contentMaxLength
             const className = options.commentPopover.className || 'summernote-comment-popover'
+            const anchorClassName = options.commentPopover.anchorClassName || 'summernote-comment-popover-anchor'
             const urlPattern = options.commentPopover.urlPattern || /https?:\/\/(?:[\w\u00a1-\uffff]+\.?)+(?::\d{2,5})?(?:\/[^\s]*)?/
+            const disabledImage = options.commentPopover.disabledImage
+            const disabledTitle = options.commentPopover.disabledTitle
+            const disabledContent = options.commentPopover.disabledContent
+            const displayDelay = options.commentPopover.displayDelay
 
             const editPopoverIcon = `<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path stroke="#000000" fill="#000000" d="m0.93829,4.45171l0,0c0,-1.05081 0.81745,-1.90267 1.82583,-1.90267l0.82992,0l0,0l3.98362,0l7.46929,0c0.48424,0 0.94865,0.20046 1.29106,0.55728c0.34241,0.35682 0.53477,0.84077 0.53477,1.34538l0,4.16198c-4.84747,-0.45484 -6.47103,1.94658 -6.43542,5.20509l-1.18444,0.08376l-3.66816,1.76357l0.10921,-1.67617l-2.92985,-0.0249c-1.00838,0 -1.82583,-0.85185 -1.82583,-1.90267l0,0l0,-2.854l0,0l0,-4.75666l0,0.00001z" id="svg_1"/>
@@ -72,7 +89,7 @@
                 'summernote.init': function (_, layoutInfo) {
                     layoutInfo.editor.one('mouseenter', function (event) {
                         let $edit = layoutInfo.editingArea
-                        let $allPopover = $edit.find(`a.${className}`)
+                        let $allPopover = $edit.find(`a.${anchorClassName}[data-toggle="popover"]`)
                         $allPopover.popover()
                     })
                 }
@@ -80,34 +97,50 @@
             
             this.initialize = function () {
                 if ($('#summernote-comment-popover').length == 0) {
-                    this.css = $('<style>').html('.summernote-comment-popover:not([href]){color: #8ac193;}.summernote-comment-popover:not([href]):hover{color: #8ac193; text-decoration: underline}')
+                    this.css = $('<style>').html([
+                        '.summernote-comment-popover-anchor:not([href]){color: #8ac193;}',
+                        '.summernote-comment-popover-anchor:not([href]):hover{color: #8ac193; text-decoration: underline;}',
+                        '.summernote-comment-popover .popover-image {max-height: 500px; width: auto;}'
+                    ].join(''))
                     this.css.attr('id', 'summernote-comment-popover')
                     $(document.head).append(this.css)
                 }
 
                 let titleMaxAttr = !!titleMaxLength? `maxlength="${titleMaxLength}"`: ""
                 let contentMaxAttr = !!contentMaxLength? `maxlength="${contentMaxLength}"`: ""
-                this.$dialog = ui.dialog({
-                    title: `${lang.commentPopover.addPopover}`,
-                    className: 'summernote-comment-popover-dialog',
-                    fade: options.dialogsFade,
-                    body: [
+                let body = ''
+                if (!disabledImage) {
+                    body += [
                         '<div class="form-group summernote-comment-popover-form-group">',
                         `<label for="summernote-comment-popover-image-url-${options.id}" class="note-form-label" >${lang.commentPopover.imgurl}</label>`,
                         `<input id="summernote-comment-popover-image-url-${options.id}" class="summernote-comment-popover-image-url form-control note-form-control note-input" type="url" pattern="${urlPattern.source}" />`,
                         `<div class="invalid-feedback">${lang.commentPopover.invalidUrl}</div>`,
-                        '</div>',
+                        '</div>'
+                    ].join('')
+                }
+                if (!disabledTitle) {
+                    body += [
                         '<div class="form-group summernote-comment-popover-form-group">',
                         `<label for="summernote-comment-popover-title-text-${options.id}" class="note-form-label" >${lang.commentPopover.title}</label>`,
                         `<input ${titleMaxAttr} id="summernote-comment-popover-title-text-${options.id}" class="summernote-comment-popover-title-text form-control note-form-control note-input" type="text" />`,
                         `<div class="invalid-feedback">${lang.commentPopover.invalidContent}</div>`,
                         '</div>',
+                    ].join('')
+                }
+                if (!disabledContent) {
+                    body += [
                         '<div class="form-group summernote-comment-popover-form-group">',
                         `<label for="summernote-comment-popover-content-text-${options.id}" class="note-form-label" >${lang.commentPopover.content}</label>`,
                         `<textarea ${contentMaxAttr} id="summernote-comment-popover-content-text-${options.id}" class="summernote-comment-popover-content-text form-control note-form-control note-input" rows="3"></textarea>`,
                         `<div class="invalid-feedback">${lang.commentPopover.invalidContent}</div>`,
                         '</div>',
-                    ].join(''),
+                    ].join('')
+                }
+                this.$dialog = ui.dialog({
+                    title: `${lang.commentPopover.addPopover}`,
+                    className: 'summernote-comment-popover-dialog',
+                    fade: options.dialogsFade,
+                    body: body,
                     footer: `<button href="#" class="btn btn-primary summernote-comment-popover-btn">${lang.commentPopover.ok}</button>`,
                 }).render().appendTo(options.container);
                 this.$dialog.find('.modal-body').addClass("summernote-comment-popover-form-container")
@@ -164,9 +197,9 @@
                     var $titleInput = self.$dialog.find('.modal-body .summernote-comment-popover-title-text')
                     var $contentInput = self.$dialog.find('.modal-body .summernote-comment-popover-content-text')
 
-                    let title = $titleInput.val()
-                    let content = $contentInput.val()
-                    let imgurl = $imgurlInput.val()
+                    let title = $titleInput.val() || ""
+                    let content = $contentInput.val() || ""
+                    let imgurl = $imgurlInput.val() || ""
 
                     // chack input valid
                     let invalidFlag = false
@@ -353,7 +386,7 @@
                 // find popover
                 this.walkNodes(start, end, function (node) {
                     let pred = function (node) {
-                        return dom.isAnchor(node) && $(node).hasClass(className)
+                        return dom.isAnchor(node) && $(node).hasClass(anchorClassName)
                     }
                     // (ancestor) current node ancestor is popover
                     if (dom.ancestor(node, pred)) {
@@ -366,8 +399,8 @@
                         return true
                     }
                     // (child) current node has popover in child
-                    if ($(node).find(`a.${className}`).length) {
-                        $popover = $(node).find(`a.${className}`)
+                    if ($(node).find(`a.${anchorClassName}`).length) {
+                        $popover = $(node).find(`a.${anchorClassName}`)
                         return true
                     }
                     return false
@@ -445,10 +478,12 @@
                 }
 
                 // add popover
-                $anchor.addClass(className)
+                $anchor.addClass(anchorClassName)
                     .attr("tabindex", "0")
+                    .attr("data-delay", displayDelay)
                     .attr("data-toggle", "popover")
                     .attr("data-html", "true")
+                    .attr("data-custom-class", className)
                     .attr("data-trigger", "hover")
                 // .attr("data-trigger", "click")
 
@@ -478,7 +513,7 @@
                     $popover.popover('dispose')
                     // if <a> has link only remove attr
                     if ($popover.attr('href') || $popover.attr('target')) {
-                        $popover.removeClass(className)
+                        $popover.removeClass(anchorClassName)
                             .removeAttr("tabindex").removeAttr("data-toggle").removeAttr("data-trigger")
                             .removeAttr("data-title").removeAttr("data-content")
 
@@ -490,7 +525,7 @@
                     // else unwrap <a>
                     else {
                         let $contents = $popover.contents()
-                        $contents.unwrap(`a.${className}`)
+                        $contents.unwrap(`a.${anchorClassName}`)
 
                         // reset range
                         rng = context.invoke('editor.createRangeFromList', $contents)
@@ -518,7 +553,7 @@
                 content: '內容',
                 ok: '確認',
                 invalidUrl: '無效的連結',
-                invalidContent: '無標題和內容',
+                invalidContent: '無內容',
             }
         },
         'en-US': {
@@ -530,7 +565,7 @@
                 content: 'Content',
                 ok: 'OK',
                 invalidUrl: 'Invalid Url',
-                invalidContent: 'Invalid Title and Content',
+                invalidContent: 'Invalid Content',
             }
         },
     });

@@ -265,7 +265,9 @@ options = {{
 
 #### summernote-comment-popover
 - 框選文字段落加上註解 popover
-- 若要在編輯器以外顯示需要依賴 bootstrap popover，使用 options 設定的 className 初始化 popover (e.g. `$(.summernote-comment-popover).popover()`)
+- 若要在編輯器以外顯示需要設定
+  - 初始化 popover
+  - 定義 popover css
 - `toolbar` button: `editPopover`, `removePopover`
   - `editPopover`: 插入註解 popover
   - `removePopover`: 移除註解 popover
@@ -274,10 +276,29 @@ options = {{
     // options
     commentPopover: {
         className: 'summernote-comment-popover',  // popover classname
+        anchorClassName: 'summernote-comment-popover-anchor',   // popover anchor classname
         urlPattern: /https?:\/\/(?:[\w\u00a1-\uffff]+\.?)+(?::\d{2,5})?(?:\/[^\s]*)?/,  // test image url validity
         titleMaxLength: 100,  // title input maxlength
         contentMaxLength: 100,  // content input maxlength
+        disabledImage: false,   // disable popover image
+        disabledTitle: true,    // disable popover title
+        disabledContent: false, // disable popover content
+        displayDelay: 300,  // delay display popover
     }
+    ```
+    
+    使用 className 初始化 popover
+
+    ```js
+    $(a.summernote-comment-popover-anchor[data-toggle="popover"]).popover()
+    ```
+
+    設定 className css
+
+    ```css
+    .summernote-comment-popover-anchor:not([href]){color: #8ac193;}
+    .summernote-comment-popover-anchor:not([href]):hover{color: #8ac193; text-decoration: underline;}
+    .summernote-comment-popover .popover-image {max-height: 500px; width: auto;}
     ```
 
 #### summernote-custom-contextmenu
