@@ -309,6 +309,60 @@ summernote 包含一個原始碼的 xss 過濾機制，規則如下：
 
 更多詳細設定可以參閱[官方文件](https://summernote.org/deep-dive/#xss-protection-for-codeview)
 
+## 嵌入影片
+以下是依據 [Summernote 0.8.18 videoDialog](https://github.com/summernote/summernote/blob/v0.8.18/src/js/base/module/VideoDialog.js#L49) 整理出已知的有效網址
+
+
+### YouTube
+
+- YouTube 網域 + 路徑 + id
+    - `https://youtube.com/embed/Dm_BrGu1sHM`
+- YouTube 網域 + 路徑 + id + 時戳
+    - `https://www.youtube.com/watch?v=Dm_BrGu1sHM&t=300`
+    - `https://m.youtube.com/v/Dm_BrGu1sHM?t=300`
+- **網址附帶的其他參數需放在時戳之後**
+    - `https://m.youtube.com/v/Dm_BrGu1sHM?t=300&si=YsiSA_iLcKJMtDVq`
+
+
+| 網域                                                       | 路徑                                                         | id         | 時戳                                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------------ | ---------- | ------------------------------------------------------ |
+| `youtube.com/`<br> `www.youtube.com/`<br> `m.youtube.com/` | `embed/`<br> `v/`<br> `watch?v=`<br> `watch?`(任意字元)`&v=` | (11個字元) | `?t=`(任意字元)<br> `&t=`(任意字元)<br> `t=`(任意字元) |
+
+
+
+### Instagram
+
+- Instagram 網域 + 路徑 + id
+    - `https://www.instagram.com/p/Cy8sEXrv9xu`
+- **網址附帶的其他參數需放在 id 之後**
+    - `https://www.instagram.com/p/Cy8sEXrv9xu?igshid=MzRlODBiNWFlZA==`
+
+
+| 網域                                     | 路徑 | id         |
+| ---------------------------------------- | ---- | ---------- |
+| `www.instagram.com/`<br>`instagram.com/` | `p/` | (任意字元) |
+
+### 優酷
+
+- 優酷網域 + 路徑 + `id_` + id + `.html`
+    - `https://v.youku.com/v_show/id_XNTA3MzUyMTUyMA==.html`
+- **網址附帶的其他參數需放在 `.html` 之後**
+    - `https://v.youku.com/v_show/id_XNTA3MzUyMTUyMA==.html?spm=a2hja.14919748_WEBHOME_NEW.drawer15.d_zj1_4&s=efbfbd4a46efbfbd5975&scm=20140719.manual.19594.show_efbfbd4a46efbfbd5975`
+
+| 網域           | 路徑      | 前綴  | id                              | 後綴    |
+| -------------- | --------- | ----- | ------------------------------- | ------- |
+| `v.youku.com/` | `v_show/` | `id_` | (至少一個任意字元)(零或數個`=`) | `.html` |
+
+### DailyMotion
+
+- DailyMotion網域 + 路徑 + id
+    - `https://www.dailymotion.com/video/x8pi9hp`
+
+| 網域                   | 路徑                 | id                                     | 參數                                                   |
+| ---------------------- | -------------------- | -------------------------------------- | ------------------------------------------------------ |
+| `www.dailymotion.com/` | `video/` <br> `hub/` | (至少一個非`_`的字元)(多個非`#`的字元) | (零組或一組 (`#video=`)(至少一個非 `_` 或 `&` 的字元)) |
+
+
 ## For contributor
 
 npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼，可以參考使用：
