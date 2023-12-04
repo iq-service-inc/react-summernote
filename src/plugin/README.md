@@ -16,7 +16,7 @@ node .\bundle-plugins.js
   - [Button 功能](#button-功能)
   - [Plugin 簡介](#plugin-簡介)
     - [Lang](#lang)
-      - [summernote-zh-TW](#summernote-zh-TW)
+      - [summernote-zh-TW](#summernote-zh-tw)
     - [Custom](#custom)
       - [summernote-comment-popover](#summernote-comment-popover)
       - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
@@ -24,7 +24,7 @@ node .\bundle-plugins.js
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-fontsize-input](#summernote-fontsize-input)
       - [summernote-imagemap](#summernote-imagemap)
-      - [summernote-pastehtml](#summernote-pastehtml)
+      - [summernote-pasteHTML](#summernote-pastehtml)
       - [summernote-toc](#summernote-toc)
     - [Formatting](#formatting)
       - [summernote-addclass](#summernote-addclass)
@@ -444,6 +444,13 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
    - 圖片屬性
    - `image popover` button: `imageAttributes`
      - `imageAttributes`: 編輯圖片屬性
+
+    ```js
+    // options
+    imageAttributes: {
+      autoInsertTitle: true     // Automatically insert image tile below the image
+    }
+    ```
 
 #### [summernote-image-captionit](https://github.com/DiemenDesign/summernote-image-captionit)
    - Allows adding figure and figcaption to images, with removal when selected twice.

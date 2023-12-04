@@ -92,7 +92,8 @@
         icon: '<i class="note-icon-pencil"/>',
         removeEmpty: true,
         disableUpload: true,
-        imageFolder: ''
+        imageFolder: '',
+        autoInsertTitle: true,
       }
     });
     $.extend($.summernote.plugins, {
@@ -105,17 +106,34 @@
             $target.css({
               width: '',
               height: '',
-          });
+            });
+            if (options.imageAttributes.autoInsertTitle) {
+              this.$handle = context.modules.handle.$handle
+              var $img = this.$handle.find('.note-control-selection').data('target')
+              if (!!$img && $editable.find($img.data('image-title')).length) {
+                $img.data('image-title')
+                  .css('width', `${$img.width()}px`)
+              }
+            }
           } else {
             $target.css({
               width: value * 100 + '%',
               height: 'auto',
             });
+            if (options.imageAttributes.autoInsertTitle) {
+              this.$handle = context.modules.handle.$handle
+              var $img = this.$handle.find('.note-control-selection').data('target')
+              if (!!$img && $editable.find($img.data('image-title')).length) {
+                $img.data('image-title')
+                  .css('width', value * 100 + '%')
+              }
+            }
           }
         })
 
         var self      = this,
             ui        = $.summernote.ui,
+            dom       = $.summernote.dom,
             $note     = context.layoutInfo.note,
             $editor   = context.layoutInfo.editor,
             $editable = context.layoutInfo.editable,
@@ -281,6 +299,26 @@
             body:   body,
             footer: '<button href="#" class="btn btn-primary note-btn note-btn-primary note-imageAttributes-btn">' + lang.imageAttributes.editBtn + '</button>'
           }).render().appendTo($container);
+          
+          if (options.imageAttributes.autoInsertTitle) {
+            this.$handle = context.modules.handle.$handle
+            this.$handle.on('mousedown', (event) => {
+              if (dom.isControlSizing(event.target)) {
+                const move = () => {
+                  var $img = this.$handle.find('.note-control-selection').data('target');
+                  if (!!$img && $editable.find($img.data('image-title')).length) {
+                    $img.data('image-title')
+                      .css('width', `${$img.width()}px`)
+                      .attr('value', $img.attr('title'))
+                  }
+                }
+                $(document).on('mousemove', move)
+                  .one('mouseup', (e) => {
+                    $(document).off('mousemove', move)
+                  })
+              }
+            })
+          }
         };
         this.destroy = function () {
           ui.hideDialog(this.$dialog);
@@ -345,6 +383,40 @@
               if (imgInfo.linkRole) linkBody += ' role="' + imgInfo.linkRole + '"';
               linkBody += '></a>';
               $img.wrap(linkBody);
+              if (options.imageAttributes.autoInsertTitle) {
+                if ($editable.find($img.data('image-title')).length) {
+                  $img.data('image-title').insertAfter($img)
+                }
+              }
+            }
+            if (options.imageAttributes.autoInsertTitle) {
+              if (imgInfo.title) {
+                if ($editable.find($img.data('image-title')).length) {
+                  $img.data('image-title')
+                    .css('width', `${$img.width()}px`)
+                    .attr('value', imgInfo.title)
+                }
+                else {
+                  let $title = $('<input>').addClass('summernote-custom-image-title')
+                    .prop({
+                      readonly: true,
+                      disabled: true,
+                    })
+                    .css({
+                      'display': 'block',
+                      'background': 'none',
+                      'border': 'none',
+                      'color': 'black',
+                      'textAlign': 'center',
+                      'width': `${$img.width()}px`,
+                      'pointerEvents': 'none',
+                      'userSelect': 'none',
+                    })
+                    .attr('value', imgInfo.title)
+                  $img.after($title)
+                    .data('image-title', $title)
+                }
+              }
             }
             $note.val(context.invoke('code'));
             $note.change();
