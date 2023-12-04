@@ -32,6 +32,8 @@
             title: 'Title',
             alt: 'Alt Text',
             dimensions: 'Dimensions',
+            useNaturalSize: 'Use natural image size',
+            dimensionHint: 'Leave blank to scale proportionally',
           tabAttributes: 'Attributes',
             class: 'Class',
             style: 'Style',
@@ -62,7 +64,9 @@
               browse: '瀏覽',
               title: '標題',
               alt: '圖片說明',
-              dimensions: '外形尺寸',
+              dimensions: '圖片尺寸',
+              useNaturalSize: '套用原始圖片尺寸',
+              dimensionHint: '留空依等比例縮放',
             tabAttributes: '屬性',
               class: '類 (Class)',
               style: '樣式 (Style)',
@@ -93,6 +97,23 @@
     });
     $.extend($.summernote.plugins, {
       'imageAttributes': function (context) {
+        var modulesEditor = context.modules.editor
+        modulesEditor.resize = modulesEditor.wrapCommand((value) => {
+          const $target = $(modulesEditor.restoreTarget());
+          value = parseFloat(value);
+          if (value === 0) {
+            $target.css({
+              width: '',
+              height: '',
+          });
+          } else {
+            $target.css({
+              width: value * 100 + '%',
+              height: 'auto',
+            });
+          }
+        })
+
         var self      = this,
             ui        = $.summernote.ui,
             $note     = context.layoutInfo.note,
@@ -227,12 +248,31 @@
                           '</div>' +
                         '</div>' +
                         '<div class="note-form-group form-group note-group-imageAttributes-dimensions">' +
-                          '<label class="control-label note-form-label col-sm-3">' + lang.imageAttributes.dimensions + '</label>' +
-                          '<div class="input-group note-input-group col-xs-12 col-sm-9">' +
-                            '<input class="note-imageAttributes-width form-control note-form-control note-input" type="text">' +
-                            '<span class="input-group-addon note-input-group-addon">x</span>' +
-                            '<input class="note-imageAttributes-height form-control note-form-control note-input" type="text">' +
+                          '<div class="col-xs-12 col-sm-9">' +
+                            '<label class="control-label note-form-label">' + lang.imageAttributes.dimensions + '</label>' +
+                            '<button class="btn btn-sm btn-outline-primary note-btn note-imageAttributes-naturalSizeBtn mb-1 float-right">'+ lang.imageAttributes.useNaturalSize +' </button>' +
                           '</div>' +
+                          '<div class="input-group note-input-group col-xs-12 col-sm-9">' +
+                            '<input class="note-imageAttributes-width form-control note-form-control note-input" type="number">' +
+                            '<div class="input-group-prepend input-group-append">' +
+                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">x</div>' +
+                            '</div>' +
+                            '<input class="note-imageAttributes-height form-control note-form-control note-input" type="number">' +
+                            '<div class="input-group-append" style="width: 2.6em">' +
+                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">px</div>' +
+                            '</div>' +
+                          '</div>' +
+                          '<div class="input-group note-input-group col-xs-12 col-sm-9">' +
+                            '<input class="note-imageAttributes-width-percent form-control note-form-control note-input" type="number">' +
+                            '<div class="input-group-prepend input-group-append">' +
+                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">x</div>' +
+                            '</div>' +
+                            '<input class="note-imageAttributes-height-percent form-control note-form-control note-input" type="number">' +
+                            '<div class="input-group-append" style="width: 2.6em">' +
+                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">%</div>' +
+                            '</div>' +
+                          '</div>' +
+                          '<small class="form-text font-italic text-muted col-xs-12 col-sm-9 text-right">' + lang.imageAttributes.dimensionHint + '</small>' +
                         '</div>' +
                       '</div>' +
                     '</div>';
@@ -264,8 +304,8 @@
             title:   $img.attr('title'),
             src:     $img.attr('src'),
             alt:     $img.attr('alt'),
-            width:   $img.attr('width'),
-            height:  $img.attr('height'),
+            width:   $img.width(),
+            height:  $img.height(),
             role:    $img.attr('role'),
             class:   $img.attr('class'),
             style:   $img.attr('style'),
@@ -276,22 +316,24 @@
             var $img = imgInfo.imgDom;
             if (options.imageAttributes.removeEmpty) {
               if (imgInfo.alt)    $img.attr('alt',   imgInfo.alt);    else $img.removeAttr('alt');
-              if (imgInfo.width)  $img.attr('width', imgInfo.width);  else $img.removeAttr('width');
-              if (imgInfo.height) $img.attr('height',imgInfo.height); else $img.removeAttr('height');
               if (imgInfo.title)  $img.attr('title', imgInfo.title);  else $img.removeAttr('title');
               if (imgInfo.src)    $img.attr('src',   imgInfo.src);    else $img.attr('src', '#');
               if (imgInfo.class)  $img.attr('class', imgInfo.class);  else $img.removeAttr('class');
               if (imgInfo.style)  $img.attr('style', imgInfo.style);  else $img.removeAttr('style');
               if (imgInfo.role)   $img.attr('role',  imgInfo.role);   else $img.removeAttr('role');
+              if (imgInfo.width)  $img.attr('width', imgInfo.width);  else $img.removeAttr('width');
+              if (imgInfo.height) $img.attr('height',imgInfo.height); else $img.removeAttr('height');
+              $img.css({ 'width': '', 'height': '' })
             } else {
               if (imgInfo.src)    $img.attr('src',   imgInfo.src);    else $img.attr('src', '#');
               $img.attr('alt',    imgInfo.alt);
-              $img.attr('width',  imgInfo.width);
-              $img.attr('height', imgInfo.height);
               $img.attr('title',  imgInfo.title);
               $img.attr('class',  imgInfo.class);
               $img.attr('style',  imgInfo.style);
               $img.attr('role',   imgInfo.role);
+              $img.attr('width',  imgInfo.width);
+              $img.attr('height', imgInfo.height);
+              $img.css({ 'width': '', 'height': '' })
             }
             if($img.parent().is("a")) $img.unwrap();
             if (imgInfo.linkHref) {
@@ -316,6 +358,8 @@
                 $imageAlt    = self.$dialog.find('.note-imageAttributes-alt'),
                 $imageWidth  = self.$dialog.find('.note-imageAttributes-width'),
                 $imageHeight = self.$dialog.find('.note-imageAttributes-height'),
+                $imageWidthPercent = self.$dialog.find('.note-imageAttributes-width-percent'),
+                $imageHeightPercent = self.$dialog.find('.note-imageAttributes-height-percent'),
                 $imageClass  = self.$dialog.find('.note-imageAttributes-class'),
                 $imageStyle  = self.$dialog.find('.note-imageAttributes-style'),
                 $imageRole   = self.$dialog.find('.note-imageAttributes-role'),
@@ -326,6 +370,7 @@
                 $linkRel     = self.$dialog.find('.note-imageAttributes-link-rel'),
                 $linkRole    = self.$dialog.find('.note-imageAttributes-link-role'),
                 $editBtn     = self.$dialog.find('.note-imageAttributes-btn');
+                $naturalSizeBtn = self.$dialog.find('.note-imageAttributes-naturalSizeBtn');
             $linkHref.val();
             $linkClass.val();
             $linkStyle.val();
@@ -378,11 +423,37 @@
                   context.triggerEvent('change', $editable.html());
                 });
               });
+              $naturalSizeBtn.click( function (e) {
+                $imageWidth.val(imgInfo.imgDom.prop('naturalWidth'))
+                $imageHeight.val(imgInfo.imgDom.prop('naturalHeight'))
+                $imageWidthPercent.val(100)
+                $imageHeightPercent.val(100)
+              })
+              resetDimensions = function () {
+                if ($imageWidth.val()) $imageWidthPercent.val($imageWidth.val() / imgInfo.imgDom.prop('naturalWidth') * 100)
+                else $imageWidthPercent.val("")
+                if ($imageHeight.val()) $imageHeightPercent.val($imageHeight.val() / imgInfo.imgDom.prop('naturalHeight') * 100)
+                else $imageHeightPercent.val("")
+              }
+              resetDimensionsPercent = function () {
+                if ($imageWidthPercent.val()) $imageWidth.val($imageWidthPercent.val() * imgInfo.imgDom.prop('naturalWidth') / 100)
+                else $imageWidth.val("")
+                if ($imageHeightPercent.val()) $imageHeight.val($imageHeightPercent.val() * imgInfo.imgDom.prop('naturalHeight') / 100)
+                else $imageHeight.val("")
+              }
+              $imageWidth.on('keyup', resetDimensions);
+              $imageHeight.on('keyup', resetDimensions);
+              $imageWidthPercent.on('keyup', resetDimensionsPercent);
+              $imageHeightPercent.on('keyup', resetDimensionsPercent);
               $imageTitle.val(imgInfo.title);
               $imageSrc.val(imgInfo.src);
               $imageAlt.val(imgInfo.alt);
               $imageWidth.val(imgInfo.width);
               $imageHeight.val(imgInfo.height);
+              if (imgInfo.width) $imageWidthPercent.val(imgInfo.width / imgInfo.imgDom.prop('naturalWidth') * 100);
+              else $imageWidthPercent.val("")
+              if (imgInfo.height) $imageHeightPercent.val(imgInfo.height / imgInfo.imgDom.prop('naturalHeight') * 100);
+              else $imageHeightPercent.val("")
               $imageClass.val(imgInfo.class);
               $imageStyle.val(imgInfo.style);
               $imageRole.val(imgInfo.role);
@@ -391,6 +462,7 @@
             });
             ui.onDialogHidden(self.$dialog, function () {
               $editBtn.off('click');
+              $naturalSizeBtn.off('click');
               if (deferred.state() === 'pending') deferred.reject();
             });
             ui.showDialog(self.$dialog);
