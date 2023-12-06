@@ -112,9 +112,10 @@
             if (options.imageAttributes.autoInsertTitle) {
               this.$handle = context.modules.handle.$handle
               var $img = this.$handle.find('.note-control-selection').data('target')
-              if (!!$img && $editable.find($img.data('image-title')).length) {
-                $img.data('image-title')
-                  .css('width', `${$img.width()}px`)
+              let id = $img.attr('data-image-id')
+              let $title = $editable.find(`input[data-image-title-id=${id}]`)
+              if ($title.length) {
+                $title.css('width', `${$img.width()}px`)
               }
             }
           } else {
@@ -125,9 +126,10 @@
             if (options.imageAttributes.autoInsertTitle) {
               this.$handle = context.modules.handle.$handle
               var $img = this.$handle.find('.note-control-selection').data('target')
-              if (!!$img && $editable.find($img.data('image-title')).length) {
-                $img.data('image-title')
-                  .css('width', value * 100 + '%')
+              let id = $img.attr('data-image-id')
+              let $title = $editable.find(`input[data-image-title-id=${id}]`)
+              if ($title.length) {
+                $title.css('width', value * 100 + '%')
               }
             }
           }
@@ -317,9 +319,10 @@
               if (dom.isControlSizing(event.target)) {
                 const move = () => {
                   var $img = this.$handle.find('.note-control-selection').data('target');
-                  if (!!$img && $editable.find($img.data('image-title')).length) {
-                    $img.data('image-title')
-                      .css('width', `${$img.width()}px`)
+                  let id = $img.attr('data-image-id')
+                  let $title = $editable.find(`input[data-image-title-id=${id}]`)
+                  if ($title.length) {
+                    $title.css('width', `${$img.width()}px`)
                       .attr('value', $img.attr('title'))
                   }
                 }
@@ -394,21 +397,30 @@
               if (imgInfo.linkRole) linkBody += ' role="' + imgInfo.linkRole + '"';
               linkBody += '></a>';
               $img.wrap(linkBody);
-              if (options.imageAttributes.autoInsertTitle) {
-                if ($editable.find($img.data('image-title')).length) {
-                  $img.data('image-title').insertAfter($img)
-                }
-              }
             }
             if (options.imageAttributes.autoInsertTitle) {
+              let id = $img.attr('data-image-id')
+              let $title = $editable.find(`input[data-image-title-id=${id}]`)
+              if ($title.length) {
+                // unwrap $title link
+                if ($title.parent().is('a') &&
+                  $title.parent().children().not($title).length == 0) {
+                  $title.unwrap('a')
+                }
+              }
               if (imgInfo.title) {
-                if ($editable.find($img.data('image-title')).length) {
-                  $img.data('image-title')
-                    .css('width', `${$img.width()}px`)
+                if ($title.length) {
+                  // title get value && $title is exist
+                  // update $title content and position
+                  $title.css('width', `${$img.width()}px`)
                     .attr('value', imgInfo.title)
+                  $title.insertAfter($img)
                 }
                 else {
-                  let $title = $('<input>').addClass('summernote-custom-image-title')
+                  // title get value && $title not exist
+                  // create $title
+                  let newid = self.randomId()
+                  let $newtitle = $('<input>').addClass('summernote-custom-image-title')
                     .prop({
                       readonly: true,
                       disabled: true,
@@ -423,9 +435,20 @@
                       'pointerEvents': 'none',
                       'userSelect': 'none',
                     })
-                    .attr('value', imgInfo.title)
-                  $img.after($title)
-                    .data('image-title', $title)
+                    .attr({
+                      'value': imgInfo.title,
+                      'data-image-title-id': newid,
+                    })
+                  $img.after($newtitle)
+                    .attr('data-image-id', newid)
+                }
+              }
+              else {
+                if ($title.length) {
+                  // title is blank && $title is exist
+                  // remove $title
+                  $title.remove()
+                  $img.removeAttr('data-image-id')
                 }
               }
             }
@@ -606,6 +629,9 @@
             ui.showDialog(self.$dialog);
           });
         };
+        this.randomId = function() {
+          return Date.now().toString(36) + Math.random().toString(36).substring(2)
+        }
       }
     });
   }));
