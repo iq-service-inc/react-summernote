@@ -33,6 +33,7 @@
             alt: 'Alt Text',
             dimensions: 'Dimensions',
             useNaturalSize: 'Use natural image size',
+            switchUnit: 'Switch Unit',
             dimensionHint: 'Leave blank to scale proportionally',
           tabAttributes: 'Attributes',
             class: 'Class',
@@ -66,6 +67,7 @@
               alt: '圖片說明',
               dimensions: '圖片尺寸',
               useNaturalSize: '套用原始圖片尺寸',
+              switchUnit: '切換單位',
               dimensionHint: '留空依等比例縮放',
             tabAttributes: '屬性',
               class: '類 (Class)',
@@ -268,26 +270,35 @@
                         '<div class="note-form-group form-group note-group-imageAttributes-dimensions">' +
                           '<div class="col-xs-12 col-sm-9">' +
                             '<label class="control-label note-form-label">' + lang.imageAttributes.dimensions + '</label>' +
-                            '<button class="btn btn-sm btn-outline-primary note-btn note-imageAttributes-naturalSizeBtn mb-1 float-right">'+ lang.imageAttributes.useNaturalSize +' </button>' +
+                            '<button class="btn btn-sm btn-outline-primary note-btn note-imageAttributes-naturalSizeBtn shadow-none mb-1 float-right">'+ lang.imageAttributes.useNaturalSize +' </button>' +
                           '</div>' +
-                          '<div class="input-group note-input-group col-xs-12 col-sm-9">' +
-                            '<input class="note-imageAttributes-width form-control note-form-control note-input" type="number">' +
-                            '<div class="input-group-prepend input-group-append">' +
-                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">x</div>' +
+                          '<div class="input-group input-group-sm note-input-group col-xs-12 col-sm-9 mb-1">' +
+                            '<div class="input-group-prepend col-4 p-0">' + 
+                              '<label class="control-label note-form-label input-group-text rounded-left w-100 justify-content-center">' + lang.imageAttributes.switchUnit + '</label>' +
                             '</div>' +
-                            '<input class="note-imageAttributes-height form-control note-form-control note-input" type="number">' +
-                            '<div class="input-group-append" style="width: 2.6em">' +
-                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">px</div>' +
+                            '<div class="input-group-append col-8 m-0 p-0">' + 
+                              '<button class="btn btn-sm w-50 shadow-none btn-outline-primary note-btn note-imageAttributes-switchUnitToPX active">px</button>' +
+                              '<button class="btn btn-sm w-50 shadow-none btn-outline-primary note-btn note-imageAttributes-switchUnitToPercent">%</button>' +
                             '</div>' +
                           '</div>' +
-                          '<div class="input-group note-input-group col-xs-12 col-sm-9">' +
-                            '<input class="note-imageAttributes-width-percent form-control note-form-control note-input" type="number">' +
+                          '<div class="input-group note-input-group col-xs-12 col-sm-9 note-imageAttributes-px">' +
+                            '<input class="note-imageAttributes-width form-control note-form-control note-input" type="number" inputmode="numeric" min="0">' +
                             '<div class="input-group-prepend input-group-append">' +
-                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">x</div>' +
+                              '<div class="input-group-text form-control note-form-control">x</div>' +
                             '</div>' +
-                            '<input class="note-imageAttributes-height-percent form-control note-form-control note-input" type="number">' +
+                            '<input class="note-imageAttributes-height form-control note-form-control note-input" type="number" inputmode="numeric" min="0">' +
                             '<div class="input-group-append" style="width: 2.6em">' +
-                              '<div class="input-group-addon note-input-group-addon input-group-text form-control note-form-control">%</div>' +
+                              '<div class="input-group-text form-control note-form-control">px</div>' +
+                            '</div>' +
+                          '</div>' +
+                          '<div class="input-group note-input-group col-xs-12 col-sm-9 note-imageAttributes-percent" style="display: none">' +
+                            '<input class="note-imageAttributes-width-percent form-control note-form-control note-input" type="number" pattern="^\d*(\.\d{0,2})?$" min="0">' +
+                            '<div class="input-group-prepend input-group-append">' +
+                              '<div class="input-group-text form-control note-form-control">x</div>' +
+                            '</div>' +
+                            '<input class="note-imageAttributes-height-percent form-control note-form-control note-input" type="number" pattern="^\d*(\.\d{0,2})?$" min="0">' +
+                            '<div class="input-group-append" style="width: 2.6em">' +
+                              '<div class="input-group-text form-control note-form-control">%</div>' +
                             '</div>' +
                           '</div>' +
                           '<small class="form-text font-italic text-muted col-xs-12 col-sm-9 text-right">' + lang.imageAttributes.dimensionHint + '</small>' +
@@ -443,6 +454,10 @@
                 $linkRole    = self.$dialog.find('.note-imageAttributes-link-role'),
                 $editBtn     = self.$dialog.find('.note-imageAttributes-btn');
                 $naturalSizeBtn = self.$dialog.find('.note-imageAttributes-naturalSizeBtn');
+                $switchUnitToPXBtn = self.$dialog.find('.note-imageAttributes-switchUnitToPX');
+                $switchUnitToPercentBtn = self.$dialog.find('.note-imageAttributes-switchUnitToPercent');
+                $pxGroup = self.$dialog.find('.note-imageAttributes-px');
+                $percentGroup = self.$dialog.find('.note-imageAttributes-percent');
             $linkHref.val();
             $linkClass.val();
             $linkStyle.val();
@@ -501,22 +516,67 @@
                 $imageWidthPercent.val(100)
                 $imageHeightPercent.val(100)
               })
-              resetDimensions = function () {
-                if ($imageWidth.val()) $imageWidthPercent.val($imageWidth.val() / imgInfo.imgDom.prop('naturalWidth') * 100)
-                else $imageWidthPercent.val("")
-                if ($imageHeight.val()) $imageHeightPercent.val($imageHeight.val() / imgInfo.imgDom.prop('naturalHeight') * 100)
-                else $imageHeightPercent.val("")
+              $switchUnitToPXBtn.click( function (e) {
+                if ($switchUnitToPXBtn.hasClass('active')) return
+                $imageWidth.val( function(i, v) {
+                  if (!!v) return parseInt(($imageWidthPercent.val() * imgInfo.imgDom.prop('naturalWidth') / 100))
+                  else return ""
+                })
+                $imageHeight.val( function(i, v) {
+                  if (!!v) return parseInt(($imageHeightPercent.val() * imgInfo.imgDom.prop('naturalHeight') / 100))
+                  else return ""
+                })
+                $switchUnitToPercentBtn.toggleClass('active', false)
+                $switchUnitToPXBtn.toggleClass('active', true)
+                $percentGroup.hide()
+                $pxGroup.show()
+              })
+              $switchUnitToPercentBtn.click( function (e) {
+                if ($switchUnitToPercentBtn.hasClass('active')) return
+                $imageWidthPercent.val( function(i, v) {
+                  if(!!v) return parseFloat(($imageWidth.val() / imgInfo.imgDom.prop('naturalWidth') * 100).toFixed(2))
+                  else return ""
+                })
+                $imageHeightPercent.val( function(i, v) {
+                  if(!!v) return parseFloat(($imageHeight.val() / imgInfo.imgDom.prop('naturalHeight') * 100).toFixed(2))
+                  else return ""
+                })
+                $switchUnitToPercentBtn.toggleClass('active', true)
+                $switchUnitToPXBtn.toggleClass('active', false)
+                $percentGroup.show()
+                $pxGroup.hide()
+              })
+              $imageWidth.on('keydown', preventPeriod)
+              $imageHeight.on('keydown', preventPeriod)
+              function preventPeriod(e) {
+                // prevent .
+                if (e.key == ".") e.preventDefault()
               }
-              resetDimensionsPercent = function () {
-                if ($imageWidthPercent.val()) $imageWidth.val($imageWidthPercent.val() * imgInfo.imgDom.prop('naturalWidth') / 100)
-                else $imageWidth.val("")
-                if ($imageHeightPercent.val()) $imageHeight.val($imageHeightPercent.val() * imgInfo.imgDom.prop('naturalHeight') / 100)
-                else $imageHeight.val("")
+              $imageWidth.on('input', parseValueToInt)
+              $imageHeight.on('input', parseValueToInt)
+              function parseValueToInt(e) {
+                $(e.target).val(function (i, v) {
+                  if (!!v) return parseInt(v)
+                  else return ""
+                })
               }
-              $imageWidth.on('keyup', resetDimensions);
-              $imageHeight.on('keyup', resetDimensions);
-              $imageWidthPercent.on('keyup', resetDimensionsPercent);
-              $imageHeightPercent.on('keyup', resetDimensionsPercent);
+              $imageWidthPercent.on('keydown', preventAddMinus)
+              $imageHeightPercent.on('keydown', preventAddMinus)
+              function preventAddMinus(e) {
+                // prevent + -
+                if (e.key == "+" || e.key == "-") e.preventDefault()
+              }
+              $imageWidthPercent.on('input', parseValueToFixedTwo)
+              $imageHeightPercent.on('input', parseValueToFixedTwo)
+              function parseValueToFixedTwo(e) {
+                let v = $(e.target).val()
+                let precision = v.replace(/\d*\.?/, '') 
+                if (precision && precision.length > 2) {
+                  $(e.target).val(function (i, v) {
+                    return v.replace(/(\.\d{2})\d*/, '$1')
+                  })
+                }
+              }
               $imageTitle.val(imgInfo.title);
               $imageSrc.val(imgInfo.src);
               $imageAlt.val(imgInfo.alt);
@@ -535,6 +595,12 @@
             ui.onDialogHidden(self.$dialog, function () {
               $editBtn.off('click');
               $naturalSizeBtn.off('click');
+              $switchUnitToPXBtn.off('click')
+              $switchUnitToPercentBtn.off('click')
+              $imageWidth.off()
+              $imageHeight.off()
+              $imageWidthPercent.off()
+              $imageHeightPercent.off()
               if (deferred.state() === 'pending') deferred.reject();
             });
             ui.showDialog(self.$dialog);
