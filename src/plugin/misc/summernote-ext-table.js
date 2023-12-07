@@ -2075,7 +2075,7 @@
                 $rowHeightInput.val("")
             }
             else {
-                var currentHeight = recordHeight? parseInt(recordHeight.replace(/\D/g, ""), 10) : ""
+                var currentHeight = recordHeight? parseInt(recordHeight.replace(/[^\d\.]/g, ""), 10) : ""
                 $rowHeightInput.val(currentHeight)
             }
 
@@ -2083,7 +2083,7 @@
                 $colWidthInput.val("")
             }
             else { 
-                var currentWidth = recordWidth? parseInt(recordWidth.replace(/\D/g, ""), 10) : ""
+                var currentWidth = recordWidth? parseInt(recordWidth.replace(/[^\d\.]/g, ""), 10) : ""
                 $colWidthInput.val(currentWidth)
             }
         }
