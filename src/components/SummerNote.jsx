@@ -71,6 +71,7 @@ class InnerReactSummernote extends React.Component {
 			  ['link', ['linkDialogShow', 'unlink']],
 			],
 			table: [
+              ['fontname', ['jFontname']],
 			  ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
 			  ['delete', ['deleteRow', 'deleteCol']],
             //   ['columrow', ['jAddDeleteRowCol']],

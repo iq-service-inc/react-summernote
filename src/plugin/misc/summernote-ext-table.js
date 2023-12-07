@@ -20,7 +20,9 @@
         var self = this,
             dom = $.summernote.dom,
             ui = $.summernote.ui,
+            range = $.summernote.range,
             modules = context.modules,
+            style = modules.editor.style,
             options = context.options,
             $editable = context.layoutInfo.editable,
             $toolbar = context.layoutInfo.toolbar,
@@ -2087,6 +2089,122 @@
                 $colWidthInput.val(currentWidth)
             }
         }
+        
+        /**
+         * 'validFontName' copy 'summernote-0.8.16\src\js\base\core\env.js'
+         * returns whether font is installed or not.
+         *
+         * @param {String} fontName
+         * @return {Boolean}
+         */
+        const genericFontFamilies = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
+        this.validFontName = function (fontName) {
+            return ($.inArray(fontName.toLowerCase(), genericFontFamilies) === -1) ? `'${fontName}'` : fontName;
+        }
+
+        context.memo('button.jFontname', () => {
+            const styleInfo = context.invoke('editor.currentStyle');
+            if (options.addDefaultFonts) {
+                // Add 'default' fonts into the fontnames array if not exist
+                $.each(styleInfo['font-family'].split(','), (idx, fontname) => {
+                    fontname = fontname.trim().replace(/['"]+/g, '');
+                    if (modules.buttons.isFontDeservedToAdd(fontname)) {
+                        if (options.fontNames.indexOf(fontname) === -1) {
+                            options.fontNames.push(fontname);
+                        }
+                    }
+                });
+            }
+
+            return ui.buttonGroup({
+                className: "jtable-display input-group input-group-sm",
+                children: [
+                    ui.button({
+                        className: 'dropdown-toggle jtable-fontname',
+                        contents: ui.dropdownButtonContents(
+                            '<span class="note-current-fontname"></span>', options
+                        ),
+                        tooltip: lang.jTable.fontname,
+                        data: {
+                            toggle: 'dropdown',
+                        },
+                        click: function (event) {
+                            self.recoverPopover(event)
+                        }
+                    }),
+                    ui.dropdownCheck({
+                        className: 'dropdown-fontname',
+                        checkClassName: options.icons.menuCheck,
+                        items: options.fontNames.filter(modules.buttons.isFontInstalled.bind(modules.buttons)),
+                        title: lang.font.name,
+                        template: (item) => {
+                            return '<span style="font-family: ' + this.validFontName(item) + '">' + item + '</span>';
+                        },
+                        click: function (event) {
+                            context.createInvokeHandlerAndUpdateState('jTable.setCellsFont')(event)
+                            context.invoke('jTable.updateCurrentStyle')
+                        }
+                    }),
+                ]
+            }).render()
+                .prepend([
+                    '<div class="input-group-prepend">',
+                    '<span class="input-group-text">',
+                    ui.icon(options.icons.table),
+                    '</span>',
+                    '</div>',
+                ].join(''))
+        });
+
+        self.updateCurrentStyle = function () {
+            context.invoke('buttons.updateCurrentStyle', modules.tablePopover.$popover)
+        }
+
+        self.setCellsFont = function (val) {
+            let fontname = this.validFontName(val)
+
+            var cell = tableBlock.currentTdEl;
+            var $cell = $(cell);
+            var $table = $cell.closest('table');
+            var vTable = new TableResultAction(cell, undefined, undefined, $table[0]);
+            var matrixTable = vTable.getMatrixTable();
+
+            var effectRow = tableBlock.effect.row;
+            var effectCol = tableBlock.effect.col;
+
+            let elements = []
+
+            for (var rowIndex = effectRow.start; rowIndex <= effectRow.end; rowIndex++) {
+                for (var colIndex = effectCol.start; colIndex <= effectCol.end; colIndex++) {
+                    var virtualTd = matrixTable[rowIndex][colIndex]
+                    var rng = range.createFromNode(virtualTd.baseCell)
+                    const spans = style.styleNodes(rng)
+                    $(spans).css('font-family', fontname)
+                    elements = elements.concat(spans)
+                }
+            }
+            
+            let newrng = context.invoke('editor.createRangeFromList', elements)
+            newrng.select()
+            context.invoke('editor.setLastRange', newrng)
+
+            var $lastTdEL = $(matrixTable[effectRow.end][effectCol.end].baseCell)
+            var targetLeft = $lastTdEL.offset().left;
+            var targetTop = $lastTdEL.offset().top;
+            var targetWidth = $lastTdEL.outerWidth();
+            var targetHeight = $lastTdEL.outerHeight();
+            var targetRight = targetLeft + targetWidth;
+            var targetBottom = targetTop + targetHeight;
+
+            tableBlock.width = targetRight - tableBlock.left;
+            tableBlock.height = targetBottom - tableBlock.top;
+            
+            var $block = $table.closest('.note-editing-area').find('.jtable-block')
+            $block.css({
+                width : tableBlock.width,
+                height: tableBlock.height,
+            });
+        }
 
         self.expandColgroup = function (colgroup) {
             /**
@@ -2119,6 +2237,7 @@
         self.events = {
             'summernote.keyup summernote.mouseup summernote.change': function () {
                 context.invoke('jTable.updateCellsWidthHeight')
+                context.invoke('jTable.updateCurrentStyle')
             },
             'summernote.init': function (_, layoutInfo) {
                 layoutInfo.editingArea.append('<div class="jtable-block"><div/>');
@@ -2874,6 +2993,7 @@
                 this.$css.attr('id', `input-spin-buton`)
                 $(document.head).append(this.$css)
             }
+            context.invoke('jTable.updateCurrentStyle')
         };
 
         self.destroy = function () {
@@ -3373,6 +3493,7 @@
         'zh-TW': {
             jTable: {
                 borderColor    : '外框顏色',
+                fontname       : '表格字體',
                 table: {
                     row: '列',
                     col: '欄',
@@ -3414,6 +3535,7 @@
         'en-US': {
             jTable: {
                 borderColor    : 'Border color',
+                fontname       : 'Table Font Family',
                 table: {
                     row: 'row',
                     col: 'column',
