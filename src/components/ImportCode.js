@@ -13,6 +13,8 @@ module.exports = function () {
     // require('summernote/dist/lang/summernote-zh-TW')
     require('../plugin/lang/summernote-zh-TW')
 
+    require('../plugin/custom/summernote-patch-dom')
+
     require('../plugin/custom/summernote-custom')
     require('../plugin/custom/summernote-custom-contextmenu')
     require('../plugin/custom/summernote-custom-specialchars')
@@ -46,30 +48,4 @@ module.exports = function () {
     //require('react-summernote/plugin/syntax/summernote-ext-highlight')
     //require('react-summernote/plugin/syntax/run_prettify')
 
-    /**
-     * override the default walkPoint method to fix styling issues
-     * source: https://github.com/summernote/summernote/issues/3963#issuecomment-876953821
-     */
-    $.summernote.dom.walkPoint = (function (_super) {
-        return function () {
-            var startPoint = arguments[0]
-            var endPoint = arguments[1]
-            var handler = arguments[2]
-            var isSkipInnerOffset = arguments[3]
-            let point = startPoint;
-
-            while (point) {
-                handler(point);
-
-                if ($.summernote.dom.isSamePoint(point, endPoint)) {
-                    break;
-                }
-                const isSkipOffset = isSkipInnerOffset &&
-                    startPoint.node !== point.node &&
-                    endPoint.node !== point.node;
-                point = $.summernote.dom.nextPoint(point, isSkipOffset);
-            }
-        };
-
-    })($.summernote.dom.walkPoint);
 }

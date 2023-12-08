@@ -254,8 +254,15 @@ require('bootstrap/js/dist/tooltip')
 require('bootstrap/js/dist/tab')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
-
+require('react-summernote/plugin/custom/summernote-patch-dom')
 ```
+
+> `summernote-patch-dom`: 用於修復字體、字型等樣式無法正常套用到框選範圍內的所有節點。因官方尚未發布涵蓋 [Summernote PR#4472](https://github.com/summernote/summernote/pull/4472) 的版本，故在此使用 plugin 覆寫 `dom.walkPoint`, `dom.nextPointWithEmptyNode`
+> 
+> 目前 Summernote 版本 `0.8.18`，待官方發佈新版本後可移除此 plugin
+> 
+> 參考：[Summernote issue#4471](https://github.com/summernote/summernote/issues/4471)
+
 
 ## Plugin
 
