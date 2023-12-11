@@ -90,6 +90,7 @@
             this.initialize = function () {
                 if ($('#summernote-imagemap').length == 0) {
                     this.css = $('<style>').html([
+                        '.note-editable map[name] { position: relative; }',
                         '.note-editable map[name]:after { content: "ImgMap"; position: absolute; writing-mode: vertical-lr; opacity: 0.7; }',
 
                         '.summernote-imagemap-dialog .modal-dialog { max-width: 95vw; max-height: calc(100vh - 3.5rem); }',
