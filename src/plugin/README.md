@@ -247,6 +247,7 @@ options = {{
      - `jCellMerge`: 合併儲存格
      - `jCellSplit`: 分割儲存格
      - `jFontname`: 框選更新表格內字體，`table popover`
+     - `jStyleCell`: 編輯單一儲存格樣式，`table popover`
 
 -  [Special Characters & Icons](#special-characters-icons)
    - summernote-ext-specialchars
@@ -602,7 +603,7 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
 #### [summernote-ext-table](https://github.com/ksy11/summernote-ext-table)
    - Adds table column/row resize, cell background-color change, cell merge, cell unmerge, border-color change, table margin change, table width/height reset.
    - table 功能
-   - `toolbar` and `table popover` button: `jTable` `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`, `jFontname`
+   - `toolbar` and `table popover` button: `jTable` `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`, `jFontname`, `jStyleCell`
      - `jTable`: 新增適用於 table resizing 的表格
      - `jInsertTableDialog`: 透過 dialog 新增適用於 table resizing 的表格
      - `jAddDeleteRowCol`: 框選 新增/刪除 欄/列
@@ -624,6 +625,7 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
      - `jCellMerge`: 合併儲存格
      - `jCellSplit`: 分割儲存格
      - `jFontname`: 框選更新表格內字體
+     - `jStyleCell`: 編輯單一儲存格樣式
 
 ### Special Characters & Icons
 

@@ -77,7 +77,7 @@ class InnerReactSummernote extends React.Component {
             //   ['columrow', ['jAddDeleteRowCol']],
               ['color', ['jBackcolor', 'jBorderColor' ]],
               ['style', ['jAlign', 'jMerge' ]],
-              ['info', ['jAutoFit', 'jTableInfo']],
+              ['info', ['jAutoFit', 'jStyleCell', 'jTableInfo']],
               ['delete', ['jWidthHeightReset', 'deleteTable']],
 			],
 			air: [

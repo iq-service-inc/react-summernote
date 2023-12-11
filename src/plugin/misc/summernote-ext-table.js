@@ -28,7 +28,8 @@
             $toolbar = context.layoutInfo.toolbar,
             lang = options.langInfo,
             $mergeDialog,
-            $tableInfoDialog;
+            $tableInfoDialog,
+            $styleCellDialog;
 
         var userAgent = navigator.userAgent,
             isMSIE = /MSIE|Trident/i.test(userAgent),
@@ -2206,6 +2207,109 @@
             });
         }
 
+        $styleCellDialog = ui.dialog({
+            title : lang.jTable.styleEditor,
+            fade  : options.dialogsFade,
+            body: [
+                '<div class="form-group form-group-jtable-style-cell">',
+                `<label for="jtable-style-cell-${options.id}" class="note-form-label mt-1" >${lang.jTable.info.cellStyle}</label>`,
+                `<button class="btn btn-primary btn-sm note-btn note-btn-primary jtable-cssLineBreak-btn float-right">${lang.jTable.cssLineBreak}</button>`,
+                `<textarea id="jtable-style-cell-${options.id}" class="jtable-style-cell-textarea form-control note-form-control note-input" rows="8"></textarea>`,
+                '</div>',
+                '<div class="form-group form-group-jtable-style-cell-preview">',
+                `<label class="note-form-label">${lang.jTable.cellStylePreview}</label>`,
+                `<div class="jtable-style-cell-preview h-auto form-control note-form-control"></div>`,
+                '</div>',
+            ].join(''),
+            footer: `<button href="#" class="btn btn-primary note-btn note-btn-primary jtable-apply-btn">${lang.jTable.apply}</button>`,
+        }).render().appendTo(options.container);
+
+        var styleCellIcon = `<svg width="20" height="20" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <path stroke="#000" d="m311.18514,530.07222l692.70151,-0.49145l-2.60466,356.17646l-691.05339,-0.37879l0.95653,-355.30622zm655.16326,34.88934l-615.24031,0.00936l0.53173,284.73966l614.62469,-0.52735l0.08389,-284.22167z" stroke-width="20" fill="#000000"></path>
+            <path transform="rotate(-45 373.339 253.614)" d="m192.9535,73.22819c124.65981,131.72212 240.04694,123.87191 360.77138,0c-123.07606,127.33837 -125.77516,234.69616 0,360.77137c-123.82997,-126.16459 -253.8979,-106.90552 -357.62196,-3.14942c105.66925,-103.66672 120.02506,-226.27031 -3.14942,-357.62194z" fill="#007fff"></path>
+            <path transform="rotate(-45 167.338 482.614)" stroke="#ffffff" d="m38.57076,353.84737c88.98734,94.02871 171.35545,88.4249 257.53355,0c-87.85679,90.89941 -89.78352,167.53585 0,257.53355c-88.39496,-90.06151 -181.24284,-76.31359 -255.28536,-2.24819c75.43108,-74.00159 85.67886,-161.52111 -2.24819,-255.28536z" fill="#007fff"></path>
+            <path transform="rotate(-45 655.339 341.614)" stroke="#ffffff" d="m568.29196,254.56694c60.15616,63.56416 115.83766,59.77594 174.09475,0c-59.3919,61.44873 -60.69438,113.25558 0,174.09475c-59.7557,-60.88231 -122.52162,-51.5886 -172.57496,-1.51979c50.99202,-50.02567 57.9196,-109.18958 -1.51979,-172.57496z" fill="#007fff"></path>
+        </svg>`
+
+        context.memo('button.jStyleCell', () => {
+            return ui.button({
+                className: 'jtable-display jtable-cell-disabled',
+                contents : styleCellIcon,
+                tooltip  : lang.jTable.info.cellStyle,
+                container: options.container,
+                click    : context.createInvokeHandler('jTable.cellStyleDialogShow'),
+            }).render();
+        })
+
+        self.cellStyleDialogShow = function () {
+            var rng = modules.editor.getLastRange.call(modules.editor);
+            if (rng.isOnCell()) {
+                var $cell = $(dom.ancestor(rng.commonAncestor(), dom.isCell));
+                modules.tablePopover.hide();
+
+                showCellStyleDialog($cell).then(function (style) {
+                    ui.hideDialog($styleCellDialog);
+                    context.invoke('editor.restoreRange');
+
+                    $cell.attr('style', style.replace(/\s*(?:;)\s*/g, '; '))
+
+                }).fail(function () {
+                    context.invoke('editor.restoreRange');
+                });
+            }
+        };
+
+        function showCellStyleDialog($cell) {
+            return $.Deferred(function (deferred) {
+                var $lineBreakBtn = $styleCellDialog.find('.jtable-cssLineBreak-btn');
+                var $applyBtn = $styleCellDialog.find('.jtable-apply-btn');
+                var $styleTextarea = $styleCellDialog.find('.jtable-style-cell-textarea');
+                var $stylePreview = $styleCellDialog.find('.jtable-style-cell-preview');
+
+                $styleTextarea.val($cell.attr('style'))
+                var $cloning = $cell.clone().appendTo($stylePreview)
+
+                ui.onDialogShown($styleCellDialog, function () {
+                    context.triggerEvent('dialog.shown');
+
+                    $styleTextarea.on('input', function (event) {
+                        $cloning.attr('style', $styleTextarea.val().replace(/\s*(?:;)\s*/g, '; '))
+                    })
+
+                    $lineBreakBtn.click(function (event) {
+                        event.preventDefault();
+                        $styleTextarea.val(function (i, v) {
+                            return v.replace(/\s*(?:;)\s*/g, ';\n')
+                        })
+                    })
+                    
+                    $applyBtn.click(function (event) {
+                        context.invoke('beforeCommand')
+                        event.preventDefault();
+
+                        let style = $styleTextarea.val().replace(/\s*(?:;)\s*/g, '; ')
+                        deferred.resolve(style);
+
+                        context.invoke('afterCommand')
+                    });
+
+                });
+
+                ui.onDialogHidden($styleCellDialog, function () {
+                    $applyBtn.off();
+                    $styleTextarea.off();
+                    $lineBreakBtn.off();
+                    $cloning.remove();
+
+                    if (deferred.state() === 'pending') {
+                        deferred.reject();
+                    }
+                });
+
+                ui.showDialog($styleCellDialog);
+            });
+        }
+
         self.expandColgroup = function (colgroup) {
             /**
              * expand colgroup col span
@@ -2580,6 +2684,16 @@
                     var $target = $(event.target).closest('td');
                     if (!$target.length) $target = $(event.target).closest('th');
                     if ($target.length) modules.tablePopover.update($target[0]);
+
+                    var $jtableCell = $(event.target).closest('.note-editor').find('.jtable-cell-disabled')
+                    if (tableBlock.effect.row.start == tableBlock.effect.row.end
+                        && tableBlock.effect.col.start == tableBlock.effect.col.end
+                    ) {
+                        $jtableCell.prop('disabled', false)
+                    }
+                    else {
+                        $jtableCell.prop('disabled', true)
+                    }
                 });
                 
                 /**
@@ -3513,7 +3627,8 @@
                 },
                 info           : {
                     info  : 'table info',
-                    margin: '邊界'
+                    margin: '邊界',
+                    cellStyle: '儲存格樣式',
                 },
                 autofit: {
                     autofit: '自動調整',
@@ -3525,6 +3640,9 @@
                     rowHeight: '列高 (px)',
                     colWidth: '欄寬 (px)',
                 },
+                styleEditor    : '編輯樣式',
+                cssLineBreak   : '自動斷行',
+                cellStylePreview: '儲存格樣式預覽',
                 apply          : '套用',
                 addDeleteRowCOl: '欄/列(插入/刪除)',
                 deleteCell     : '刪除儲存格',
@@ -3555,7 +3673,8 @@
                 },
                 info           : {
                     info  : 'table info',
-                    margin: 'margin'
+                    margin: 'margin',
+                    cellStyle: 'style cell',
                 },
                 autofit: {
                     autofit: 'autofit',
@@ -3567,6 +3686,9 @@
                     rowHeight: 'row height (px)',
                     colWidth: 'col width (px)',
                 },
+                styleEditor    : 'Style Editor',
+                cssLineBreak   : 'Auto line break',
+                cellStylePreview: 'Cell style preview',
                 apply          : 'apply',
                 addDeleteRowCOl: 'Row/Col(Add/Del)',
                 deleteCell     : 'Delete Cell',
