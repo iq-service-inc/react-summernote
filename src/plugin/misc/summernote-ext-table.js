@@ -3119,6 +3119,9 @@
 
             ui.hideDialog($tableInfoDialog);
             $tableInfoDialog.remove();
+
+            ui.hideDialog($styleCellDialog);
+            $styleCellDialog.remove();
         };
 
 
