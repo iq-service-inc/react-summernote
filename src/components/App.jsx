@@ -70,7 +70,7 @@ class App extends Component {
 						dialogsInBody: true,
 						toolbar: [
 							["style", ["style"]],
-							["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear"]],
+							["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear", "customCleaner"]],
 							["fontname", ["fontname"]],
                             ["fontsize", ["fontsizeInput"]],
                             ['color', ['forecolor', 'backcolor']],
@@ -96,7 +96,7 @@ class App extends Component {
 				<SummerNote2 id='editor2' onImageUpload={this.onImageUpload2} ref={this.editor2} options={{
 					toolbar: [
 						["style", ["style"]],
-						["font", ["bold", "underline", "clear"]],
+						["font", ["bold", "underline", "clear", "customCleaner"]],
 						["fontname", ["fontname"]],
                         ["fontsize", ["fontsizeInput"]],
 						['color', ['color']],

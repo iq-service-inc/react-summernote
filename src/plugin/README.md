@@ -19,6 +19,7 @@ node .\bundle-plugins.js
       - [summernote-zh-TW](#summernote-zh-tw)
     - [Custom](#custom)
       - [summernote-comment-popover](#summernote-comment-popover)
+      - [summernote-custom-cleaner](#summernote-custom-cleaner)
       - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
@@ -56,6 +57,7 @@ node .\bundle-plugins.js
 require('react-summernote/plugin/lang/summernote-zh-TW')
 
 require('react-summernote/plugin/custom/summernote-comment-popover')
+require('react-summernote/plugin/custom/summernote-custom-cleaner')
 require('react-summernote/plugin/custom/summernote-custom-contextmenu')
 require('react-summernote/plugin/custom/summernote-custom-specialchars')
 require('react-summernote/plugin/custom/summernote-custom')
@@ -178,6 +180,8 @@ options = {{
    - summernote-comment-popover
      - `editPopover`: 插入註解 popover
      - `removePopover`: 移除註解 popover
+   - summernote-custom-cleaner
+     - `customCleaner`: 清除所有樣式
    - summernote-custom
      - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
    - summernote-custom-specialchars
@@ -301,6 +305,19 @@ options = {{
     .summernote-comment-popover-anchor:not([href]){color: #8ac193;}
     .summernote-comment-popover-anchor:not([href]):hover{color: #8ac193; text-decoration: underline;}
     .summernote-comment-popover .popover-image {max-height: 500px; width: auto;}
+    ```
+
+#### summernote-custom-cleaner
+- 清除所有樣式包含 Styled Tag, Style, className
+- `toolbar` button: `customCleaner`
+  - `customCleaner`: 清除所有樣式
+
+    ```js
+    // options
+    customCleaner: {
+        excludedClassName: 'jtable table-bordered', // 要略過清除的 className
+        removedTags: [],    // 要清除的 tag
+    }
     ```
 
 #### summernote-custom-contextmenu
