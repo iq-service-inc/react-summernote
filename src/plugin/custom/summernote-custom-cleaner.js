@@ -12,8 +12,9 @@
 }(function ($) {
     $.extend($.summernote.options, {
         customCleaner: {
-            excludedClassName: 'jtable table-bordered',
+            excludedClassName: 'jtable table-bordered summernote-comment-popover-anchor',
             removedTags: [],
+            removedAttrs: [],
         }
     })
     $.extend($.summernote.plugins, {
@@ -34,8 +35,8 @@
 
             const excludedClassName = options.customCleaner.excludedClassName || $.summernote.options.tableClassName
             const excluded = excludedClassName.split(/(?:\s+)/)
-            const removedTags = (options.customCleaner.removedTags || ['acronym', 'b', 'bdo', 'big', 'cite', 'code', 'dfn', 'em', 'font', 'i', 'ins', 'kbd', 'nobr', 'q', 's', 'samp', 'small', 'strike', 'strong', 'sub', 'sup', 'tt', 'u', 'var']).join(',')
-
+            const removedTags = (options.customCleaner.removedTags.length ? options.customCleaner.removedTags : ['acronym', 'b', 'bdo', 'big', 'cite', 'code', 'dfn', 'em', 'font', 'i', 'ins', 'kbd', 'nobr', 'q', 's', 'samp', 'small', 'strike', 'strong', 'sub', 'sup', 'tt', 'u', 'var']).join(',')
+            const removedAttrs = (options.customCleaner.removedAttrs.length ? options.customCleaner.removedAttrs : ['align', 'background', 'bgcolor', 'border', 'bordercolor', 'color', 'height', 'width', 'sizes', 'style', 'valign']).join(' ')
 
             var cleanerIcon = [
                 '<svg width="18" height="16" viewBox="0 0 640 512" xmlns="http://www.w3.org/2000/svg">',
@@ -102,7 +103,7 @@
                             nodeRng.select()
                             $(node).find(removedTags).contents().unwrap()
                         }
-                        $(node).removeAttr('style')
+                        $(node).removeAttr(removedAttrs)
                             .removeClass((_, className) => className.split(' ').filter(c => !excluded.includes(c)))
                     }
                 })

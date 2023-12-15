@@ -317,6 +317,7 @@ options = {{
     customCleaner: {
         excludedClassName: 'jtable table-bordered', // 要略過清除的 className
         removedTags: [],    // 要清除的 tag
+        removedAttrs: [],   // 要清除的 attribute
     }
     ```
 
