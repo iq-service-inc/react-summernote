@@ -62,10 +62,10 @@
                 // expand left point
                 let sc = rng.sc,
                     so = rng.so
-                while (sc && dom.isLeftEdgePoint(rng.getStartPoint())) {
+                while (sc && dom.isLeftEdgePoint({ node: sc, offset: so })) {
                     if (dom.isEditable(sc.parentNode)) { break; }
-                    so = Array.prototype.indexOf.call(sc.parentNode.childNodes, sc)
-                    sc = sc.parentNode;
+                    so = dom.position(sc)
+                    sc = sc.parentNode
                 }
                 // prevent left point is on editable
                 if (dom.isEditable(sc)) {
@@ -76,10 +76,10 @@
                 // expand right point
                 let ec = rng.ec,
                     eo = rng.eo
-                while (ec && dom.isRightEdgePoint(rng.getEndPoint())) {
+                while (ec && dom.isRightEdgePoint({ node: ec, offset: eo })) {
                     if (dom.isEditable(ec.parentNode)) { break; }
-                    eo = Array.prototype.indexOf.call(ec.parentNode.childNodes, ec) + 1
-                    ec = ec.parentNode;
+                    eo = dom.position(ec) + 1
+                    ec = ec.parentNode
                 }
                 // prevent right point is on editable
                 if (dom.isEditable(ec)) {
