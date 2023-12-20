@@ -98,8 +98,8 @@
 			color: {
 				recent: '字型顏色',
 				more: '更多',
-				background: '背景',
-				foreground: '字體',
+				background: '字型背景',
+				foreground: '字型顏色',
 				transparent: '透明',
 				setTransparent: '透明',
 				reset: '重設',

@@ -23,6 +23,7 @@ node .\bundle-plugins.js
       - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
+      - [summernote-custom-style](#summernote-custom-style)
       - [summernote-fontsize-input](#summernote-fontsize-input)
       - [summernote-imagemap](#summernote-imagemap)
       - [summernote-pasteHTML](#summernote-pastehtml)
@@ -60,6 +61,7 @@ require('react-summernote/plugin/custom/summernote-comment-popover')
 require('react-summernote/plugin/custom/summernote-custom-cleaner')
 require('react-summernote/plugin/custom/summernote-custom-contextmenu')
 require('react-summernote/plugin/custom/summernote-custom-specialchars')
+require('react-summernote/plugin/custom/summernote-custom-style')
 require('react-summernote/plugin/custom/summernote-custom')
 require('react-summernote/plugin/custom/summernote-fontsize-input')
 require('react-summernote/plugin/custom/summernote-imagemap')
@@ -99,7 +101,7 @@ options = {{
   lang: `zh-TW`,
   toolbar: [
     [`icon`, [`emoji`, `specialChar`]],
-    [`style`, [`style`, `addclass`]],
+    [`style`, [`style`, `addclass`, `customStyle`]],
     [`font`, [`caseConverter`, `bold`, `underline`, `clear`]],
     [`fontname`, [`fontname`]],
     ['fontsize', ['fontsizeInput']],
@@ -186,6 +188,8 @@ options = {{
      - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
    - summernote-custom-specialchars
      - `customSpecialChar`: 插入特殊符號
+   - summernote-custom-style
+     - `customStyle`: 自訂樣式
    - summernote-fontsize-input
      - `fontsizeInput`: 更新字號
    - summernote-imagemap
@@ -372,6 +376,49 @@ options = {{
 - 插入特殊符號
 - `toolbar` button: `customSpecialChar`
  - `customSpecialChar`: 插入特殊符號
+
+#### summernote-custom-style
+- 使用者自訂樣式，可設定字體、字號、粗體、斜體、刪除線、字型顏色、字型背景，樣式使用 localStorage 儲存
+- `toolbar` button: `customStyle`
+ - `customStyle`: 套用自訂樣式
+
+    ```js
+    // options
+    customStyle: {
+        maxStyle: 5,    // 樣式數量上限
+        storeKey: 'summernote-stylelist',   //  localStorage 儲存使用 key
+        onGetList: () => {  // onGetList: async () => styleList 取得樣式列表
+            let list = [
+                { name: 'style1', styles: { 'font-family': 'Comic Sans MS', 'font-style': 'italic', 'color': '#007bff' } },
+                { name: 'style2', styles: { 'font-size': '24px', 'font-weight': 'bold', 'color': '#ffc107' } },
+                { name: 'style3', styles: { 'font-size': '10px', 'font-weight': 'bold', 'font-style': 'italic', 'color': '#ff9c00' } },
+                { name: 'style4', styles: { 'font-size': '40px', 'color': '#634aa5' } },
+                { name: 'style5', styles: { 'text-decoration': 'line-through', 'color': '#E76363' } },
+            ]
+            return list
+        },
+        onSave: (list) => list, // onSave: async (styleList) => styleList 儲存樣式列表
+    }
+    ```
+
+    styleList 樣式列表格式
+    ```js
+    [
+        {
+            "name": "style2",   // style name
+            "id": "lqbyjoaxmsbzfnqv3ho",    // style id if is not given will automatically generate random one
+            "styles": {     // styles accept: font-family, font-size, font-weight, font-style, font-style, text-decoration, color, background-color
+                "font-family": "Comic Sans MS",
+                "font-size": "16px",
+                "font-weight": "bold",
+                "font-style": "italic",
+                "text-decoration": "line-through",
+                "color": "#3984C6",
+                "background-color": "#FFEFC6"
+            }
+        }
+    ]
+    ```
 
 #### summernote-fontsize-input
 - 以輸入框和下拉選單更新 fontsize

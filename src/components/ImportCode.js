@@ -18,6 +18,7 @@ module.exports = function () {
     require('../plugin/custom/summernote-custom')
     require('../plugin/custom/summernote-custom-contextmenu')
     require('../plugin/custom/summernote-custom-specialchars')
+    require('../plugin/custom/summernote-custom-style')
     require('../plugin/custom/summernote-fontsize-input')
     require('../plugin/custom/summernote-imagemap')
     require('../plugin/custom/summernote-comment-popover')
