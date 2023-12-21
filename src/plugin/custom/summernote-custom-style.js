@@ -34,7 +34,7 @@
         customStyle: {
             maxStyle: 5,
             storeKey: 'summernote-stylelist',
-            // onGetList: () => {},
+            // onGetList: () => list,
             // onSave: (list) => list,
         }
     })
@@ -101,7 +101,7 @@
              */
             this.getStyleList = async function () {
                 if (typeof options.customStyle.onGetList === 'function') {
-                    let list = await options.customStyle.onGetList()
+                    let list = await options.customStyle.onGetList() || []
                     if (!!list && list.length) {
                         list.map(item => {
                             return {
@@ -112,7 +112,11 @@
                         localStorage.setItem(options.customStyle.storeKey, JSON.stringify(list))
                     }
                 }
-                this.styleList = JSON.parse(localStorage.getItem(options.customStyle.storeKey)) || []
+                try {
+                    this.styleList = JSON.parse(localStorage.getItem(options.customStyle.storeKey))
+                } catch (error) {
+                    this.styleList = []
+                }
                 this.validStyleList()
             }
 
@@ -128,7 +132,7 @@
             this.saveStyleList = async function () {
                 let list = this.styleList
                 if (typeof options.customStyle.onSave === 'function') {
-                    list = await options.customStyle.onSave(this.styleList)
+                    list = await options.customStyle.onSave(this.styleList) || list
                     if (!!list && list.length) {
                         list.map(item => {
                             return {
@@ -139,7 +143,11 @@
                     }
                 }
                 localStorage.setItem(options.customStyle.storeKey, JSON.stringify(list))
-                this.styleList = JSON.parse(localStorage.getItem(options.customStyle.storeKey)) || []
+                try {
+                    this.styleList = JSON.parse(localStorage.getItem(options.customStyle.storeKey))
+                } catch (error) {
+                    this.styleList = []
+                }
                 this.validStyleList()
             }
 
