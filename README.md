@@ -255,6 +255,7 @@ require('bootstrap/js/dist/tab')
 require('summernote/dist/summernote-bs4.css')
 require('summernote/dist/summernote-bs4.min.js')
 require('react-summernote/plugin/custom/summernote-patch-dom')
+require('react-summernote/plugin/custom/summernote-patch-handle')
 ```
 
 > `summernote-patch-dom`: 用於修復字體、字型等樣式無法正常套用到框選範圍內的所有節點。因官方尚未發布涵蓋 [Summernote PR#4472](https://github.com/summernote/summernote/pull/4472) 的版本，故在此使用 plugin 覆寫 `dom.walkPoint`, `dom.nextPointWithEmptyNode`
@@ -262,6 +263,10 @@ require('react-summernote/plugin/custom/summernote-patch-dom')
 > 目前 Summernote 版本 `0.8.18`，待官方發佈新版本後可移除此 plugin
 > 
 > 參考：[Summernote issue#4471](https://github.com/summernote/summernote/issues/4471)
+
+> `summernote-patch-handle`: 用於修復圖片顯示框位置偏移。因官方尚未發布涵蓋 [Summernote PR#4283](https://github.com/summernote/summernote/pull/4283) 的版本，故在此使用 plugin 覆寫 `modules.handle.update`
+> 
+> 目前 Summernote 版本 `0.8.18`，待官方發佈新版本後可移除此 plugin
 
 
 ## Plugin

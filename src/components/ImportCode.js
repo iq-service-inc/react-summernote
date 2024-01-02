@@ -14,6 +14,7 @@ module.exports = function () {
     require('../plugin/lang/summernote-zh-TW')
 
     require('../plugin/custom/summernote-patch-dom')
+    require('../plugin/custom/summernote-patch-handle')
 
     require('../plugin/custom/summernote-custom')
     require('../plugin/custom/summernote-custom-contextmenu')
