@@ -69,7 +69,7 @@ class App extends Component {
 						height: 350,
 						dialogsInBody: true,
 						toolbar: [
-							["style", ["style", "customStyle"]],
+							["style", ["style", "customStyle", "copyFormatting"]],
 							["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear", "customCleaner"]],
 							["fontname", ["fontname"]],
                             ["fontsize", ["fontsizeInput"]],
@@ -95,7 +95,7 @@ class App extends Component {
 				/>
 				<SummerNote2 id='editor2' onImageUpload={this.onImageUpload2} ref={this.editor2} options={{
 					toolbar: [
-						["style", ["style", "customStyle"]],
+						["style", ["style", "customStyle", "copyFormatting"]],
 						["font", ["bold", "underline", "clear", "customCleaner"]],
 						["fontname", ["fontname"]],
                         ["fontsize", ["fontsizeInput"]],

@@ -849,7 +849,7 @@
         };
 
         context.memo('button.jBackcolor', function () {
-            return self.colorPalette('note-color-back', lang.color.background, self.color);
+            return self.colorPalette('note-color-back', lang.jTable.background, self.color);
         });
 
         self.color = function (backColor) {
@@ -3162,6 +3162,9 @@
             };
         }
 
+        this.resetTableBlock = function () {
+            resetTableBlock(context.layoutInfo.editingArea)
+        }
         function resetTableBlock($this) {
             tableBlock = {
                 pressed          : false,
@@ -3610,6 +3613,7 @@
         'zh-TW': {
             jTable: {
                 borderColor    : '外框顏色',
+                background     : '背景顏色',
                 fontname       : '表格字體',
                 table: {
                     row: '列',
@@ -3657,6 +3661,7 @@
         'en-US': {
             jTable: {
                 borderColor    : 'Border color',
+                background     : 'Background Color',
                 fontname       : 'Table Font Family',
                 table: {
                     row: 'row',

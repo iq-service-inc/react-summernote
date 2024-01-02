@@ -19,6 +19,7 @@ node .\bundle-plugins.js
       - [summernote-zh-TW](#summernote-zh-tw)
     - [Custom](#custom)
       - [summernote-comment-popover](#summernote-comment-popover)
+      - [summernote-copy-formatting](#summernote-copy-formatting)
       - [summernote-custom-cleaner](#summernote-custom-cleaner)
       - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
       - [summernote-custom](#summernote-custom)
@@ -58,6 +59,7 @@ node .\bundle-plugins.js
 require('react-summernote/plugin/lang/summernote-zh-TW')
 
 require('react-summernote/plugin/custom/summernote-comment-popover')
+require('react-summernote/plugin/custom/summernote-copy-formatting')
 require('react-summernote/plugin/custom/summernote-custom-cleaner')
 require('react-summernote/plugin/custom/summernote-custom-contextmenu')
 require('react-summernote/plugin/custom/summernote-custom-specialchars')
@@ -182,6 +184,8 @@ options = {{
    - summernote-comment-popover
      - `editPopover`: 插入註解 popover
      - `removePopover`: 移除註解 popover
+   - summernote-copy-formatting
+     - `copyFormatting`: 複製格式
    - summernote-custom-cleaner
      - `customCleaner`: 清除所有樣式
    - summernote-custom
@@ -310,6 +314,11 @@ options = {{
     .summernote-comment-popover-anchor:not([href]):hover{color: #8ac193; text-decoration: underline;}
     .summernote-comment-popover .popover-image {max-height: 500px; width: auto;}
     ```
+
+#### summernote-copy-formatting
+- 複製格式，格式分為文字、表格、列表
+- `toolbar` button: `copyFormatting`
+  - `copyFormatting`: 複製格式
 
 #### summernote-custom-cleaner
 - 清除所有樣式包含 Styled Tag, Style, className
