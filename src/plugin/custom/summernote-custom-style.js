@@ -54,7 +54,8 @@
                 options = context.options,
                 lang = options.langInfo;
 
-            const maxStyle = options.customStyle.maxStyle || 1000
+            const maxStyle = options.customStyle.maxStyle || 5
+            const storeKey = options.customStyle.storeKey || 'summernote-stylelist'
             const activeClassName = 'summernote-customStyle-active'
 
             this.styleList = []
@@ -109,11 +110,11 @@
                                 id: item.id || this.randomId()
                             }
                         })
-                        localStorage.setItem(options.customStyle.storeKey, JSON.stringify(list))
+                        localStorage.setItem(storeKey, JSON.stringify(list))
                     }
                 }
                 try {
-                    this.styleList = JSON.parse(localStorage.getItem(options.customStyle.storeKey))
+                    this.styleList = JSON.parse(localStorage.getItem(storeKey)) || []
                 } catch (error) {
                     this.styleList = []
                 }
@@ -142,9 +143,9 @@
                         })
                     }
                 }
-                localStorage.setItem(options.customStyle.storeKey, JSON.stringify(list))
+                localStorage.setItem(storeKey, JSON.stringify(list))
                 try {
-                    this.styleList = JSON.parse(localStorage.getItem(options.customStyle.storeKey))
+                    this.styleList = JSON.parse(localStorage.getItem(storeKey)) || []
                 } catch (error) {
                     this.styleList = []
                 }
