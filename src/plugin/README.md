@@ -429,6 +429,84 @@ options = {{
     ]
     ```
 
+- **使用範例**
+
+    在 React 以 `customStyle.onGetList`, `customStyle.onSave` 串接 API
+
+    1. 定義 Editor component
+        
+        將 `onGetCustomStyle`, `onSaveCustomStyle` 轉換成 options `customStyle.onGetList`, `customStyle.onSave`
+
+        ```jsx
+        export class Editor extends Component {
+            constructor(props) {
+                super(props)
+            }
+
+            render() {
+                return (
+                    <SummerNote {...this.props} options={{
+                        ...this.props.options,
+                        customStyle: {
+                            ...this.props.options.customStyle,
+                            onGetList: this.props.onGetCustomStyle,
+                            onSave: this.props.onSaveCustomStyle,
+                        },
+                    }} />
+                )
+            }
+        }
+        ```
+
+    2. 使用 Editor component
+
+        定義 async function `onGetCustomStyle`, `onSaveCustomStyle` 呼叫 API
+
+        ```jsx
+            onGetCustomStyle = async () => {
+                let resp = await fetch(`${HOST}/get/data/api`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': '*',
+                    },
+                    mode: 'cors',
+                    credentials: 'include',
+                })
+                let data = await resp.json()
+                if (data && data.result) {
+                    return data.data
+                }
+            }
+
+            onSaveCustomStyle = async (list) => {
+                let resp = await fetch(`${HOST}/save/data/api`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': '*',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        miscdata: list,
+                    }),
+                    mode: 'cors',
+                    credentials: 'include',
+                })
+                let data = await resp.json()
+                if (data && data.result) {
+                    return list
+                }
+            }
+        ```
+
+        透過 props 傳遞 function
+
+        ```jsx
+        <Editor
+            onGetCustomStyle={GetCustomStyle} 
+            onSaveCustomStyle={SaveCustomStyle} 
+        />
+        ```
+
 #### summernote-fontsize-input
 - 以輸入框和下拉選單更新 fontsize
 - `toolbar` button: `fontsizeInput`
