@@ -438,24 +438,20 @@ options = {{
         將 `onGetCustomStyle`, `onSaveCustomStyle` 轉換成 options `customStyle.onGetList`, `customStyle.onSave`
 
         ```jsx
-        export class Editor extends Component {
-            constructor(props) {
-                super(props)
-            }
-
-            render() {
-                return (
-                    <SummerNote {...this.props} options={{
-                        ...this.props.options,
+        const Editor = React.forwardRef(function (props, ref) {
+            return (
+                <SummerNote {...props}
+                    ref={ref}
+                    options={{
+                        ...props.options,
                         customStyle: {
-                            ...this.props.options.customStyle,
-                            onGetList: this.props.onGetCustomStyle,
-                            onSave: this.props.onSaveCustomStyle,
+                            ...props.options.customStyle,
+                            onGetList: props.onGetCustomStyle,
+                            onSave: props.onSaveCustomStyle,
                         },
                     }} />
-                )
-            }
-        }
+            )
+        })
         ```
 
     2. 使用 Editor component
