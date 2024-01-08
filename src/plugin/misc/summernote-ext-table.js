@@ -2791,8 +2791,8 @@
 
                 // 每次透過 popover 向左向右增加 column 時補上 <colgroup> 內的 <col>
                 function fillInColgroup() {
-                    var $this = $(this);
-                    var $table = $this.closest('.note-editor').find('table');
+                    var rng = context.invoke('editor.getLastRange')
+                    var $table = $(dom.ancestor(rng.commonAncestor(), dom.isTable));
                     var vTable = new TableResultAction(undefined, undefined, undefined, $table[0]);
                     var virtualTable = vTable.getVirtualTable();
 
