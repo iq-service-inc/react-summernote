@@ -7,7 +7,7 @@
  * 3. Listen to mouseup event, wait for mouse selection
  * 4. When mouseup, call function applyFormatting. When ESC keydown, cancel
  * 5. Clear selection formats. Styled nodes will remove directly, Preseved nodes will remove attributes and styles, other nodes will remove all attributes include styles
- * 6. Apply formats by record formats. Record formats type roughly divided into 3 types: Text, Table and List
+ * 6. Apply formats by record formats. Record formats type roughly divided into 4 types: Text, Table and List, Anchor
  * 
  * Record formats structure:
  * {
@@ -51,6 +51,17 @@
  *      attributes: {...},
  *      styles: {...},
  *      wrapBy: [
+ *         { node: styledNode, nodeName: 'B', attributes: {...}, styles: {...}, },
+ *          ...,
+ *      ],
+ *  },
+ *  'A': {
+ *      node: spanNode,
+ *      nodeName: 'A',
+ *      attributes: {...},
+ *      styles: {...},
+ *      wrapBy: [
+ *         { node: styledNode, nodeName: 'SPAN', attributes: {...}, styles: {...}, },
  *         { node: styledNode, nodeName: 'B', attributes: {...}, styles: {...}, },
  *          ...,
  *      ],
@@ -206,6 +217,7 @@
                 rng.collapse().select()
 
                 let nodes = rng.nodes(dom.isNotVoid, { includeAncestor: true })
+                // Extract range nodes formats
                 for (let node of nodes) {
                     // 1. Table node
                     if (dom.isTable(node)) {
@@ -270,7 +282,60 @@
                         if (!format) continue
                         formats[node.nodeName] = format
                     }
-                    // 5. record styled tags format in Span format
+                    // 5. Anchor node
+                    else if (dom.isAnchor(node)) {
+                        let wrapBy = []
+                        // preserve wrapBy
+                        if (('A' in formats) &&
+                            (formats['A'].node === node ||
+                                formats['A'].wrapBy.find((wrapper) => dom.isCloseRelative(node, wrapper.node)))
+                        ) {
+                            wrapBy = formats['A'].wrapBy
+                        }
+                        let format = {
+                            ...this.getNodeFormat(node),
+                            wrapBy,
+                        }
+                        formats[node.nodeName] = format
+                    }
+                    // 6. styled tags, span inside Anchor node
+                    else if ((styledTags.includes(node.nodeName) || dom.isSpan(node)) && dom.ancestor(node, dom.isAnchor)) {
+                        let format = this.getNodeFormat(node, dom.isSpan(node))
+                        if (!format) continue
+                        // if Anchor format node is this styled node's ancestor
+                        // or Anchor format wrapBy include this styled node's ancestor or child
+                        // push this styled node to wrapBy
+                        if (('A' in formats)
+                            &&
+                            (dom.ancestor(node, (el) => formats['A'].node === el) ||
+                                formats['A'].wrapBy.find((wrapper) => dom.isCloseRelative(node, wrapper.node)))
+                        ) {
+                            formats['A'].wrapBy = formats['A'].wrapBy.filter((wrapper) => wrapper.nodeName !== node.nodeName)
+                            formats['A'].wrapBy.push(format)
+                        }
+                        // otherwise override Anchor format
+                        else {
+                            // if this styled node has Anchor ancestor use it
+                            let anchorEl = dom.ancestor(node, dom.isAnchor)
+                            if (anchorEl) {
+                                formats['A'] = {
+                                    ...this.getNodeFormat(anchorEl),
+                                    wrapBy: [format],
+                                }
+                            }
+                            // otherwise create pseudo Anchor
+                            else {
+                                formats['A'] = {
+                                    node: document.createElement('A'),
+                                    nodeName: 'A',
+                                    attributes: {},
+                                    styles: {},
+                                    wrapBy: [format],
+                                }
+                            }
+                        }
+                    }
+                    // 7. record styled tags format in Span format
                     else if (styledTags.includes(node.nodeName)) {
                         let format = this.getNodeFormat(node)
                         // if Span format node is this styled node's ancestor
@@ -306,14 +371,13 @@
                             }
                         }
                     }
-                    // 6. Span node
+                    // 8. Span node
                     else if (dom.isSpan(node)) {
                         let wrapBy = []
                         // preserve wrapBy
                         if (('SPAN' in formats) &&
                             (formats['SPAN'].node === node ||
                                 formats['SPAN'].wrapBy.find((wrapper) => dom.isCloseRelative(node, wrapper.node)))
-                            // TODO... wrapBy ....
                         ) {
                             wrapBy = formats['SPAN'].wrapBy
                         }
@@ -323,7 +387,7 @@
                         }
                         formats[node.nodeName] = format
                     }
-                    // 7. Paragraph format
+                    // 9. Paragraph format
                     else if (dom.isPurePara(node)) {
                         let format = this.getNodeFormat(node, true)
                         if (!format) continue
@@ -331,7 +395,7 @@
                         // record PurePara format
                         formats['PUREPARA'] = format
                     }
-                    // 8. other nodes
+                    // 10. other nodes
                     else if (dom.isElement(node)) {
                         let format = this.getNodeFormat(node, true)
                         if (!format) continue
@@ -354,8 +418,9 @@
             }
 
             /**
-             * 1. clear range nodes format
-             * 2. apply format by record formats
+             * 1. Clear range nodes format
+             * 2. Record node and which format it will apply
+             * 3. Apply format to target node
              */
             this.applyFormatting = function () {
                 let rng = range.create()
@@ -402,7 +467,16 @@
                         let format = this.recordFormats[node.nodeName]
                         this.clearNodeByFormat($node, format)
                     }
-                    // 5. other nodes -> clear all attributes include styles
+                    // 5. Anchor node
+                    else if (dom.isAnchor(node)) {
+                        Object.values(node.attributes)
+                            .forEach((attr) => {
+                                if (!formatExcludedAttributes.includes(attr.name)) $node.removeAttr(attr.name)
+                            })
+                        // keep text only
+                        $node.html(node.textContent)
+                    }
+                    // 6. other nodes -> clear all attributes include styles
                     else if (dom.isElement(node)) {
                         Object.values(node.attributes)
                             .forEach((attr) => {
@@ -410,24 +484,26 @@
                             })
 
                         // if styled node or node has empty attributes -> remove node
-                        if (styledTags.includes(node.nodeName) || !node.hasAttributes()) {
+                        if (styledTags.includes(node.nodeName) ||
+                            (!node.hasAttributes() && dom.isTextBlock(node.parentNode) && !dom.isEditable(node.parentNode))
+                        ) {
                             if (node.hasChildNodes()) $node.contents().unwrap()
                             else $node.remove()
                         }
                     }
                 }
 
-                // Apply record formats
+                // Record node and which format it will apply
+                let applyFormats = []
                 for (let node of nodes) {
                     // check if node still exist
                     if (!$editable.find(node).length) continue
-                    let positionAbsoluteFlag = false
                     let format
                     // 1. Table node
                     if (dom.isTable(node)) {
                         if (!('TABLE' in this.recordFormats)) continue
-                        let format = this.recordFormats['TABLE']
-                        $(node).attr(format.attributes).css(format.styles)
+                        format = this.recordFormats['TABLE']
+                        applyFormats.push({ node, format })
                     }
                     // 2. other preserved Table nodes
                     else if (preservedTableTags.includes(node.nodeName)) {
@@ -440,7 +516,11 @@
                         if (dom.isCell(node)) {
                             // find current Cell's ancestor TR index in selected range
                             let currentTR = dom.ancestor(node, dom.isTR)
-                            let indexTR = nodes.filter((el) => dom.isTR(el)).findIndex((el) => el === currentTR)
+                            let nodesTR = nodes.filter((el) => dom.isTR(el))
+                            // if TR is not in selected range set indexTR to last index
+                            let indexTR
+                            if (lists.contains(nodesTR, currentTR)) indexTR = nodesTR.findIndex((el) => el === currentTR)
+                            else indexTR = nodesTR.length
                             // find current Cell index in selected range
                             let nodeFormats = tableFormat.childFormat[node.nodeName]
                             let cellFormats = nodeFormats[indexTR % nodeFormats.length]
@@ -451,7 +531,11 @@
                         else if (dom.isCol(node)) {
                             // find current COL's ancestor COLGROUP index in selected range
                             let currentCOLGROUP = dom.ancestor(node, dom.isColgroup)
-                            let indexCOLGROUP = nodes.filter((el) => dom.isColgroup(el)).findIndex((el) => el === currentCOLGROUP)
+                            let nodesCOLGROUP = nodes.filter((el) => dom.isColgroup(el))
+                            // if COLGROUP is not in selected range set indexCOLGROUP to last index
+                            let indexCOLGROUP
+                            if (lists.contains(nodesCOLGROUP, currentCOLGROUP)) indexCOLGROUP = nodesCOLGROUP.findIndex((el) => el === currentCOLGROUP)
+                            else indexCOLGROUP = nodesCOLGROUP.length
                             // find current COL index in selected range
                             let index = nodes.filter((el) => el.nodeName === node.nodeName && dom.ancestor(el, dom.isColgroup) === currentCOLGROUP).findIndex((el) => el === node)
                             let nodeFormats = tableFormat.childFormat[node.nodeName]
@@ -465,70 +549,112 @@
                         }
 
                         if (!format) continue
-                        $(node).attr(format.attributes).css(format.styles)
+                        applyFormats.push({ node, format })
                     }
                     // 3. List node
                     else if (dom.isList(node)) {
                         if (!('LIST' in this.recordFormats)) continue
-                        let format = this.recordFormats['LIST']
-                        if (node.nodeName !== format.nodeName) {
-                            $(node).replaceWith($(`<${format.nodeName}>`)
-                                .attr(format.attributes).css(format.styles)
-                                .append($(node).contents()))
-                        }
-                        else {
-                            $(node).attr(format.attributes).css(format.styles)
-                        }
+                        format = this.recordFormats['LIST']
+                        applyFormats.push({
+                            node,
+                            format,
+                            replace: node.nodeName !== format.nodeName
+                        })
                     }
                     // 4. Li node
                     else if (dom.isLi(node)) {
                         if (!(node.nodeName in this.recordFormats)) continue
                         format = this.recordFormats[node.nodeName]
-                        $(node).attr(format.attributes).css(format.styles)
+                        applyFormats.push({ node, format })
                     }
-                    // 5. exactly match nodeName
+                    // 5. Anchor node
+                    else if (dom.isAnchor(node)) {
+                        format = this.recordFormats['A'] || this.recordFormats['SPAN'] || this.recordFormats['PUREPARA']
+                        if (!format) continue
+                        applyFormats.push({ node, format })
+                    }
+                    // 6. exactly match nodeName
                     else if (node.nodeName in this.recordFormats) {
                         format = this.recordFormats[node.nodeName]
-                        $(node).attr(format.attributes).css(format.styles)
-                        if (format.styles['position'] === 'absolute') positionAbsoluteFlag = true
+                        applyFormats.push({ node, format })
                     }
-                    // 6. tolerate Paragraph node
+                    // 7. tolerate Paragraph node
                     else if (dom.isPurePara(node)) {
+                        format = this.recordFormats['PUREPARA'] || this.recordFormats['SPAN']
+                        if (!format) continue
+                        applyFormats.push({
+                            node,
+                            format,
+                            replace: format.nodeName !== 'SPAN' && node.nodeName !== format.nodeName
+                        })
+                    }
+                    // 8. tolerate SPAN node
+                    else if (dom.isSpan(node)) {
                         format = this.recordFormats['PUREPARA']
                         if (!format) continue
-                        $(node).attr(format.attributes).css(format.styles)
-                        if (format.styles['position'] === 'absolute') positionAbsoluteFlag = true
+                        applyFormats.push({ node, format })
                     }
-                    // 7. tolerate Text node && its parentNode is Block, Cell or Li
-                    else if (dom.isText(node) && (dom.isBlock(node.parentNode) || dom.isCell(node.parentNode) || dom.isLi(node.parentNode))) {
-                        format = this.recordFormats['SPAN']
+                    // 9. tolerate Text node which first element ancestor is TextBlock, Cell, Li or Anchor
+                    else if (dom.isText(node) && node.textContent.trim().length &&
+                        dom.ancestor(node.parentNode, (el) => dom.isElement(el) && !styledTags.includes(el.nodeName))) {
+                        let ancestor = dom.ancestor(node.parentNode, (el) => dom.isElement(el) && !styledTags.includes(el.nodeName))
+                        if (!(dom.isTextBlock(ancestor) || dom.isCell(ancestor) || dom.isLi(ancestor) || dom.isAnchor(ancestor))) continue
+                        format = this.recordFormats['SPAN'] || this.recordFormats['PUREPARA']
                         if (!format) continue
-                        // wrap text node styles
-                        let styledNode = $(`<${format.nodeName}>`).attr(format.attributes).css(format.styles)
-                        if (format.styles['position'] === 'absolute') positionAbsoluteFlag = true
-                        $(node).wrap(styledNode)
+                        $(node).wrap('<SPAN>')
                         node = node.parentNode
+                        applyFormats.push({ node, format })
                     }
+                }
 
-                    // Span format need to apply styled tags
-                    if (format && format.nodeName === 'SPAN') {
-                        if ('wrapBy' in format) {
-                            format.wrapBy.reverse().forEach((wrapper) => {
-                                let $wrapper = $(dom.wrap(node, wrapper.nodeName))
-                                $wrapper.attr(wrapper.attributes).css(wrapper.styles)
-                            })
+                // Apply format to target node
+                applyFormats.forEach(({ node, format, replace }) => {
+                    // prevent SPAN apply redundant formatting
+                    if (dom.isSpan(node)) {
+                        // if inside formatted anchor don't apply format
+                        if (dom.ancestor(node.parentNode, dom.isAnchor)) {
+                            let anchor = dom.ancestor(node.parentNode, dom.isAnchor)
+                            if (applyFormats.find((apply) => apply.node === anchor)) {
+                                $(node).contents().unwrap('SPAN')
+                                return
+                            }
+                        }
+                        // if ancestor has applied format don't apply again
+                        else if (applyFormats.find((apply) => apply.node === node.parentNode && apply.format === format)) {
+                            $(node).contents().unwrap('SPAN')
+                            return
                         }
                     }
 
+                    // replace nodeName or not
+                    if (replace) {
+                        let $replace = $(`<${format.nodeName}>`)
+                            .append($(node).contents())
+                        $(node).replaceWith($replace)
+                        node = $replace[0]
+                    }
+                    // apply format
+                    $(node).attr(format.attributes).css(format.styles)
+
                     // add position 'relative' to those who apply position 'absolute'
-                    if (positionAbsoluteFlag) {
-                        if (!dom.ancestor(node, (el) => (dom.isElement(el) && $(el).css('position') === 'relative'))) {
+                    if (format.styles['position'] === 'absolute') {
+                        if (!dom.ancestor(node.parentNode, (el) => (dom.isElement(el) && !dom.isEditable(el) && $(el).css('position') === 'relative'))) {
                             let ancestor = dom.ancestor(node.parentNode, dom.isElement)
                             $(ancestor).css('position', 'relative')
                         }
                     }
-                }
+
+                    // apply styled tags
+                    if ('wrapBy' in format) {
+                        format.wrapBy.reverse().forEach((wrapper) => {
+                            let $wrapper = $(`<${wrapper.nodeName}>`).attr(wrapper.attributes).css(wrapper.styles)
+                            $(node).contents().wrapAll($wrapper)
+                        })
+                    }
+                })
                 this.clearRecord()
+                rng = context.invoke('editor.createRangeFromList', applyFormats.map(apply => apply.node))
+                rng.select()
                 context.invoke('editor.setLastRang', rng)
                 context.invoke('afterCommand')
             }
