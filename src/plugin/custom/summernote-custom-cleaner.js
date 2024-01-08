@@ -64,6 +64,12 @@
                     so = rng.so
                 while (sc && dom.isLeftEdgePoint({ node: sc, offset: so })) {
                     if (dom.isEditable(sc.parentNode)) { break; }
+                    while (sc.previousSibling) {
+                        if (dom.isText(sc.previousSibling) && sc.previousSibling.textContent.trim().length === 0) {
+                            $(sc.previousSibling).remove()
+                        }
+                        else break
+                    }
                     so = dom.position(sc)
                     sc = sc.parentNode
                 }
@@ -78,6 +84,12 @@
                     eo = rng.eo
                 while (ec && dom.isRightEdgePoint({ node: ec, offset: eo })) {
                     if (dom.isEditable(ec.parentNode)) { break; }
+                    while (ec.nextSibling) {
+                        if (dom.isText(ec.nextSibling) && ec.nextSibling.textContent.trim().length === 0) {
+                            $(ec.nextSibling).remove()
+                        }
+                        else break
+                    }
                     eo = dom.position(ec) + 1
                     ec = ec.parentNode
                 }
