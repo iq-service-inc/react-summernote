@@ -1,5 +1,42 @@
 # Changelog
 
+## `2.2.20`
+### feat
+* 新增 SummernotePlugin 及 Types
+* 新增 summernote-copy-formatting
+* 新增 summernote-custom-style
+* 新增 summernote-custom-cleaner
+* 新增 summernote-ext-table jStyleCell 編輯單一儲存格樣式
+* 新增 summernote-ext-table jFontname 框選更新表格內字體
+* 更新 summernote-image-attributes 自動插入圖片標題
+* 更新 summernote-image-attributes 設定圖片尺寸
+* 更新 summernote-comment-popover 內容參數設定
+* 新增 summernote-imagemap
+* 新增 summernote-custom-contextmenu
+* 更新 summernote-ext-table jAddDeleteRowCol 插入刪除欄列支援框選
+
+### fix
+* 修復 summernote-ext-table 插入欄 有多個表格計算 colspan 出錯
+* 新增 summernote-patch-handle 修復圖片顯示框位置偏移
+* 新增 summernote-patch-dom 修復字體、字型等樣式無法套用到所有節點
+* 修復 summernote-ext-table jRowHeight, jColWidth 當前寬高計算錯誤
+* 修復 summernote-fontsize-input 未阻擋輸入超出最大/最小值
+* 修復 summernote-ext-table 點擊右鍵框選範圍會重置
+* 修復 summernote-ext-table 刪除欄或列後自動更新儲存格寬高出現錯誤訊息
+
+### perf
+* 更新 summernote-ext-table jStyleCell 對話框輸入框加上 placeholder 提示文字
+* 更新 summernote-ext-table destroy 移除 $styleCellDialog
+* 更新 summernote-image-attributes 圖片標題以 id 對應
+* 更新 summernote-image-attributes 圖片尺寸切換單位顯示
+* 更新 summernote-pastehtml pasteHTML 按鈕 icon
+* 更新 summernote-custom-specialchars customSpecialChar 按鈕 icon
+
+### docs
+* 更新 README 原生 summernote 嵌入影片的有效網址
+* 更新 import plugins 範例缺漏
+
+
 ## `2.2.19`
 ### feat
 * 更新 zh-TW 翻譯
