@@ -216,7 +216,11 @@
                 rng = context.invoke('customCleaner.expandEdgePoint', rng.splitText())
                 rng.collapse().select()
 
-                let nodes = rng.nodes(dom.isNotVoid, { includeAncestor: true })
+                let nodes = rng.nodes(dom.isNotVoid)
+                let commonAncestor = rng.commonAncestor()
+                // ancestors with styled tags
+                let listAncestor = dom.listAncestor(commonAncestor, (el) => !styledTags.includes(el.nodeName)).slice(0, -1)
+                nodes = lists.unique(nodes.concat(listAncestor))
                 // Extract range nodes formats
                 for (let node of nodes) {
                     // 1. Table node
@@ -347,7 +351,8 @@
                                 formats['SPAN'].wrapBy.find((wrapper) => dom.isCloseRelative(node, wrapper.node)))
                         ) {
                             formats['SPAN'].wrapBy = formats['SPAN'].wrapBy.filter((wrapper) => wrapper.nodeName !== node.nodeName)
-                            formats['SPAN'].wrapBy.push(format)
+                            if (listAncestor.includes(node)) formats['SPAN'].wrapBy.unshift(format)
+                            else formats['SPAN'].wrapBy.push(format)
                         }
                         // otherwise override Span format
                         else {
@@ -487,6 +492,7 @@
                         if (styledTags.includes(node.nodeName) ||
                             (!node.hasAttributes() && dom.isTextBlock(node.parentNode) && !dom.isEditable(node.parentNode))
                         ) {
+                            nodes = nodes.filter((el) => el !== node)
                             if (node.hasChildNodes()) $node.contents().unwrap()
                             else $node.remove()
                         }
@@ -495,7 +501,9 @@
 
                 // Record node and which format it will apply
                 let applyFormats = []
-                for (let node of nodes) {
+                let index = 0
+                while (index < nodes.length) {
+                    let node = nodes[index++]
                     // check if node still exist
                     if (!$editable.find(node).length) continue
                     let format
@@ -598,17 +606,137 @@
                     else if (dom.isText(node) && node.textContent.trim().length &&
                         dom.ancestor(node.parentNode, (el) => dom.isElement(el) && !styledTags.includes(el.nodeName))) {
                         let ancestor = dom.ancestor(node.parentNode, (el) => dom.isElement(el) && !styledTags.includes(el.nodeName))
-                        if (!(dom.isTextBlock(ancestor) || dom.isCell(ancestor) || dom.isLi(ancestor) || dom.isAnchor(ancestor))) continue
+                        let listAncestor = dom.listAncestor(node, (el) => el === ancestor)
+
+                        if (!(dom.isSpan(ancestor) || dom.isTextBlock(ancestor) || dom.isCell(ancestor) || dom.isLi(ancestor) || dom.isAnchor(ancestor))) continue
                         format = this.recordFormats['SPAN'] || this.recordFormats['PUREPARA']
                         if (!format) continue
-                        $(node).wrap('<SPAN>')
-                        node = node.parentNode
-                        applyFormats.push({ node, format })
+
+                        if (!dom.isSpan(ancestor) && listAncestor.findLast((el) => styledTags.includes(el.nodeName))) {
+                            ancestor = listAncestor.findLast((el) => styledTags.includes(el.nodeName))
+                        }
+
+                        if (dom.isSpan(ancestor) || styledTags.includes(ancestor.nodeName)) {
+                            // need to split tree by current node
+
+                            // clone ancestor
+                            let $newAncestor = $(ancestor).clone().insertAfter(ancestor)
+                            // create range by these two ancestor
+                            let prevRng = range.createFromNode(ancestor),
+                                nextRng = range.createFromNode($newAncestor[0])
+
+                            let newRngPoints = { sc: rng.sc, so: rng.so, ec: rng.ec, eo: rng.eo }
+
+                            // if start point or end point is current node need to update later
+                            let startPointIsCurrentNode = false, endPointIsCurrentNode = false
+                            if (rng.sc.childNodes[rng.so] === node) {
+                                startPointIsCurrentNode = true
+                            }
+                            if (rng.ec.childNodes[rng.eo - 1] === node) {
+                                endPointIsCurrentNode = true
+                            }
+
+                            let hitNodeFlag = false, transferEndFlag = false
+                            let leftEdgeNodes = []
+                            // determine whether need to transfer end point to new ancestor
+                            dom.walkPoint(prevRng.getStartPoint(), prevRng.getEndPoint(), function (point) {
+                                if (dom.isEditable(point.node)) return
+                                if (dom.isLeftEdgePoint(point)) {   // left edge
+                                    leftEdgeNodes.push(point.node)
+                                }
+                                if (point.node === node) {
+                                    hitNodeFlag = true
+                                    return
+                                }
+                                if (dom.isRightEdgePoint(point) && lists.contains(leftEdgeNodes, point.node)) { // right edge
+                                    if (hitNodeFlag && point.node === rng.ec) { // end point is in old ancestor
+                                        transferEndFlag = true
+                                    }
+                                }
+                            }, true)
+                            // transfer end point to new ancestor
+                            if (transferEndFlag) {
+                                let offsetPath = dom.makeOffsetPath(ancestor, rng.ec.childNodes[rng.eo - 1]).slice(1)
+                                let point = dom.fromOffsetPath($newAncestor[0], offsetPath)
+                                newRngPoints.ec = point.parentNode
+                                newRngPoints.eo = dom.position(point) + 1
+                            }
+
+                            // record node which need to be removed
+                            let removeList = []
+                            let prevNodes = prevRng.nodes(dom.isText),
+                                nextNodes = nextRng.nodes(dom.isText)
+                            let hitTextIdx = prevNodes.indexOf(node)
+                            // if nodes is before current node remove it from prevNodes, otherwise remove it from nextNodes
+                            for (let idx = 0; idx < prevNodes.length; idx++) {
+                                let el = prevNodes[idx]
+                                if (idx === hitTextIdx) continue
+                                if (idx > hitTextIdx) {
+                                    // remove last single child ancestor to prevent remaining empty nodes
+                                    let lastSingleChildAncestor = this.lastSingleChildAncestor(el, ancestor)
+                                    removeList.push(lastSingleChildAncestor)
+                                }
+                                else {
+                                    let lastSingleChildAncestor = this.lastSingleChildAncestor(nextNodes[idx], ancestor)
+                                    removeList.push(lastSingleChildAncestor)
+                                }
+                            }
+                            removeList.push(nextNodes[hitTextIdx])
+                            removeList.forEach((el) => $(el).remove())
+
+                            // move current node between old ancestor and new ancestor
+                            $(node).insertAfter(ancestor).wrap('<SPAN>')
+                            node = node.parentNode
+                            let ancestorAttr = ancestor.attributes ? Object.values(ancestor.attributes)
+                                .reduce((obj, attr) => {
+                                    if (formatExcludedAttributes.includes(attr.name) && attr.name !== 'style') obj[attr.name] = attr.value
+                                    return obj
+                                }, {})
+                                : {}
+                            $(node).attr(ancestorAttr)
+                            applyFormats.push({ node, format, textNode: !Object.keys(ancestorAttr).length })
+
+                            // clear redundant nodes
+                            let newElementCount = 2 // one is span with current node, another is new ancestor clone by old ancestor
+                            // all nodes in old ancestor has moved to new ancestor
+                            if (hitTextIdx === 0) {
+                                $(ancestor).remove()
+                                newElementCount -= 1
+                            }
+                            // none of nodes in old ancestor has moved to new ancestor
+                            if (hitTextIdx === prevNodes.length - 1) {
+                                $newAncestor.remove()
+                                newElementCount -= 1
+                            }
+
+                            // fix boundary point
+                            if (startPointIsCurrentNode) {
+                                newRngPoints.sc = node.parentNode
+                                newRngPoints.so = dom.position(node)
+                            }
+                            if (endPointIsCurrentNode) {
+                                newRngPoints.ec = node.parentNode
+                                newRngPoints.eo = dom.position(node) + 1
+                            }
+                            // end point is current node's siblings need to fix offset
+                            else if (dom.listPrev(rng.ec.childNodes[rng.eo - 1]).includes(node)) {
+                                newRngPoints.eo += newElementCount
+                            }
+                            // recreate range
+                            rng = range.create(newRngPoints.sc, newRngPoints.so, newRngPoints.ec, newRngPoints.eo)
+                        }
+                        else {
+                            $(node).wrap('<SPAN>')
+                            node = node.parentNode
+                            applyFormats.push({ node, format, textNode: true })
+                        }
+                        nodes = rng.nodes(dom.isNotVoid, { fullyContains: true })
+                        index = nodes.indexOf(node) + 1
                     }
                 }
 
                 // Apply format to target node
-                applyFormats.forEach(({ node, format, replace }) => {
+                applyFormats.forEach(({ node, format, replace, textNode }) => {
                     // prevent SPAN apply redundant formatting
                     if (dom.isSpan(node)) {
                         // if inside formatted anchor don't apply format
@@ -622,6 +750,12 @@
                         // if ancestor has applied format don't apply again
                         else if (applyFormats.find((apply) => apply.node === node.parentNode && apply.format === format)) {
                             $(node).contents().unwrap('SPAN')
+                            return
+                        }
+                        // if this node is text and nextSibling will apply same format move this node's content to nextSibling to combine text
+                        else if (textNode && applyFormats.find((apply) => apply.textNode && apply.node === node.nextSibling && apply.format === format)) {
+                            $(node).contents().prependTo(node.nextSibling)
+                            $(node).remove()
                             return
                         }
                     }
@@ -646,7 +780,8 @@
 
                     // apply styled tags
                     if ('wrapBy' in format) {
-                        format.wrapBy.reverse().forEach((wrapper) => {
+                        let wrapBy = [...format.wrapBy]
+                        wrapBy.reverse().forEach((wrapper) => {
                             let $wrapper = $(`<${wrapper.nodeName}>`).attr(wrapper.attributes).css(wrapper.styles)
                             $(node).contents().wrapAll($wrapper)
                         })
@@ -657,6 +792,17 @@
                 rng.select()
                 context.invoke('editor.setLastRang', rng)
                 context.invoke('afterCommand')
+            }
+
+            this.lastSingleChildAncestor = function (node, boundaryNode) {
+                while (node) {
+                    if (dom.nodeLength(node.parentNode) !== 1) { break; }
+                    if (node.parentNode === boundaryNode) { break; }
+                    if (dom.isEditable(node.parentNode)) { break; }
+
+                    node = node.parentNode;
+                }
+                return node
             }
 
             /**
