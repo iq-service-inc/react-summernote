@@ -101,7 +101,7 @@
 
             const blockTags = ['ADDRESS', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'PRE', 'SECTION', 'HEADER', 'FOOTER', 'NAV', 'ARTICLE', 'ASIDE', 'FIGURE', 'DIALOG', 'HGROUP', 'TIME', 'METER', 'MENU', 'COMMAND', 'KEYGEN', 'OUTPUT', 'PROGRESS', 'DETAILS', 'DATAGRID', 'DATALIST']
             dom.isTextBlock = function (node) { return blockTags.includes(node.nodeName) }
-            dom.isNotVoid = function (node) { return !dom.isVoid(node) }
+            dom.isNotVoid = function (node) { return !dom.isVoid(node) && !(/^MAP|^AREA/.test(node.nodeName.toUpperCase())) }
             dom.isCloseRelative = function (nodeA, nodeB) { return $(nodeA).find(nodeB).length || $(nodeA).closest(nodeB).length }
             dom.isTR = dom.makePredByNodeName('TR')
             dom.isCol = dom.makePredByNodeName('COL')
@@ -476,7 +476,7 @@
                     else if (dom.isAnchor(node)) {
                         Object.values(node.attributes)
                             .forEach((attr) => {
-                                if (!formatExcludedAttributes.includes(attr.name)) $node.removeAttr(attr.name)
+                                if (!this.isPreservedAttribute(attr.name)) $node.removeAttr(attr.name)
                             })
                         // keep text only
                         $node.html(node.textContent)
@@ -485,7 +485,7 @@
                     else if (dom.isElement(node)) {
                         Object.values(node.attributes)
                             .forEach((attr) => {
-                                if (!formatExcludedAttributes.includes(attr.name)) $node.removeAttr(attr.name)
+                                if (!this.isPreservedAttribute(attr.name)) $node.removeAttr(attr.name)
                             })
 
                         // if styled node or node has empty attributes -> remove node
@@ -689,7 +689,7 @@
                             node = node.parentNode
                             let ancestorAttr = ancestor.attributes ? Object.values(ancestor.attributes)
                                 .reduce((obj, attr) => {
-                                    if (formatExcludedAttributes.includes(attr.name) && attr.name !== 'style') obj[attr.name] = attr.value
+                                    if (this.isPreservedAttribute(attr.name) && attr.name !== 'style') obj[attr.name] = attr.value
                                     return obj
                                 }, {})
                                 : {}
@@ -788,9 +788,11 @@
                     }
                 })
                 this.clearRecord()
-                rng = context.invoke('editor.createRangeFromList', applyFormats.map(apply => apply.node))
-                rng.select()
-                context.invoke('editor.setLastRang', rng)
+                if (applyFormats.length) {
+                    rng = context.invoke('editor.createRangeFromList', applyFormats.map(apply => apply.node))
+                    rng.select()
+                    context.invoke('editor.setLastRang', rng)
+                }
                 context.invoke('afterCommand')
             }
 
@@ -849,13 +851,21 @@
             }
 
             /**
+             * check if attribute need to be preserved
+             * formatExcludedAttributes and data-* are excluded
+             */
+            this.isPreservedAttribute = function (attrName) {
+                return formatExcludedAttributes.includes(attrName) || (attrName.slice(0, 5) === 'data-')
+            }
+
+            /**
              * get node format
              */
             this.getNodeFormat = function (node, rejectEmpty) {
-                // get node attributes exclude formatExcludedAttributes
+                // get node attributes exclude preserved attributes
                 let attr = node.attributes ? Object.values(node.attributes)
                     .reduce((obj, attr) => {
-                        if (!formatExcludedAttributes.includes(attr.name)) obj[attr.name] = attr.value
+                        if (!this.isPreservedAttribute(attr.name)) obj[attr.name] = attr.value
                         return obj
                     }, {})
                     : {}
