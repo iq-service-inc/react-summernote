@@ -71,7 +71,7 @@ class App extends Component {
 						toolbar: [
 							["style", ["style", "customStyle", "copyFormatting"]],
 							["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear", "customCleaner"]],
-							["fontname", ["fontname"]],
+							["fontname", ["fontname", "customFont"]],
                             ["fontsize", ["fontsizeInput"]],
                             ['color', ['forecolor', 'backcolor']],
 							["para", ["ul", "ol", "listStyles", "paragraph"]],
@@ -84,7 +84,15 @@ class App extends Component {
 							["view", ["fullscreen", "codeview", "help"]],
 						],
 						canViewClasslist: true,
-                        tableClassName: 'jtable table-bordered'
+                        tableClassName: 'jtable table-bordered',
+						customFont: {
+							fontNames: [
+								'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana',
+								{ name: '新細明體', value: '新細明體, serif' },
+								{ name: '微軟正黑體', value: '微軟正黑體, sans-serif' },
+								{ name: '標楷體', value: '標楷體, DFKai-SB, BiauKaiTC' }
+							]
+						},		
 					}}
 					onChange={onChange}
 					onImageUpload={this.onImageUpload1}
