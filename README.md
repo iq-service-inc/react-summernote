@@ -376,7 +376,27 @@ summernote 包含一個原始碼的 xss 過濾機制，規則如下：
 
 
 ## For contributor
+### Setup Node
+- `node`: v16.20.2
+- `npm`: v8.19.4
 
+以 nvm 安裝
+
+```bash
+nvm install v16.20.2
+nvm use v16.20.2
+```
+
+### Install Dependencies
+安裝依賴套件
+- `npm ci` 依據 `package-lock.json` 安裝套件
+
+```bash
+npm ci
+```
+
+
+### NPM Scripts
 npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼，可以參考使用：
 
 
@@ -386,9 +406,133 @@ npm 有準備以下指令，分別說明如下，如果您也想貢獻程式碼�
 * `npm run test`：啟動一個 `webpack-dev-server`，以 `src/test.js` 為起始，用於測試直接引用打包 (build) 後的 summernote ，觀察引用打包後的程式執行起來是否有問題
 * `npm start`：開發人員主要模式，啟動一個 `webpack-dev-server`，以 `src/start.js` 為起始，用於測試原始程式執行起來是否有問題，並開發新功能
 
+
+### Commit Message
+可使用 vscode extension [Commit Message Editor](https://marketplace.visualstudio.com/items?itemName=adam-bender.commit-message-editor) 編輯 Commit Message
+
+- 依據 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) ([中文版](https://www.conventionalcommits.org/zh-hant/v1.0.0/))
+    - Type 必填，選對修改事項類型，不清楚選哪種可依據 [Angular CONTRIBUTING - Commit Message Format](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format)
+    - Title 必填，概述修改事項 (Short description)
+    - Scope 可選，目前未定義
+    - Body 可選，可描寫變更的內容
+    - Footer 可選，可寫 commit 簽署者資訊
+
+
+
+### Code Structure
+#### Summernote.jsx
+
+[src/components/SummerNote.jsx](/src/components/SummerNote.jsx)
+
+Summernote 連結器，與原生 Summernote 對接
+
+
+#### App.jsx
+
+[src/components/App.jsx](/src/components/App.jsx)
+
+引入使用 Summernote Component，DEMO 呈現依賴此檔案設定
+
+#### ImportCode.js
+
+[src/components/ImportCode.js](/src/components/ImportCode.js)
+
+ImportCode 會引入所有 Plugin，若有新增 Plugin 需要在此引入
+
+```javascript=
+module.exports = function () {
+    // ...
+    require('../plugin/custom/summernote-custom-style')
+}
+```
+
+
+#### SummernotePlugin
+@iqs/react-summernote: `v2.2.20` 開始
+
+- [src/components/SummernotePlugin.jsx](/src/components/SummernotePlugin.jsx): 可在使用 React-Summernote 時匯入自定義的 Button 或 Plugin
+
+- [src/components/SummernotePlugin.d.ts](/src/components/SummernotePlugin.d.ts): 設定 Summernote Types
+
+```jsx
+import SummerNote, { SummernotePlugin } from '@iqs/react-summernote'
+```
+
+Methods
+
+- `SummernotePlugin.createSummernoteButton`
+- `SummernotePlugin.createSummernotePlugin`
+
+Types
+
+- global `$.summernote`
+- `SummernotePlugin.createSummernotePlugin`
+- `SummernotePlugin.SummernotePluginClass`
+- `SummernotePlugin.SummernotePluginFunction`
+- `SummernotePlugin.createSummernoteButton`
+- `SummernotePlugin.SummernoteContext`
+- ...
+
+
+
+#### Plugin
+[src/plugin/](/src/plugin/)
+
+Plugin 目錄架構由 [Awesome Summernote](https://github.com/summernote/awesome-summernote) 訂定，IQS 自己寫的都放在 [src/plugin/custom/](https://github.com/iq-service-inc/react-summernote/tree/master/src/plugin/custom)
+
+檔案名稱以 `summernote-` 開頭，Plugin 名稱、按鈕名稱以 **小駝峰** 命名
+
+
+有新增 Plugin 記得更新文件 [src/plugin/README.md](/src/plugin/README.md)
+
+
+## For maintainer
+
+### 上版 DEMO 網站流程
+[iq-service-inc.github.io/react-summernote](https://iq-service-inc.github.io/react-summernote/)
+
+1. **push** 到 **master** 分支
+
+2. 觸發 Github Workflow **Deploy Master Branch to Github Pages**
+
+3. 待 Workflow 完成即上版完成
+
+
+### 發佈 npm 套件流程
+[NPM - @iqs/react-summernote](https://www.npmjs.com/package/@iqs/react-summernote)
+
+1. 修改 [README.md](README.md?plain=1#L5) 版本號
+
+2. 修改 [package.json](package.json#L3) 版本號
+
+3. 更新 [CHANGELOG.md](CHANGELOG.md)
+
+4. **push** 到 **master** 分支
+
+5. 發布 [Github Release](https://github.com/iq-service-inc/react-summernote/releases)
+    - 選擇新 Tag
+    - 標題為 Tag
+    - 內容貼 CHANGELOG
+    - 內容最後附上差異比對連結
+        - e.g.
+        ```markdown
+        **Full Changelog**: https://github.com/iq-service-inc/react-summernote/compare/v2.2.19...v2.2.20
+        ```
+
+6. 觸發 Github Workflow **Publish Package to npmjs**
+
+7. 待 Workflow 完成即發佈完成
+
+
 ## For repo admins
 
-本 repo 現已與 GitHub Actions 連動，因此未來要發布新版時，只需要把新版本 push 上來之後發布一個 Release，GitHub Actions 就會自動將套件發布至 npm registry
+[.github/workflows/](https://github.com/iq-service-inc/react-summernote/tree/master/.github/workflows) 存放所有 Github Workflows
+
+1. Deploy Master Branch to Github Pages: 自動部署 Pages
+
+2. Publish Package to npmjs: 發佈 npm 套件
+
+    > 若發布流程失敗，出現 `404 Not Found - PUT https://registry.npmjs.org/@iqs%2freact-summernote - Not found` 等訊息，可能是 Token 無效或過期
 
 ## License
 
