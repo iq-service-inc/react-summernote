@@ -93,7 +93,8 @@
                         },
                         click: function (event) {
                             context.createInvokeHandler('customFont.setFontName')(event)
-                            context.invoke('customFont.updateCurrentStyle')
+                            var $div = $(event.currentTarget).parent();
+                            context.invoke('customFont.updateCurrentStyle', $div)
                         }
                     }),
                 ]).render();
@@ -106,7 +107,8 @@
                 context.invoke("afterCommand");
             }
 
-            this.updateCurrentStyle = function(){
+            this.updateCurrentStyle = function($container){
+                const $cont = $container || context.layoutInfo.toolbar;
                 const styleInfo = context.invoke('editor.currentStyle');
                 if (styleInfo['font-family']) {
                     const fontNames = styleInfo['font-family'].split(',').map((name) => {
@@ -114,15 +116,21 @@
                         .replace(/\s+$/, '')
                         .replace(/^\s+/, '');
                     });
-                    const showFontName = Array.isArray(fontNames) ? fontNames[0] : fontNames
-
-                    $customFontBtn.find('.dropdown-fontname a').each((idx, item) => {
+                    const showFontName = lists.find(fontNames, modules.buttons.isFontInstalled.bind(modules.buttons))
+                    var updateFontName = { name: showFontName, value: showFontName }
+                    $cont.find('.dropdown-fontname a').each((idx, item) => {
                         const $item = $(item);
-                        const showFontName = typeof fontNames === 'object' ? fontNames[0] : fontNames 
-                        const isChecked = ($item.data('value') + '') === (showFontName + '');
+                        const itemFontNames = $item.data('value').split(',').map((name) => {
+                            return name.replace(/[\'\"]/g, '')
+                            .replace(/\s+$/, '')
+                            .replace(/^\s+/, '');
+                        })
+                        const itemInstalledFontName = lists.find(itemFontNames, modules.buttons.isFontInstalled.bind(modules.buttons))
+                        const isChecked = (itemInstalledFontName + '') === (showFontName + '');
+                        if (isChecked) updateFontName = { name:  $item.text(), value: $item.data('value') }
                         $item.toggleClass('checked', isChecked);
                     });
-                    $customFontBtn.find('.note-current-fontname').text(showFontName).css('font-family', showFontName);
+                    $cont.find('.note-current-fontname').text(updateFontName.name).css('font-family', updateFontName.value);
                 }
             }
         }
