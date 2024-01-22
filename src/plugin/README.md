@@ -22,6 +22,7 @@ node .\bundle-plugins.js
       - [summernote-copy-formatting](#summernote-copy-formatting)
       - [summernote-custom-cleaner](#summernote-custom-cleaner)
       - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
+      - [summernote-custom-font](#summernote-custom-font)
       - [summernote-custom](#summernote-custom)
       - [summernote-custom-specialchars](#summernote-custom-specialchars)
       - [summernote-custom-style](#summernote-custom-style)
@@ -62,6 +63,7 @@ require('react-summernote/plugin/custom/summernote-comment-popover')
 require('react-summernote/plugin/custom/summernote-copy-formatting')
 require('react-summernote/plugin/custom/summernote-custom-cleaner')
 require('react-summernote/plugin/custom/summernote-custom-contextmenu')
+require('react-summernote/plugin/custom/summernote-custom-font')
 require('react-summernote/plugin/custom/summernote-custom-specialchars')
 require('react-summernote/plugin/custom/summernote-custom-style')
 require('react-summernote/plugin/custom/summernote-custom')
@@ -105,7 +107,7 @@ options = {{
     [`icon`, [`emoji`, `specialChar`]],
     [`style`, [`style`, `addclass`, `customStyle`]],
     [`font`, [`caseConverter`, `bold`, `underline`, `clear`]],
-    [`fontname`, [`fontname`]],
+    [`fontname`, [`fontname`, `customFont`]],
     ['fontsize', ['fontsizeInput']],
     ['color', ['color']],
     [`para`, [`customUL`, `ol`, 'listStyles', `paragraph`]],
@@ -188,6 +190,8 @@ options = {{
      - `copyFormatting`: 複製格式
    - summernote-custom-cleaner
      - `customCleaner`: 清除所有樣式
+   - summernote-custom-font
+     - `customFont`: 自訂字體
    - summernote-custom
      - `customUL`: 插入項目清單 `ul` 並自動帶入 `padding-left: 40px;`
    - summernote-custom-specialchars
@@ -371,6 +375,23 @@ options = {{
         },
         // should initialize this plugin
         shouldInitialize: true,
+    }
+    ```
+
+#### summernote-custom-font
+- 使用者自訂字體，並提供單一選項有多個值的功能
+- `toolbar` button: `customFont`
+  - `customFont`: 套用自訂字體
+
+   ```js
+    // options
+    customFont: {
+        fontNames: [
+            'Comic Sans MS', 'Courier New', 'Times New Roman',
+            { name: '新細明體', value: '新細明體, serif' },
+            { name: '微軟正黑體', value: '微軟正黑體, sans-serif' },
+            { name: '標楷體', value: '標楷體, DFKai-SB, BiauKaiTC' }
+        ],
     }
     ```
 
