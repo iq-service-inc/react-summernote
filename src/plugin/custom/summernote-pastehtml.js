@@ -35,6 +35,7 @@
                 lang = options.langInfo;
 
             this.initialize = function () {
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 this.$dialog = ui.dialog({
                     title: `${lang.pasteHTML.htmlEditor}`,
                     className: 'summernote-pastehtml-dialog',
@@ -46,7 +47,7 @@
                         '</div>',
                     ].join(''),
                     footer: `<button href="#" class="btn btn-primary summernote-pastehtml-btn">${lang.pasteHTML.ok}</button>`,
-                }).render().appendTo(options.container);
+                }).render().appendTo($container);
                 this.$dialog.find('.modal-body').addClass("summernote-pastehtml-form-container")
             }
 

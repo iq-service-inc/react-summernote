@@ -24,6 +24,7 @@
             modules = context.modules,
             style = modules.editor.style,
             options = context.options,
+            $editor = context.layoutInfo.editor,
             $editable = context.layoutInfo.editable,
             $toolbar = context.layoutInfo.toolbar,
             lang = options.langInfo,
@@ -745,8 +746,7 @@
                 '</div>',
             ].join(''),
             footer: '<input type="button" href="#" class="btn btn-primary note-btn note-btn-primary jtable-insert-table-btn" value="' + lang.jTable.apply + '" >'
-
-        }).render().appendTo(options.container);
+        }).render();
         this.$insertTableDialog.find('.modal-dialog').addClass('modal-sm')
 
         this.showInsertTableDialog = function () {
@@ -1280,7 +1280,7 @@
             fade  : options.dialogsFade,
             body  : mergeBody,
             footer: mergeFooter,
-        }).render().appendTo(options.container);
+        }).render();
         $mergeDialog.find('.note-modal-content').width(340);
         $mergeDialog.find('.note-modal-body').css('padding', '20px 20px 10px 20px');
 
@@ -1718,7 +1718,7 @@
             fade  : options.dialogsFade,
             body  : tableInfoBody,
             footer: tableInfoFooter,
-        }).render().appendTo(options.container);
+        }).render();
         // $tableInfoDialog.find('.note-modal-content').width(340);
         $tableInfoDialog.find('.note-modal-body').css('padding', '20px 20px 10px 20px');
 
@@ -2183,7 +2183,7 @@
                 '</div>',
             ].join(''),
             footer: `<button href="#" class="btn btn-primary note-btn note-btn-primary jtable-apply-btn">${lang.jTable.apply}</button>`,
-        }).render().appendTo(options.container);
+        }).render();
 
         var styleCellIcon = `<svg width="20" height="20" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path stroke="#000" d="m311.18514,530.07222l692.70151,-0.49145l-2.60466,356.17646l-691.05339,-0.37879l0.95653,-355.30622zm655.16326,34.88934l-615.24031,0.00936l0.53173,284.73966l614.62469,-0.52735l0.08389,-284.22167z" stroke-width="20" fill="#000000"></path>
@@ -3069,6 +3069,11 @@
                 $(document.head).append(this.$css)
             }
             context.invoke('jTable.updateCurrentStyle')
+            var $container = options.dialogsInBody ? $(document.body) : $editor
+            this.$insertTableDialog.appendTo($container);
+            $mergeDialog.appendTo($container);
+            $tableInfoDialog.appendTo($container);
+            $styleCellDialog.appendTo($container);
         };
 
         self.destroy = function () {

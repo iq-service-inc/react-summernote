@@ -80,6 +80,7 @@
                     $toolbar.append(this.$toc);
                 }
 
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 this.$dialog = ui.dialog({
                     title: `${lang.toc.editAnchortext}`,
                     fade: options.dialogsFade,
@@ -88,7 +89,7 @@
                         <b>${lang.toc.message}</b>
                     </div>`,
                     footer: `<button href="#" class="btn btn-primary ${prefix}-toc-btn">${lang.toc.addtoc}</button>`,
-                }).render().appendTo(options.container);
+                }).render().appendTo($container);
                 this.$dialog.find('.modal-body').addClass(`${prefix}-toc-form-container`)
 
                 $editingArea.css('display', 'flex').css('flex-direction', 'row')
@@ -198,11 +199,11 @@
                         text = $(d).attr('data-anchortext')
 
                     var $anchor = $('<a>').text(text).attr('href', '#' + id).css('flex', '2').css('align-self', 'center').css('overflow', 'hidden').css('text-overflow', 'ellipsis').css('white-space', 'nowrap')
-                    var $input = $('<input>').attr('value', text).addClass(`${prefix}-toc-data-text`)
-                    var $edit = $('<button>').text('編輯').addClass(['btn', 'btn-primary'])
-                    var $del = $('<button>').text('移除').addClass(['btn', 'btn-primary'])
-                    var $check = $('<button>').text('確認').addClass(['btn', 'btn-primary'])
-                    var $cancel = $('<button>').text('取消').addClass(['btn', 'btn-primary'])
+                    var $input = $('<input>').attr({'value': text, 'name': `${prefix}-toc-data-text`}).addClass(`${prefix}-toc-data-text`)
+                    var $edit = $('<button>').text('編輯').addClass(['btn', 'btn-primary']).attr({'type': 'button'})
+                    var $del = $('<button>').text('移除').addClass(['btn', 'btn-primary']).attr({'type': 'button'})
+                    var $check = $('<button>').text('確認').addClass(['btn', 'btn-primary']).attr({'type': 'button'})
+                    var $cancel = $('<button>').text('取消').addClass(['btn', 'btn-primary']).attr({'type': 'button'})
                     var $btncontainer = $('<div>').append([$edit, $check, $cancel, $del])
                                         .css('flex', '2').css('display', 'flex').css('justify-content', 'space-evenly')
                     var $div = $('<li>').addClass(['form-group', `${prefix}-toc-form-group`]).append([$anchor, $input, $btncontainer])

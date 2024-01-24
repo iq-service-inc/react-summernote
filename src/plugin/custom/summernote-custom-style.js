@@ -175,6 +175,7 @@
                     this.css.attr('id', 'summernote-customStyle')
                     $(document.head).append(this.css)
                 }
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 this.$dialog = ui.dialog({
                     title: `${lang.customStyle.editStyleList}`,
                     className: 'summernote-customStyle-dialog',
@@ -221,7 +222,7 @@
                             `<p class="font-italic text-muted m-auto">${lang.customStyle.noStyleSelected}</p>`,
                             '</div>',
                         ]).join(''),
-                }).render().appendTo(options.container);
+                }).render().appendTo($container);
                 this.$dialog.find('.modal-dialog').addClass('modal-xl')
 
                 this.loadingDropdownList()
