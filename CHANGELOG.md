@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.1](https://github.com/iq-service-inc/react-summernote/compare/v2.3.0...v2.3.1) (2024-01-24)
+
+### fix
+
+* 修復在 Summernote 外層套用 form 點擊部分按鈕會提交 ([3a6bf5f](https://github.com/iq-service-inc/react-summernote/commit/3a6bf5f32d9ee5c9b855e79b9503d6c7b632d7ad))
+
 ## [2.3.0](https://github.com/iq-service-inc/react-summernote/compare/v2.2.20...v2.3.0) (2024-01-22)
 
 ### BREAKING CHANGES
