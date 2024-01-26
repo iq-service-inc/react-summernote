@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.3](https://github.com/iq-service-inc/react-summernote/compare/v2.3.2...v2.3.3) (2024-01-26)
+
+### fix
+
+* 修復 summernote-custom-style, summernote-imagemap dialog 按鈕的 tooltip 插入位置未依照 container 設定 ([68a96e2](https://github.com/iq-service-inc/react-summernote/commit/68a96e2c1361491b428393ede53ecf22067e30b3))
+
 ## [2.3.2](https://github.com/iq-service-inc/react-summernote/compare/v2.3.1...v2.3.2) (2024-01-26)
 
 ### fix
