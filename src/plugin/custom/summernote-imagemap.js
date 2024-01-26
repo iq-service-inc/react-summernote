@@ -131,7 +131,7 @@
                     this.css.attr('id', 'summernote-imagemap')
                     $(document.head).append(this.css)
                 }
-
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 this.$dialog = ui.dialog({
                     title: `${lang.imageMap.editImageMap}`,
                     className: 'summernote-imagemap-dialog',
@@ -142,7 +142,7 @@
                         '<div class="summernote-imagemap-editor">',
                         '</div>',
                     ].join(''),
-                }).render().appendTo(options.container);
+                }).render().appendTo($container);
                 this.$dialog.find('.modal-dialog').addClass('modal-xl')
             }
             this.destroy = function () {
@@ -453,6 +453,7 @@
                     this.$cancelBtn = $('<button>')
                         .text(lang.imageMap.cancel)
                         .addClass(['btn', 'btn-sm', 'btn-outline-primary'])
+                        .attr({'type': 'button'})
                         .appendTo($modifyBtnGroup)
                     this.$cancelBtn.on('click', (event) => {
                         let $target = this.$activeElement
@@ -463,6 +464,7 @@
                     this.$saveBtn = $('<button>')
                         .text(lang.imageMap.save)
                         .addClass(['btn', 'btn-sm', 'btn-primary'])
+                        .attr({'type': 'button'})
                         .appendTo($modifyBtnGroup)
                     this.$saveBtn.on('click', (event) => {
                         let $target = this.$activeElement

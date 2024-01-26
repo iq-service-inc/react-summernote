@@ -109,6 +109,7 @@
                 let titleMaxAttr = !!titleMaxLength? `maxlength="${titleMaxLength}"`: ""
                 let contentMaxAttr = !!contentMaxLength? `maxlength="${contentMaxLength}"`: ""
                 let body = ''
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 if (!disabledImage) {
                     body += [
                         '<div class="form-group summernote-comment-popover-form-group">',
@@ -142,7 +143,7 @@
                     fade: options.dialogsFade,
                     body: body,
                     footer: `<button href="#" class="btn btn-primary summernote-comment-popover-btn">${lang.commentPopover.ok}</button>`,
-                }).render().appendTo(options.container);
+                }).render().appendTo($container);
                 this.$dialog.find('.modal-body').addClass("summernote-comment-popover-form-container")
             }
             this.destroy = function () {

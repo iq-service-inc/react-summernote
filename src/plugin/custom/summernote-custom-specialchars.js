@@ -79,6 +79,7 @@
                     this.makeSpecialCharSetTable()[0].outerHTML +
                     '</div>';
 
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 this.$dialog = ui.dialog({
                     className: 'note-specialchar-dialog',
                     // Set the title for the Dialog. Note: We don't need to build the markup for the Modal
@@ -89,7 +90,7 @@
                     body: body,
 
                     // This adds the Modal to the DOM.
-                }).render().appendTo($editor);
+                }).render().appendTo($container);
             }
             this.destroy = function () {
                 this.$dialog.remove()
@@ -166,7 +167,6 @@
                     $specialCharDialog.one('shown.bs.modal', function () {
                         $specialCharNode.on('click', function (event) {
                             event.preventDefault();
-                            console.log(event.currentTarget)
                             deferred.resolve(decodeURIComponent(event.currentTarget.title));
                             $specialCharDialog.modal('hide');
                         });

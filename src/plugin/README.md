@@ -23,13 +23,6 @@ node .\bundle-plugins.js
       - [summernote-custom-cleaner](#summernote-custom-cleaner)
       - [summernote-custom-contextmenu](#summernote-custom-contextmenu)
       - [summernote-custom-font](#summernote-custom-font)
-      - [summernote-custom](#summernote-custom)
-      - [summernote-custom-specialchars](#summernote-custom-specialchars)
-      - [summernote-custom-style](#summernote-custom-style)
-      - [summernote-fontsize-input](#summernote-fontsize-input)
-      - [summernote-imagemap](#summernote-imagemap)
-      - [summernote-pasteHTML](#summernote-pastehtml)
-      - [summernote-toc](#summernote-toc)
     - [Formatting](#formatting)
       - [summernote-addclass](#summernote-addclass)
       - [summernote-case-converter](#summernote-case-converter)
@@ -409,6 +402,7 @@ options = {{
 
 #### summernote-custom-style
 - 使用者自訂樣式，可設定字體、字號、粗體、斜體、刪除線、字型顏色、字型背景，樣式使用 localStorage 儲存
+- 字體依賴 `summernote-custom-font` plugin
 - `toolbar` button: `customStyle`
  - `customStyle`: 套用自訂樣式
 
@@ -772,6 +766,7 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
 #### [summernote-ext-table](https://github.com/ksy11/summernote-ext-table)
    - Adds table column/row resize, cell background-color change, cell merge, cell unmerge, border-color change, table margin change, table width/height reset.
    - table 功能
+     - 字體依賴 `summernote-custom-font` plugin
    - `toolbar` and `table popover` button: `jTable` `jMerge`, `jBackcolor`, `jBorderColor`, `jAlign`, `jAddDeleteRowCol`, `jAutoFit`, `jRowHeight`, `jColWidth`, `jTableInfo`, `jWidthHeightReset`, `jFontname`, `jStyleCell`
      - `jTable`: 新增適用於 table resizing 的表格
      - `jInsertTableDialog`: 透過 dialog 新增適用於 table resizing 的表格

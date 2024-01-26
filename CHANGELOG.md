@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.3.1](https://github.com/iq-service-inc/react-summernote/compare/v2.3.0...v2.3.1) (2024-01-24)
+
+### fix
+
+* 修復在 Summernote 外層套用 form 點擊部分按鈕會提交 ([3a6bf5f](https://github.com/iq-service-inc/react-summernote/commit/3a6bf5f32d9ee5c9b855e79b9503d6c7b632d7ad))
+
+## [2.3.0](https://github.com/iq-service-inc/react-summernote/compare/v2.2.20...v2.3.0) (2024-01-22)
+
+### BREAKING CHANGES
+
+* 自訂樣式字體按鈕、表格字體按鈕依賴 custom-fontname plugin
+
+在使用 summernote-custom-style, summernote-ext-table 之前須先引入 custom-fontname
+
+### feat
+
+* 更新 summernote-custom-style, summernote-ext-table 字體按鈕改用使用 customFont
+* 新增 summernote-custom-font ([#3](https://github.com/iq-service-inc/react-summernote/issues/3))
+
+### fix
+
+* 修復 summernote-copy-formatting 無法套用樣式到外層已有樣式的局部文字
+* 修復 summernote-copy-formatting 錯誤複製 data-* 屬性, 錯誤複製圖片影像地圖
+
+# Changelog
+
 ## `2.2.20`
 ### feat
 * 新增 SummernotePlugin 及 Types

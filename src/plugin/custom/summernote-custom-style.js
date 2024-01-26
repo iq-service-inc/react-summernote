@@ -175,6 +175,7 @@
                     this.css.attr('id', 'summernote-customStyle')
                     $(document.head).append(this.css)
                 }
+                var $container = options.dialogsInBody ? $(document.body) : $editor
                 this.$dialog = ui.dialog({
                     title: `${lang.customStyle.editStyleList}`,
                     className: 'summernote-customStyle-dialog',
@@ -221,7 +222,7 @@
                             `<p class="font-italic text-muted m-auto">${lang.customStyle.noStyleSelected}</p>`,
                             '</div>',
                         ]).join(''),
-                }).render().appendTo(options.container);
+                }).render().appendTo($container);
                 this.$dialog.find('.modal-dialog').addClass('modal-xl')
 
                 this.loadingDropdownList()
@@ -279,7 +280,7 @@
                 })
 
                 // fontname button
-                let $fontNameBtn = context.memo('button.fontname')()
+                let $fontNameBtn = context.memo('button.customFont')()
                 $fontNameBtn.find('.dropdown-menu').css({
                     'max-height': '15rem',
                     'overflow-y': 'auto',
@@ -407,18 +408,6 @@
             }
 
             /**
-             * 'validFontName' copy 'summernote-0.8.16\src\js\base\core\env.js'
-             * returns whether font is installed or not.
-             *
-             * @param {String} fontName
-             * @return {Boolean}
-             */
-            const genericFontFamilies = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
-            this.validFontName = function (fontName) {
-                return ($.inArray(fontName.toLowerCase(), genericFontFamilies) === -1) ? `'${fontName}'` : fontName;
-            }
-
-            /**
              * toolbar buttons and its commands
              */
             const cmds = [
@@ -447,21 +436,6 @@
                     }
                 })(cmd)
             })
-            /**
-             * override fontName command
-             */
-            this.fontName = function (value) {
-                let item = this.getCurrentItem()
-                if (item) {
-                    let name = this.validFontName(value)
-                        .replace(/[\'\"]/g, '')
-                        .replace(/\s+$/, '')
-                        .replace(/^\s+/, '')
-                    item.styles['font-family'] = name
-                    this.updateList()
-                    this.updateEditor()
-                }
-            }
 
             /**
              * removeFormat will called by color palatte
@@ -607,9 +581,10 @@
                             let value = styles[cmd.key] || cmd.value
                             $target.val(value)
                             $target.find('.checked').removeClass('checked')
-                            $target.find(`[data-value="${value}"]`).addClass('checked')
+                            let $currentItem = $target.find(`[data-value="${value}"]`)
+                            $currentItem.addClass('checked')
                             let $text = $target.prev('.dropdown-toggle').find('span')
-                            $text.text(value).css(cmd.key, value)
+                            $text.text($currentItem.text()).css(cmd.key, value)
                             break;
                     }
                     if (cmd.name === 'fontSize') {  // fontSize include input and dropdown

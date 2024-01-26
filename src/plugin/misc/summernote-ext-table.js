@@ -24,6 +24,7 @@
             modules = context.modules,
             style = modules.editor.style,
             options = context.options,
+            $editor = context.layoutInfo.editor,
             $editable = context.layoutInfo.editable,
             $toolbar = context.layoutInfo.toolbar,
             lang = options.langInfo,
@@ -745,8 +746,7 @@
                 '</div>',
             ].join(''),
             footer: '<input type="button" href="#" class="btn btn-primary note-btn note-btn-primary jtable-insert-table-btn" value="' + lang.jTable.apply + '" >'
-
-        }).render().appendTo(options.container);
+        }).render();
         this.$insertTableDialog.find('.modal-dialog').addClass('modal-sm')
 
         this.showInsertTableDialog = function () {
@@ -1280,7 +1280,7 @@
             fade  : options.dialogsFade,
             body  : mergeBody,
             footer: mergeFooter,
-        }).render().appendTo(options.container);
+        }).render();
         $mergeDialog.find('.note-modal-content').width(340);
         $mergeDialog.find('.note-modal-body').css('padding', '20px 20px 10px 20px');
 
@@ -1718,7 +1718,7 @@
             fade  : options.dialogsFade,
             body  : tableInfoBody,
             footer: tableInfoFooter,
-        }).render().appendTo(options.container);
+        }).render();
         // $tableInfoDialog.find('.note-modal-content').width(340);
         $tableInfoDialog.find('.note-modal-body').css('padding', '20px 20px 10px 20px');
 
@@ -2091,63 +2091,26 @@
             }
         }
         
-        /**
-         * 'validFontName' copy 'summernote-0.8.16\src\js\base\core\env.js'
-         * returns whether font is installed or not.
-         *
-         * @param {String} fontName
-         * @return {Boolean}
-         */
-        const genericFontFamilies = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
-        this.validFontName = function (fontName) {
-            return ($.inArray(fontName.toLowerCase(), genericFontFamilies) === -1) ? `'${fontName}'` : fontName;
-        }
-
         context.memo('button.jFontname', () => {
-            const styleInfo = context.invoke('editor.currentStyle');
-            if (options.addDefaultFonts) {
-                // Add 'default' fonts into the fontnames array if not exist
-                $.each(styleInfo['font-family'].split(','), (idx, fontname) => {
-                    fontname = fontname.trim().replace(/['"]+/g, '');
-                    if (modules.buttons.isFontDeservedToAdd(fontname)) {
-                        if (options.fontNames.indexOf(fontname) === -1) {
-                            options.fontNames.push(fontname);
-                        }
-                    }
-                });
-            }
-
-            return ui.buttonGroup({
-                className: "jtable-display input-group input-group-sm",
-                children: [
-                    ui.button({
-                        className: 'dropdown-toggle jtable-fontname',
-                        contents: ui.dropdownButtonContents(
-                            '<span class="note-current-fontname"></span>', options
-                        ),
-                        tooltip: lang.jTable.fontname,
-                        data: {
-                            toggle: 'dropdown',
-                        },
-                        click: function (event) {
-                            self.recoverPopover(event)
-                        }
-                    }),
-                    ui.dropdownCheck({
-                        className: 'dropdown-fontname',
-                        checkClassName: options.icons.menuCheck,
-                        items: options.fontNames.filter(modules.buttons.isFontInstalled.bind(modules.buttons)),
-                        title: lang.font.name,
-                        template: (item) => {
-                            return '<span style="font-family: ' + this.validFontName(item) + '">' + item + '</span>';
-                        },
-                        click: function (event) {
-                            context.createInvokeHandlerAndUpdateState('jTable.setCellsFont')(event)
-                            context.invoke('jTable.updateCurrentStyle')
-                        }
-                    }),
-                ]
-            }).render()
+            let $jFontnameBtn = context.memo('button.customFont')()
+            $jFontnameBtn.addClass('jtable-display input-group input-group-sm')
+            let tooltip =  lang.jTable.fontname
+            $jFontnameBtn.find('.dropdown-toggle').attr({
+                title: tooltip,
+                'aria-label': tooltip,
+            }).tooltip('dispose').tooltip({
+                container: options.container,
+                trigger: 'hover',
+                placement: 'bottom',
+            }).off('click').on('click', (e) => {
+                $(e.currentTarget).tooltip('hide');
+                self.recoverPopover(e)
+            })
+            $jFontnameBtn.find('.dropdown-menu').off('click').on('click', (e) => {
+                context.createInvokeHandlerAndUpdateState('jTable.setCellsFont')(e)
+                context.invoke('jTable.updateCurrentStyle')
+            })
+            return $jFontnameBtn
                 .prepend([
                     '<div class="input-group-prepend">',
                     '<span class="input-group-text">',
@@ -2158,12 +2121,10 @@
         });
 
         self.updateCurrentStyle = function () {
-            context.invoke('buttons.updateCurrentStyle', modules.tablePopover.$popover)
+            context.invoke('customFont.updateCurrentStyle', modules.tablePopover.$popover)
         }
 
         self.setCellsFont = function (val) {
-            let fontname = this.validFontName(val)
-
             var cell = tableBlock.currentTdEl;
             var $cell = $(cell);
             var $table = $cell.closest('table');
@@ -2180,7 +2141,7 @@
                     var virtualTd = matrixTable[rowIndex][colIndex]
                     var rng = range.createFromNode(virtualTd.baseCell)
                     const spans = style.styleNodes(rng)
-                    $(spans).css('font-family', fontname)
+                    $(spans).css('font-family', val)
                     elements = elements.concat(spans)
                 }
             }
@@ -2222,7 +2183,7 @@
                 '</div>',
             ].join(''),
             footer: `<button href="#" class="btn btn-primary note-btn note-btn-primary jtable-apply-btn">${lang.jTable.apply}</button>`,
-        }).render().appendTo(options.container);
+        }).render();
 
         var styleCellIcon = `<svg width="20" height="20" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path stroke="#000" d="m311.18514,530.07222l692.70151,-0.49145l-2.60466,356.17646l-691.05339,-0.37879l0.95653,-355.30622zm655.16326,34.88934l-615.24031,0.00936l0.53173,284.73966l614.62469,-0.52735l0.08389,-284.22167z" stroke-width="20" fill="#000000"></path>
@@ -3108,6 +3069,11 @@
                 $(document.head).append(this.$css)
             }
             context.invoke('jTable.updateCurrentStyle')
+            var $container = options.dialogsInBody ? $(document.body) : $editor
+            this.$insertTableDialog.appendTo($container);
+            $mergeDialog.appendTo($container);
+            $tableInfoDialog.appendTo($container);
+            $styleCellDialog.appendTo($container);
         };
 
         self.destroy = function () {
