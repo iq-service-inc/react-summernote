@@ -197,7 +197,7 @@
                         ],
                         ['<div class="summernote-customStyle-divider"></div>'],
                         [
-                            '<div class="summernote-customStyle-editor">',
+                            '<div class="summernote-customStyle-editor note-editor">',
 
                             '<div class="form-inline px-3 py-2">',
                             '<div class="note-form-group form-group">',

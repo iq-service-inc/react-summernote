@@ -143,6 +143,7 @@
                         '</div>',
                     ].join(''),
                 }).render().appendTo($container);
+                this.$dialog.find('.modal-body').addClass('note-editor')
                 this.$dialog.find('.modal-dialog').addClass('modal-xl')
             }
             this.destroy = function () {
