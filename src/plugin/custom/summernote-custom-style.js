@@ -404,11 +404,10 @@
                 $('<div class="note-btn-group btn-group">').append(fontStyleBtns).appendTo($customStyleToolbar)
                 $('<div class="note-btn-group btn-group">').append($forecolorBtn, $backcolorBtn).appendTo($customStyleToolbar)
 
-                var $container = options.dialogsInBody ? $(document.body) : $editor
                 $customStyleToolbar.find('button.note-btn,button.note-color-btn').each((_, domBtn) => {
                     let $btn = $(domBtn)
                     $btn.tooltip('dispose').tooltip({
-                        container: $container,
+                        container: this.$dialog,
                         trigger: 'hover',
                         placement: 'bottom',
                     })

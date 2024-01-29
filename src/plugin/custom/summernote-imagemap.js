@@ -195,6 +195,7 @@
                         $targetImgMap,
                         $imgMapEditor,
                         $imgMapToolbar,
+                        this.$dialog,
                     )
 
                     ui.onDialogShown(this.$dialog, () => {
@@ -322,11 +323,12 @@
             }
 
             class EditImageMap extends ImageMap {
-                constructor(id, $img, $map, $editor, $toolbar) {
+                constructor(id, $img, $map, $editor, $toolbar, $container) {
                     super(id, $img, $map)
 
                     this.$editor = $editor
                     this.$toolbar = $toolbar
+                    this.$container = $container || document.body
                 }
 
                 init() {
@@ -346,7 +348,6 @@
                  * Initial Toolbar
                  */
                 initToolbar() {
-                    var $container = options.dialogsInBody ? $(document.body) : $editor
                     let rectIcon = `<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <rect stroke="#000000" fill="none" id="svg_1" height="8.68468" width="13.59878" y="5.60704" x="3.16221"/>
                     <ellipse stroke="#000000" ry="1.75858" rx="1.75858" id="svg_4" cy="5.64647" cx="3.25446" fill="#ffffff"/>
@@ -358,7 +359,7 @@
                     let $rectBtn = ui.button({
                         contents: `<i class="note-icon">${rectIcon}</i>`,
                         tooltip: lang.imageMap.rect,
-                        container: $container
+                        container: this.$container
                     }).render()
                         .appendTo(this.$toolbar)
                         .wrap('<div class="note-btn-group btn-group">')
@@ -366,7 +367,7 @@
                     this.$deletBtn = ui.button({
                         contents: `<i class="note-icon-trash">`,
                         tooltip: lang.imageMap.delete,
-                        container: $container
+                        container: this.$container
                     }).render()
                         .prop('disabled', true)
                         .appendTo(this.$toolbar)
@@ -487,7 +488,6 @@
                         this.$activeElement.siblings('text').text(this.$title.val())
                     })
 
-                    var $container = options.dialogsInBody ? $(document.body) : $editor
                     var $toggle = $('<div>').addClass(['note-btn-group', 'togglebtn', 'show'])
                         .appendTo($attr)
                         .append(
@@ -499,7 +499,7 @@
                                     toggle: "collapse",
                                     target: `#attr-collapse-${this.id}`,
                                 },
-                                container: $container
+                                container: this.$container
                             }).render()
                         )
                         .append(
@@ -511,7 +511,7 @@
                                     toggle: "collapse",
                                     target: `#attr-collapse-${this.id}`,
                                 },
-                                container: $container
+                                container: this.$container
                             }).render()
                         )
 
