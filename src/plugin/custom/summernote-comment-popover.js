@@ -547,8 +547,8 @@
     $.extend(true, $.summernote.lang, {
         'zh-TW': {
             commentPopover: {
-                addPopover: '新增註解',
-                removePopover: '刪除註解',
+                addPopover: '新增摘要',
+                removePopover: '刪除摘要',
                 imgurl: '圖片連結',
                 title: '標題',
                 content: '內容',
