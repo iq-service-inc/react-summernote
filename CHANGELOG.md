@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.5](https://github.com/iq-service-inc/react-summernote/compare/v2.3.4...v2.3.5) (2024-02-05)
+
+### perf
+
+* 更新 summernote-comment-popover 中文翻譯「註解」改成「摘要」
+
 ## [2.3.4](https://github.com/iq-service-inc/react-summernote/compare/v2.3.3...v2.3.4) (2024-01-29)
 
 ### fix
