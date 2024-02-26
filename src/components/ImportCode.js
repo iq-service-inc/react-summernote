@@ -40,6 +40,7 @@ module.exports = function () {
     require('../plugin/formatting/summernote-list-styles.css')
     require('../plugin/formatting/summernote-pagebreak')
     require('../plugin/formatting/summernote-video-attributes')
+    require('../plugin/formatting/summernote-video-attr-setter')
     require('../plugin/insert/summernote-at-mention')
     require('../plugin/insert/summernote-file')
     require('../plugin/insert/summernote-element-template')
