@@ -143,6 +143,7 @@
                         '</div>',
                     ].join(''),
                 }).render().appendTo($container);
+                this.$dialog.find('.modal-body').addClass('note-editor')
                 this.$dialog.find('.modal-dialog').addClass('modal-xl')
             }
             this.destroy = function () {
@@ -194,6 +195,7 @@
                         $targetImgMap,
                         $imgMapEditor,
                         $imgMapToolbar,
+                        this.$dialog,
                     )
 
                     ui.onDialogShown(this.$dialog, () => {
@@ -321,11 +323,12 @@
             }
 
             class EditImageMap extends ImageMap {
-                constructor(id, $img, $map, $editor, $toolbar) {
+                constructor(id, $img, $map, $editor, $toolbar, $container) {
                     super(id, $img, $map)
 
                     this.$editor = $editor
                     this.$toolbar = $toolbar
+                    this.$container = $container || document.body
                 }
 
                 init() {
@@ -356,6 +359,7 @@
                     let $rectBtn = ui.button({
                         contents: `<i class="note-icon">${rectIcon}</i>`,
                         tooltip: lang.imageMap.rect,
+                        container: this.$container
                     }).render()
                         .appendTo(this.$toolbar)
                         .wrap('<div class="note-btn-group btn-group">')
@@ -363,6 +367,7 @@
                     this.$deletBtn = ui.button({
                         contents: `<i class="note-icon-trash">`,
                         tooltip: lang.imageMap.delete,
+                        container: this.$container
                     }).render()
                         .prop('disabled', true)
                         .appendTo(this.$toolbar)
@@ -493,7 +498,8 @@
                                 data: {
                                     toggle: "collapse",
                                     target: `#attr-collapse-${this.id}`,
-                                }
+                                },
+                                container: this.$container
                             }).render()
                         )
                         .append(
@@ -504,7 +510,8 @@
                                 data: {
                                     toggle: "collapse",
                                     target: `#attr-collapse-${this.id}`,
-                                }
+                                },
+                                container: this.$container
                             }).render()
                         )
 

@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.3.5](https://github.com/iq-service-inc/react-summernote/compare/v2.3.4...v2.3.5) (2024-02-05)
+
+### perf
+
+* 更新 summernote-comment-popover 中文翻譯「註解」改成「摘要」
+
+## [2.3.4](https://github.com/iq-service-inc/react-summernote/compare/v2.3.3...v2.3.4) (2024-01-29)
+
+### fix
+
+* 修復 summernote-custom-style, summernote-imagemap dialog 按鈕的 tooltip 插入位置 ([1899df1](https://github.com/iq-service-inc/react-summernote/commit/1899df1f5d88dc54f9133ff5e41507850b237276))
+
+## [2.3.3](https://github.com/iq-service-inc/react-summernote/compare/v2.3.2...v2.3.3) (2024-01-26)
+
+### fix
+
+* 修復 summernote-custom-style, summernote-imagemap dialog 按鈕的 tooltip 插入位置未依照 container 設定 ([68a96e2](https://github.com/iq-service-inc/react-summernote/commit/68a96e2c1361491b428393ede53ecf22067e30b3))
+
+## [2.3.2](https://github.com/iq-service-inc/react-summernote/compare/v2.3.1...v2.3.2) (2024-01-26)
+
+### fix
+
+* 修復 summernote-custom-style, summernote-imagemap 未正確工具列樣式 ([69bcc93](https://github.com/iq-service-inc/react-summernote/commit/69bcc93308157d9cfaea20d31f610038876ae9b2))
+
 ## [2.3.1](https://github.com/iq-service-inc/react-summernote/compare/v2.3.0...v2.3.1) (2024-01-24)
 
 ### fix

@@ -197,7 +197,7 @@
                         ],
                         ['<div class="summernote-customStyle-divider"></div>'],
                         [
-                            '<div class="summernote-customStyle-editor">',
+                            '<div class="summernote-customStyle-editor note-editor">',
 
                             '<div class="form-inline px-3 py-2">',
                             '<div class="note-form-group form-group">',
@@ -403,6 +403,15 @@
                 $('<div class="note-btn-group btn-group">').append($fontSizeInput).appendTo($customStyleToolbar)
                 $('<div class="note-btn-group btn-group">').append(fontStyleBtns).appendTo($customStyleToolbar)
                 $('<div class="note-btn-group btn-group">').append($forecolorBtn, $backcolorBtn).appendTo($customStyleToolbar)
+
+                $customStyleToolbar.find('button.note-btn,button.note-color-btn').each((_, domBtn) => {
+                    let $btn = $(domBtn)
+                    $btn.tooltip('dispose').tooltip({
+                        container: this.$dialog,
+                        trigger: 'hover',
+                        placement: 'bottom',
+                    })
+                })
 
                 this.updateEditor()
             }
