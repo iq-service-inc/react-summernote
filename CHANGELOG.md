@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.6](https://github.com/iq-service-inc/react-summernote/compare/v2.3.5...v2.3.6) (2024-03-29)
+
+### feat
+
+* 優化 summernote-imagemap 編輯體驗 ([bdd0380](https://github.com/iq-service-inc/react-summernote/commit/bdd0380b5c0403676bfc08124f6a7369af9a656c))
+
+
+### fix
+
+* 修復 summernote-comment-popover 已存在的 popover 標籤使用 addPopover 未能重置 popover ([8dd1ca2](https://github.com/iq-service-inc/react-summernote/commit/8dd1ca239140c2724a94a626781e2fd9efdbc331))
+* 修復 summernote-comment-popover 新增、刪除摘要未能觸發 onchange ([4d8c490](https://github.com/iq-service-inc/react-summernote/commit/4d8c490ee7a497cdff4c658a0a665cf3e2a8e499))
+
 ## [2.3.5](https://github.com/iq-service-inc/react-summernote/compare/v2.3.4...v2.3.5) (2024-02-05)
 
 ### perf
