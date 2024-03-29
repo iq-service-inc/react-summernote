@@ -176,7 +176,9 @@
                     contents: `<i class="note-icon">${deletePopoverIcon}</i>`,
                     tooltip: lang.commentPopover.removePopover,
                     click: function () {
-                        self.wrapCommand(self.removePopover())
+                        context.invoke("beforeCommand");
+                        self.removePopover()
+                        context.invoke("afterCommand");
                         // console.log(context.invoke('editor.getLastRange'))
                     }
                 }).render()
@@ -227,7 +229,9 @@
                     }
                     if (!invalidFlag) {
                         ui.hideDialog(self.$dialog)
-                        self.wrapCommand(self.addPopover(title, content, imgurl))
+                        context.invoke("beforeCommand");
+                        self.addPopover(title, content, imgurl)
+                        context.invoke("afterCommand");
                         // console.log(context.invoke('editor.getLastRange'))
                     }
                 })
