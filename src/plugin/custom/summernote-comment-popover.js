@@ -431,6 +431,9 @@
                     $popover.attr("data-title", dataTitle)
                         .attr("data-content", dataContent)
 
+                    $popover.popover('dispose')
+                    $popover.popover()
+
                     return
                 }
 
