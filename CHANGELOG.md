@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.7](https://github.com/iq-service-inc/react-summernote/compare/v2.3.6...v2.3.7) (2024-04-03)
+
+### fix
+
+* 修復 summernote-comment-popover 圖片連結 input 判斷 pattern 無法輸入減號 ([29efc8f](https://github.com/iq-service-inc/react-summernote/commit/29efc8ffbaa82750aebd053d6ba4fc06fd8fa219))
+
 ## [2.3.6](https://github.com/iq-service-inc/react-summernote/compare/v2.3.5...v2.3.6) (2024-03-29)
 
 ### feat
