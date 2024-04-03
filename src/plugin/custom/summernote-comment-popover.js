@@ -62,7 +62,19 @@
             const contentMaxLength = options.commentPopover.contentMaxLength
             const className = options.commentPopover.className || 'summernote-comment-popover'
             const anchorClassName = options.commentPopover.anchorClassName || 'summernote-comment-popover-anchor'
-            const urlPattern = options.commentPopover.urlPattern || /https?:\/\/(?:[\w\u00a1-\uffff]+\.?)+(?::\d{2,5})?(?:\/[^\s]*)?/
+            const urlPattern = options.commentPopover.urlPattern || new RegExp(
+            '((' +
+                '(https?\:\\/\\/)?' + // validate protocol
+                '((' +
+                    '([a-zA-Z\\d]([a-zA-Z\\d\\-]*[a-zA-Z\\d])*\\.)+[a-zA-Z]{2,}' + // validate domain name
+                ')|(' +
+                    '(\\d{1,3}\\.){3}\\d{1,3}' +    // validate OR ip (v4) address
+                '))'
+                + '(\:\\d+)?' + //  validate port
+            ')|(' + '(\\/[a-zA-Z\\d%_.~+\\-]*)+' + '))' +  // authority or relative
+            '(\\/[a-zA-Z\\d%_.~+\\-]*)*' + // validate path
+            '(\\?[;&a-zA-Z\\d%_.~+=\\-]*)?' + // validate query string
+            '', 'i');
             const disabledImage = options.commentPopover.disabledImage
             const disabledTitle = options.commentPopover.disabledTitle
             const disabledContent = options.commentPopover.disabledContent
@@ -114,7 +126,7 @@
                     body += [
                         '<div class="form-group summernote-comment-popover-form-group">',
                         `<label for="summernote-comment-popover-image-url-${options.id}" class="note-form-label" >${lang.commentPopover.imgurl}</label>`,
-                        `<input id="summernote-comment-popover-image-url-${options.id}" class="summernote-comment-popover-image-url form-control note-form-control note-input" type="url" pattern="${urlPattern.source}" />`,
+                        `<input id="summernote-comment-popover-image-url-${options.id}" class="summernote-comment-popover-image-url form-control note-form-control note-input" type="text" pattern="${urlPattern.source}" />`,
                         `<div class="invalid-feedback">${lang.commentPopover.invalidUrl}</div>`,
                         '</div>'
                     ].join('')
