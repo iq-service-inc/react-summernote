@@ -32,6 +32,7 @@ node .\bundle-plugins.js
       - [summernote-list-styles](#summernote-list-styles)
       - [summernote-pagebreak](#summernote-pagebreak)
       - [summernote-video-attributes](#summernote-video-attributes)
+      - [summernote-video-attr-setter](#summernote-video-attr-setter)
     - [Insert](#insert)
       - [summernote-at-mention](#summernote-at-mention)
       - [summernote-file](#summernote-file)
@@ -75,6 +76,7 @@ require('react-summernote/plugin/formatting/summernote-list-styles')
 require('react-summernote/plugin/formatting/summernote-list-styles.css')
 require('react-summernote/plugin/formatting/summernote-pagebreak')
 require('react-summernote/plugin/formatting/summernote-video-attributes')
+require('react-summernote/plugin/formatting/summernote-video-attr-setter')
 
 require('react-summernote/plugin/insert/summernote-at-mention')
 require('react-summernote/plugin/insert/summernote-file')
@@ -219,6 +221,8 @@ options = {{
      - `pagebreak`: 插入分頁符號
    - summernote-video-attributes
      - `videoAttributes`: 插入影片，設定影片屬性
+   - summernote-video-attr-setter
+     - `videoAttrSetter`: 修改影片，設定影片屬性
 
 -  [Insert](#insert)
    - summernote-file
