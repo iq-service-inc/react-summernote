@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.3.8](https://github.com/iq-service-inc/react-summernote/compare/v2.3.7...v2.3.8) (2024-04-29)
+
+### feat
+
+* 新增 smmernote-video-attr-setter  ([3678282](https://github.com/iq-service-inc/react-summernote/commit/3678282a1eb8087e38c454d755a6656a6a0cf0ec))
+
+### perf
+
+* 更新 summernote-imagemap, summernote-pastehtml destroy 移除 dialog [6e113dd](https://github.com/iq-service-inc/react-summernote/commit/6e113dd4e964dbbf1b81cfc44b56e9af0c4573e1)
+
+
 ## [2.3.7](https://github.com/iq-service-inc/react-summernote/compare/v2.3.6...v2.3.7) (2024-04-03)
 
 ### fix
