@@ -148,6 +148,8 @@
             }
             this.destroy = function () {
                 !!this.css && $(this.css).remove()
+                ui.hideDialog(this.$dialog);
+                this.$dialog.remove();
             };
 
             this.wrapCommand = function (fn) {
@@ -435,24 +437,24 @@
                     this.$title = $('<input>')
                         .addClass(['summernote-imagemap-attr-title', 'form-control', 'form-control-sm'])
                         .appendTo($attrContent)
-                        .wrap('<div class="form-group"></div>')
+                        .wrap('<div class="form-group summernote-imagemap-hide-notargetarea"></div>')
                         .before(`<label for="summernote-imagemap-title-${this.id}" class="note-form-label">${lang.imageMap.title}</label>`)
 
                     this.$alt = $('<input>')
                         .addClass(['summernote-imagemap-attr-alt', 'form-control', 'form-control-sm'])
                         .attr('id', `summernote-imagemap-alt-${this.id}`)
                         .appendTo($attrContent)
-                        .wrap('<div class="form-group"></div>')
+                        .wrap('<div class="form-group summernote-imagemap-hide-notargetarea"></div>')
                         .before(`<label for="summernote-imagemap-alt-${this.id}" class="note-form-label">${lang.imageMap.alt}</label>`)
 
                     this.$href = $('<input>')
                         .addClass(['summernote-imagemap-attr-href', 'form-control', 'form-control-sm'])
                         .appendTo($attrContent)
-                        .wrap('<div class="form-group"></div>')
+                        .wrap('<div class="form-group summernote-imagemap-hide-notargetarea"></div>')
                         .before(`<label for="summernote-imagemap-href-${this.id}" class="note-form-label">${lang.imageMap.href}</label>`)
 
                     var $modifyBtnGroup = $('<div>')
-                        .addClass(['summernote-imagemap-attr-btngroup', 'text-center'])
+                        .addClass(['summernote-imagemap-attr-btngroup', 'text-center', 'summernote-imagemap-hide-notargetarea'])
                         .appendTo($attrContent)
 
                     this.$cancelBtn = $('<button>')
@@ -461,9 +463,8 @@
                         .attr({'type': 'button'})
                         .appendTo($modifyBtnGroup)
                     this.$cancelBtn.on('click', (event) => {
-                        let $target = this.$activeElement
-                        let $area = $target.data('area')
-                        this.updateAttrEditor($area)
+                        this.$activeElement.removeClass('active')
+                        this.updateAttrEditor()
                     })
 
                     this.$saveBtn = $('<button>')
@@ -486,8 +487,18 @@
 
                         // update active svg element title
                         this.$activeElement.siblings('text').text(this.$title.val())
+                        // unselect svg element
+                        this.$activeElement.removeClass('active')
+                        this.updateAttrEditor()
+                        this.updateToolbar()
                     })
 
+                    this.$noTargetArea = $('<p>')
+                        .addClass(['summernote-imagemap-show-notargetarea', 'font-italic', 'm-0'])
+                        .text(lang.imageMap.noTargetArea)
+                        .height($attrContent.height())
+                        .appendTo($attrContent)
+                    
                     var $toggle = $('<div>').addClass(['note-btn-group', 'togglebtn', 'show'])
                         .appendTo($attr)
                         .append(
@@ -585,7 +596,11 @@
                  * @param {JQuery} $area 
                  */
                 updateAttrEditor($area) {
+                    $noTargetAreaEle = this.$editor.find('.summernote-imagemap-show-notargetarea')
+                    $existTargetAreaEle = this.$editor.find('.summernote-imagemap-hide-notargetarea')
                     if (!!$area && $area.length) {
+                        $noTargetAreaEle.hide()
+                        $existTargetAreaEle.show()
                         this.$title
                             .val($area.attr('title') || "")
                             .prop('disabled', false)
@@ -599,6 +614,8 @@
                         this.$saveBtn.prop('disabled', false)
                     }
                     else {
+                        $noTargetAreaEle.show()
+                        $existTargetAreaEle.hide()
                         this.$title.val("").prop('disabled', true)
                         this.$alt.val("").prop('disabled', true)
                         this.$href.val("").prop('disabled', true)
@@ -1031,6 +1048,7 @@
                 alt: '備註 (alt)',
                 href: '超連結 (href)',
                 hint: '關閉對話框後自動套用當前修改',
+                noTargetArea: '請新增或選擇一個矩形區域開始編輯'
             }
         },
         'en-US': {
@@ -1049,6 +1067,7 @@
                 alt: 'alt',
                 href: 'href',
                 hint: 'Close dialog will automatically apply current changes',
+                noTargetArea: 'Please create or select an area to start editing'
             }
         },
     });
