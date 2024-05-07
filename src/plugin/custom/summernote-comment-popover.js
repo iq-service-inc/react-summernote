@@ -102,7 +102,22 @@
                     layoutInfo.editor.one('mouseenter', function (event) {
                         let $edit = layoutInfo.editingArea
                         let $allPopover = $edit.find(`a.${anchorClassName}[data-toggle="popover"]`)
-                        $allPopover.popover()
+                        $allPopover.popover({
+                            trigger: "manual",
+                        })
+                        .on("mouseenter", function () {
+                            $(this).popover("show")
+                           
+                        })
+                        .on("mouseleave", function() {
+                            if (!$('.popover:hover').length) {
+                                $(this).popover('hide')
+                            }
+                        })
+
+                        $(document).on('mouseleave', '.popover', function () {
+                            $allPopover.popover('hide')
+                        });
                     })
                 }
             }
@@ -444,7 +459,22 @@
                         .attr("data-content", dataContent)
 
                     $popover.popover('dispose')
-                    $popover.popover()
+                    $popover.popover({
+                        trigger: "manual",
+                    })
+                    .on("mouseenter", function () {
+                        $(this).popover("show")
+                       
+                    })
+                    .on("mouseleave", function() {
+                        if (!$('.popover:hover').length) {
+                            $(this).popover('hide')
+                        }
+                    })
+
+                    $(document).on('mouseleave', '.popover', function () {
+                        $popover.popover('hide')
+                    });
 
                     return
                 }
@@ -512,7 +542,22 @@
                 var dataTitle = this.encodeString(title)
                 $anchor.attr("data-title", dataTitle).attr("data-content", dataContent)
 
-                $anchor.popover()
+                $anchor.popover({
+                    trigger: "manual",
+                })
+                .on("mouseenter", function () {
+                    $(this).popover("show")
+                   
+                })
+                .on("mouseleave", function() {
+                    if (!$('.popover:hover').length) {
+                        $(this).popover('hide')
+                    }
+                })
+
+                $(document).on('mouseleave', '.popover', function () {
+                    $anchor.popover('hide')
+                });
 
                 // reset range
                 rng = range.createFromNode($anchor[0])
