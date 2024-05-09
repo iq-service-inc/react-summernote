@@ -29,6 +29,26 @@
         factory(window.jQuery);
     }
 }(function ($) {
+    $.fn.hoverPopover = function () {
+        if (this && this.length){
+            this.popover({
+                trigger: "manual",
+            })
+            .on("mouseenter", function () {
+                $(this).popover("show")
+                
+            })
+            .on("mouseleave", function() {
+                if (!$('.popover:hover').length) {
+                    $(this).popover('hide')
+                }
+            })
+    
+            $(document).on('mouseleave', '.popover', function() {
+                $(this).popover('hide')
+            });
+        }
+    }
     $.extend($.summernote.options, {
         commentPopover: {
             className: null,
@@ -102,7 +122,7 @@
                     layoutInfo.editor.one('mouseenter', function (event) {
                         let $edit = layoutInfo.editingArea
                         let $allPopover = $edit.find(`a.${anchorClassName}[data-toggle="popover"]`)
-                        $allPopover.popover()
+                        $allPopover.hoverPopover()
                     })
                 }
             }
@@ -444,7 +464,7 @@
                         .attr("data-content", dataContent)
 
                     $popover.popover('dispose')
-                    $popover.popover()
+                    $popover.hoverPopover()
 
                     return
                 }
@@ -512,7 +532,7 @@
                 var dataTitle = this.encodeString(title)
                 $anchor.attr("data-title", dataTitle).attr("data-content", dataContent)
 
-                $anchor.popover()
+                $anchor.hoverPopover()
 
                 // reset range
                 rng = range.createFromNode($anchor[0])
