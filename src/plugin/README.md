@@ -303,7 +303,7 @@ options = {{
     使用 className 初始化 popover
 
     ```js
-    $(a.summernote-comment-popover-anchor[data-toggle="popover"]).popover()
+    $(a.summernote-comment-popover-anchor[data-toggle="popover"]).hoverPopover()
     ```
 
     設定 className css
