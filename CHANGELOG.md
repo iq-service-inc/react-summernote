@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.9](https://github.com/iq-service-inc/react-summernote/compare/v2.3.8...v2.3.9) (2024-05-09)
+
+### fix
+
+* 修復 summernote-custom-style 選擇顏色失效、summernote-comment-popover 懸浮框閃爍問題  ([567993e](https://github.com/iq-service-inc/react-summernote/commit/567993e771d5431d1d6281d7d5be6f1b114f1951))
+
 ## [2.3.8](https://github.com/iq-service-inc/react-summernote/compare/v2.3.7...v2.3.8) (2024-04-29)
 
 ### feat
