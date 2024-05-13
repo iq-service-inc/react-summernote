@@ -323,30 +323,30 @@
                                 '</div>',
                                 '<div class="note-holder" data-event="backColor"><!-- back colors --></div>',
                                 '<div>',
-                                    '<button type="button" class="note-color-select btn btn-light btn-default" data-event="openPalette" data-value="backColorPicker">',
+                                    '<button type="button" class="note-color-select btn btn-light btn-default" data-event="openPalette" data-value="backColorPicker-' + options.id + '">',
                                     lang.customStyle.cpSelect,
                                     '</button>',
-                                    '<input type="color" id="backColorPicker" class="note-btn note-color-select-btn" value="' + options.colorButton.backColor + '" data-event="backColorPalette">',
+                                '<input type="color" id="backColorPicker-' + options.id + '" class="note-btn note-color-select-btn" value="' + options.colorButton.backColor + '" data-event="backColorPalette-' + options.id + '">',
                                 '</div>',
-                                '<div class="note-holder-custom" id="backColorPalette" data-event="backColor"></div>',
+                                '<div class="note-holder-custom" id="backColorPalette-' + options.id + '" data-event="backColor"></div>',
                                 '</div>',
                                 ].join('') : '') +
                                 (foreColor ? [
                                 '<div class="note-palette">',
                                 '<div class="note-palette-title">' + lang.customStyle.foreground + '</div>',
                                 '<div>',
-                                    '<button type="button" class="note-color-reset btn btn-light btn-default" data-event="removeFormat" data-value="foreColor">',
+                                    '<button type="button" class="note-color-reset btn btn-light btn-default" data-event="removeFormat" data-value="foreColorPicker-' + options.id + '">',
                                     lang.customStyle.resetToDefault,
                                     '</button>',
                                 '</div>',
                                 '<div class="note-holder" data-event="foreColor"><!-- fore colors --></div>',
                                 '<div>',
-                                    '<button type="button" class="note-color-select btn btn-light btn-default" data-event="openPalette" data-value="foreColorPicker">',
+                                    '<button type="button" class="note-color-select btn btn-light btn-default" data-event="openPalette" data-value="foreColorPicker-' + options.id + '">',
                                     lang.customStyle.cpSelect,
                                     '</button>',
-                                    '<input type="color" id="foreColorPicker" class="note-btn note-color-select-btn" value="' + options.colorButton.foreColor + '" data-event="foreColorPalette">',
+                                    '<input type="color" id="foreColorPicker-' + options.id + '" class="note-btn note-color-select-btn" value="' + options.colorButton.foreColor + '" data-event="foreColorPalette-' + options.id + '">',
                                 '</div>',
-                                '<div class="note-holder-custom" id="foreColorPalette" data-event="foreColor"></div>',
+                                '<div class="note-holder-custom" id="foreColorPalette-' + options.id + '" data-event="foreColor"></div>',
                                 '</div>',
                                 ].join('') : ''),
                             callback: ($dropdown) => {
@@ -372,13 +372,16 @@
                                     }).render());
                                 });
                                 $dropdown.find('input[type=color]').each((idx, item) => {
-                                    $(item).change(function() {
+                                    $(item).on('input', function() {
                                         const $chip = $dropdown.find('#' + $(this).data('event')).find('.note-color-btn').first();
                                         const color = this.value.toUpperCase();
                                         $chip.css('background-color', color)
                                         .attr('aria-label', color)
                                         .attr('data-value', color)
                                         .attr('data-original-title', color);
+                                    });
+                                    $(item).on('change', function () {
+                                        const $chip = $dropdown.find('#' + $(this).data('event')).find('.note-color-btn').first();
                                         $chip.click();
                                     });
                                 });
@@ -392,6 +395,7 @@
                                 const value = $button.attr('data-value');
                     
                                 if (eventName === 'openPalette') { 
+                                    console.log(value)
                                     const $picker = $menu.find('#' + value);
                                     const $palette = $($menu.find('#' + $picker.data('event')).find('.note-color-row')[0]);
                                     // Shift palette chips
