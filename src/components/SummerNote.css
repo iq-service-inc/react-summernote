@@ -1,0 +1,13 @@
+.note-editor .note-toolbar .note-dropdown-menu.dropdown-fontname,
+.note-editor .note-toolbar .note-dropdown-menu.dropdown-fontsize,
+.note-editor .note-toolbar .note-dropdown-menu.dropdown-style,
+.note-editor .note-toolbar .note-dropdown-menu.dropdown-list-style,
+.note-editor .note-toolbar .note-dropdown-menu.dropdown-custom-style-list {
+    max-height: max(60vh, 200px);
+    overflow-y: auto;
+}
+
+.note-editor .note-toolbar .note-color .note-dropdown-menu .note-palette .note-color-reset,
+.note-editor .note-toolbar .note-color .note-dropdown-menu .note-palette .note-color-select {
+    margin: 3px 0;
+}

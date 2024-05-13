@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import SummerNote2 from "./SummerNote";
 import SummerNote from "./SummerNote";
+import "./SummerNote.css";
 import rtf2html from "../lib/trf2html";
 // import required codes
 // console.log(SummerNote)
