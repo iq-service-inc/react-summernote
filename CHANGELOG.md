@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.10](https://github.com/iq-service-inc/react-summernote/compare/v2.3.9...v2.3.10) (2024-05-13)
+
+### feat
+
+* 新增 css 限制 dropdown 最大高度 ([6eb592e](https://github.com/iq-service-inc/react-summernote/commit/6eb592ed97d6fe0e73e2d78b660888edc6890ffa))
+
+### fix
+
+* 修復多個編輯器無法開啟正確的調色盤 ([925c588](https://github.com/iq-service-inc/react-summernote/commit/925c588a91d5b426fa9576c5db5af9e1a7ebe0cd))
+
 ## [2.3.9](https://github.com/iq-service-inc/react-summernote/compare/v2.3.8...v2.3.9) (2024-05-09)
 
 ### fix
