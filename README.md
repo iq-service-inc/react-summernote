@@ -68,6 +68,7 @@ npm i @iqs/react-summernote --save
 import React from 'react'
 import { render } from 'react-dom'
 import SummerNote from 'react-summernote'
+import 'react-summernote/dist/main.css'
 
 // 自動載入必要套件
 SummerNote.ImportCode()
