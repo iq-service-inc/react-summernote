@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.11](https://github.com/iq-service-inc/react-summernote/compare/v2.3.10...v2.3.11) (2024-07-08)
+
+### perf
+
+* 更新 summernote-ext-table 移除表格長寬設定 <input> 元素 min 限制([dd2db24](https://github.com/iq-service-inc/react-summernote/commit/dd2db243fdc338367689205cc502e8339b35ca0a))
+
 ## [2.3.10](https://github.com/iq-service-inc/react-summernote/compare/v2.3.9...v2.3.10) (2024-05-13)
 
 ### feat
