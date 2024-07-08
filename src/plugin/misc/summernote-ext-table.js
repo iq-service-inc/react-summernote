@@ -1884,7 +1884,7 @@
             $rowHeight.append($inputPrepend)
 
             // input
-            var $rowHeightInput = $(`<input min="27" type=number />`)
+            var $rowHeightInput = $(`<input type=number />`)
                 .addClass("jtable-row-height-input")
                 .css({
                     "width": "3em",
@@ -1953,7 +1953,7 @@
             $colWidth.append($inputPrepend)
 
             // input
-            var $colWidthInput = $(`<input min="27" type=number />`)
+            var $colWidthInput = $(`<input type=number />`)
                 .addClass("jtable-col-width-input")
                 .css({
                     "width": "3em",
