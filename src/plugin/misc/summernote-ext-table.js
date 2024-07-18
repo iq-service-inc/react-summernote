@@ -1742,12 +1742,16 @@
                 modules.tablePopover.hide();
 
                 showTableInfoDialog($table).then(function (data) {
+                    context.invoke('beforeCommand')
+
                     // [workaround] hide dialog before restore range for IE range focus
                     ui.hideDialog($tableInfoDialog);
                     context.invoke('editor.restoreRange');
 
                     $table.css('margin', data.join(' '))
 
+                    // afterCommand 需要在取得 dialog 設定值之後
+                    context.invoke('afterCommand')
                 }).fail(function () {
                     context.invoke('editor.restoreRange');
                 });
@@ -1792,17 +1796,15 @@
                     });
 
                     $applyBtn.click(function (event) {
-                        context.invoke('beforeCommand')
                         event.preventDefault();
 
+                        // 回傳設定值
                         deferred.resolve([
                             parseInt($marginTopInput.val(), 10) + 'px',
                             parseInt($marginRightInput.val(), 10) + 'px',
                             parseInt($marginBottomInput.val(), 10) + 'px',
                             parseInt($marginLeftInput.val(), 10) + 'px'
                         ]);
-
-                        context.invoke('afterCommand')
                     });
 
                 });
@@ -2209,11 +2211,15 @@
                 modules.tablePopover.hide();
 
                 showCellStyleDialog($cell).then(function (style) {
+                    context.invoke('beforeCommand')
+
                     ui.hideDialog($styleCellDialog);
                     context.invoke('editor.restoreRange');
 
                     $cell.attr('style', style.replace(/\s*(?:;)\s*/g, '; '))
 
+                    // afterCommand 需要在取得 dialog 設定的樣式之後
+                    context.invoke('afterCommand')
                 }).fail(function () {
                     context.invoke('editor.restoreRange');
                 });
@@ -2245,13 +2251,11 @@
                     })
                     
                     $applyBtn.click(function (event) {
-                        context.invoke('beforeCommand')
                         event.preventDefault();
 
                         let style = $styleTextarea.val().replace(/\s*(?:;)\s*/g, '; ')
+                        // 回傳設定樣式
                         deferred.resolve(style);
-
-                        context.invoke('afterCommand')
                     });
 
                 });
