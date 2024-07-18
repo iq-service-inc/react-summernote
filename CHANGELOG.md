@@ -1,4 +1,10 @@
-# Changelog
+
+## [2.3.12](https://github.com/iq-service-inc/react-summernote/compare/v2.3.11...v2.3.12) (2024-07-18)
+
+
+### fix
+
+* 修復 summernote-ext-table 表格邊界, 儲存格樣式 功能呼叫 onchange 使用的是舊資料 ([92983ba](https://github.com/iq-service-inc/react-summernote/commit/92983ba64893dd6a60a40589a7055af723ba88b6))
 
 ## [2.3.11](https://github.com/iq-service-inc/react-summernote/compare/v2.3.10...v2.3.11) (2024-07-08)
 
