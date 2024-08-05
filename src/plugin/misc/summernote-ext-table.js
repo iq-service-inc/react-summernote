@@ -1741,8 +1741,11 @@
 
                 modules.tablePopover.hide();
 
+                // beforeCommand -> focus <- editor.on(focus) -> setLastRange
+                // beforeCommand 會觸發 focus, focus 會觸發紀錄目前游標位置, 但開啟 dialog 後游標位置會消失, 會紀錄到空的游標
+                // 因此 beforeCommand 需要放在開啟 dialog 之前
+                context.invoke('beforeCommand')
                 showTableInfoDialog($table).then(function (data) {
-                    context.invoke('beforeCommand')
 
                     // [workaround] hide dialog before restore range for IE range focus
                     ui.hideDialog($tableInfoDialog);
@@ -1809,7 +1812,7 @@
 
                 });
 
-                ui.onDialogHidden($mergeDialog, function () {
+                ui.onDialogHidden($tableInfoDialog, function () {
                     $marginInput.off();
                     $applyBtn.off();
                     ui.toggleBtn($applyBtn, false);
@@ -2210,8 +2213,11 @@
                 var $cell = $(dom.ancestor(rng.commonAncestor(), dom.isCell));
                 modules.tablePopover.hide();
 
+                // beforeCommand -> focus <- editor.on(focus) -> setLastRange
+                // beforeCommand 會觸發 focus, focus 會觸發紀錄目前游標位置, 但開啟 dialog 後游標位置會消失, 會紀錄到空的游標
+                // 因此 beforeCommand 需要放在開啟 dialog 之前
+                context.invoke('beforeCommand')
                 showCellStyleDialog($cell).then(function (style) {
-                    context.invoke('beforeCommand')
 
                     ui.hideDialog($styleCellDialog);
                     context.invoke('editor.restoreRange');
