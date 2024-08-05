@@ -1,3 +1,11 @@
+# Changelog
+
+## [2.3.13](https://github.com/iq-service-inc/react-summernote/compare/v2.3.12...v2.3.13) (2024-08-05)
+
+
+### fix
+
+* 修復 summernote-ext-table 表格邊界, 儲存格樣式 功能關閉 dialog 後未能恢復原本游標位置 ([0a160db](https://github.com/iq-service-inc/react-summernote/commit/0a160db46ac3d9553a160e7858ba82df3f1f85a3))
 
 ## [2.3.12](https://github.com/iq-service-inc/react-summernote/compare/v2.3.11...v2.3.12) (2024-07-18)
 
