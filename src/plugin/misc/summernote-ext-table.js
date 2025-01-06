@@ -1741,13 +1741,20 @@
 
                 modules.tablePopover.hide();
 
+                // beforeCommand -> focus <- editor.on(focus) -> setLastRange
+                // beforeCommand 會觸發 focus, focus 會觸發紀錄目前游標位置, 但開啟 dialog 後游標位置會消失, 會紀錄到空的游標
+                // 因此 beforeCommand 需要放在開啟 dialog 之前
+                context.invoke('beforeCommand')
                 showTableInfoDialog($table).then(function (data) {
+
                     // [workaround] hide dialog before restore range for IE range focus
                     ui.hideDialog($tableInfoDialog);
                     context.invoke('editor.restoreRange');
 
                     $table.css('margin', data.join(' '))
 
+                    // afterCommand 需要在取得 dialog 設定值之後
+                    context.invoke('afterCommand')
                 }).fail(function () {
                     context.invoke('editor.restoreRange');
                 });
@@ -1792,22 +1799,20 @@
                     });
 
                     $applyBtn.click(function (event) {
-                        context.invoke('beforeCommand')
                         event.preventDefault();
 
+                        // 回傳設定值
                         deferred.resolve([
                             parseInt($marginTopInput.val(), 10) + 'px',
                             parseInt($marginRightInput.val(), 10) + 'px',
                             parseInt($marginBottomInput.val(), 10) + 'px',
                             parseInt($marginLeftInput.val(), 10) + 'px'
                         ]);
-
-                        context.invoke('afterCommand')
                     });
 
                 });
 
-                ui.onDialogHidden($mergeDialog, function () {
+                ui.onDialogHidden($tableInfoDialog, function () {
                     $marginInput.off();
                     $applyBtn.off();
                     ui.toggleBtn($applyBtn, false);
@@ -1884,7 +1889,7 @@
             $rowHeight.append($inputPrepend)
 
             // input
-            var $rowHeightInput = $(`<input min="27" type=number />`)
+            var $rowHeightInput = $(`<input type=number />`)
                 .addClass("jtable-row-height-input")
                 .css({
                     "width": "3em",
@@ -1953,7 +1958,7 @@
             $colWidth.append($inputPrepend)
 
             // input
-            var $colWidthInput = $(`<input min="27" type=number />`)
+            var $colWidthInput = $(`<input type=number />`)
                 .addClass("jtable-col-width-input")
                 .css({
                     "width": "3em",
@@ -2208,12 +2213,19 @@
                 var $cell = $(dom.ancestor(rng.commonAncestor(), dom.isCell));
                 modules.tablePopover.hide();
 
+                // beforeCommand -> focus <- editor.on(focus) -> setLastRange
+                // beforeCommand 會觸發 focus, focus 會觸發紀錄目前游標位置, 但開啟 dialog 後游標位置會消失, 會紀錄到空的游標
+                // 因此 beforeCommand 需要放在開啟 dialog 之前
+                context.invoke('beforeCommand')
                 showCellStyleDialog($cell).then(function (style) {
+
                     ui.hideDialog($styleCellDialog);
                     context.invoke('editor.restoreRange');
 
                     $cell.attr('style', style.replace(/\s*(?:;)\s*/g, '; '))
 
+                    // afterCommand 需要在取得 dialog 設定的樣式之後
+                    context.invoke('afterCommand')
                 }).fail(function () {
                     context.invoke('editor.restoreRange');
                 });
@@ -2245,13 +2257,11 @@
                     })
                     
                     $applyBtn.click(function (event) {
-                        context.invoke('beforeCommand')
                         event.preventDefault();
 
                         let style = $styleTextarea.val().replace(/\s*(?:;)\s*/g, '; ')
+                        // 回傳設定樣式
                         deferred.resolve(style);
-
-                        context.invoke('afterCommand')
                     });
 
                 });

@@ -1,5 +1,52 @@
 # Changelog
 
+## [2.3.13](https://github.com/iq-service-inc/react-summernote/compare/v2.3.12...v2.3.13) (2024-08-05)
+
+
+### fix
+
+* 修復 summernote-ext-table 表格邊界, 儲存格樣式 功能關閉 dialog 後未能恢復原本游標位置 ([0a160db](https://github.com/iq-service-inc/react-summernote/commit/0a160db46ac3d9553a160e7858ba82df3f1f85a3))
+
+## [2.3.12](https://github.com/iq-service-inc/react-summernote/compare/v2.3.11...v2.3.12) (2024-07-18)
+
+
+### fix
+
+* 修復 summernote-ext-table 表格邊界, 儲存格樣式 功能呼叫 onchange 使用的是舊資料 ([92983ba](https://github.com/iq-service-inc/react-summernote/commit/92983ba64893dd6a60a40589a7055af723ba88b6))
+
+## [2.3.11](https://github.com/iq-service-inc/react-summernote/compare/v2.3.10...v2.3.11) (2024-07-08)
+
+### perf
+
+* 更新 summernote-ext-table 移除表格長寬設定 <input> 元素 min 限制([dd2db24](https://github.com/iq-service-inc/react-summernote/commit/dd2db243fdc338367689205cc502e8339b35ca0a))
+
+## [2.3.10](https://github.com/iq-service-inc/react-summernote/compare/v2.3.9...v2.3.10) (2024-05-13)
+
+### feat
+
+* 新增 css 限制 dropdown 最大高度 ([6eb592e](https://github.com/iq-service-inc/react-summernote/commit/6eb592ed97d6fe0e73e2d78b660888edc6890ffa))
+
+### fix
+
+* 修復多個編輯器無法開啟正確的調色盤 ([925c588](https://github.com/iq-service-inc/react-summernote/commit/925c588a91d5b426fa9576c5db5af9e1a7ebe0cd))
+
+## [2.3.9](https://github.com/iq-service-inc/react-summernote/compare/v2.3.8...v2.3.9) (2024-05-09)
+
+### fix
+
+* 修復 summernote-custom-style 選擇顏色失效、summernote-comment-popover 懸浮框閃爍問題  ([567993e](https://github.com/iq-service-inc/react-summernote/commit/567993e771d5431d1d6281d7d5be6f1b114f1951))
+
+## [2.3.8](https://github.com/iq-service-inc/react-summernote/compare/v2.3.7...v2.3.8) (2024-04-29)
+
+### feat
+
+* 新增 smmernote-video-attr-setter  ([3678282](https://github.com/iq-service-inc/react-summernote/commit/3678282a1eb8087e38c454d755a6656a6a0cf0ec))
+
+### perf
+
+* 更新 summernote-imagemap, summernote-pastehtml destroy 移除 dialog [6e113dd](https://github.com/iq-service-inc/react-summernote/commit/6e113dd4e964dbbf1b81cfc44b56e9af0c4573e1)
+
+
 ## [2.3.7](https://github.com/iq-service-inc/react-summernote/compare/v2.3.6...v2.3.7) (2024-04-03)
 
 ### fix

@@ -148,6 +148,8 @@
             }
             this.destroy = function () {
                 !!this.css && $(this.css).remove()
+                ui.hideDialog(this.$dialog);
+                this.$dialog.remove();
             };
 
             this.wrapCommand = function (fn) {

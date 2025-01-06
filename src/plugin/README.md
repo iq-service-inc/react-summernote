@@ -31,7 +31,7 @@ node .\bundle-plugins.js
       - [summernote-image-shapes](#summernote-image-shapes)
       - [summernote-list-styles](#summernote-list-styles)
       - [summernote-pagebreak](#summernote-pagebreak)
-      - [summernote-video-attributes](#summernote-video-attributes)
+      - [~~summernote-video-attributes~~](#summernote-video-attributes)
       - [summernote-video-attr-setter](#summernote-video-attr-setter)
     - [Insert](#insert)
       - [summernote-at-mention](#summernote-at-mention)
@@ -75,7 +75,7 @@ require('react-summernote/plugin/formatting/summernote-image-shapes')
 require('react-summernote/plugin/formatting/summernote-list-styles')
 require('react-summernote/plugin/formatting/summernote-list-styles.css')
 require('react-summernote/plugin/formatting/summernote-pagebreak')
-require('react-summernote/plugin/formatting/summernote-video-attributes')
+// require('react-summernote/plugin/formatting/summernote-video-attributes')
 require('react-summernote/plugin/formatting/summernote-video-attr-setter')
 
 require('react-summernote/plugin/insert/summernote-at-mention')
@@ -305,7 +305,7 @@ options = {{
     使用 className 初始化 popover
 
     ```js
-    $(a.summernote-comment-popover-anchor[data-toggle="popover"]).popover()
+    $(a.summernote-comment-popover-anchor[data-toggle="popover"]).hoverPopover()
     ```
 
     設定 className css
@@ -653,11 +653,15 @@ $editor.find(`.${prefix}-toc-anchor`).each((i, d) => {
    - `toolbar` button: `pagebreak`
      - `pagebreak`: 插入分頁符號
 
-#### [summernote-video-attributes](https://github.com/DiemenDesign/summernote-video-attributes)
+#### [~~summernote-video-attributes~~](https://github.com/DiemenDesign/summernote-video-attributes)
    - Adds a Toolbar Button for Allowing to edit Video Attributes before inserting into Editor.
    - 影片屬性
    - `toolbar` button: `videoAttributes`
      - `videoAttributes`: 插入影片，設定影片屬性
+
+#### [summernote-video-attr-setter](https://github.com/DiemenDesign/summernote-video-attr-setter)
+   - 修改影片，設定影片屬性
+   - 新增 video 專用 popover
 
 ### Insert
 

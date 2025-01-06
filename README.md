@@ -2,7 +2,7 @@
 
 React SummerNote 是一個 React 版本的 WYSIWYG 的 rich text editor，基於 [SummerNote](https://github.com/summernote/summernote) 建構
 
-* **Stable Version: `v2.3.7`**
+* **Stable Version: `v2.3.13`**
 
 * 版本修改紀錄：[Changelog](CHANGELOG.md)
 
@@ -68,6 +68,7 @@ npm i @iqs/react-summernote --save
 import React from 'react'
 import { render } from 'react-dom'
 import SummerNote from 'react-summernote'
+import 'react-summernote/dist/main.css'
 
 // 自動載入必要套件
 SummerNote.ImportCode()

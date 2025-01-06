@@ -267,6 +267,164 @@
                 }
                 this.updateListCount()
             }
+
+            /**
+             * 'colorPalette' copy from 'summernote-v0.8.18/src/js/base/module/Buttons.js' modify click event
+             */
+            this.colorPalette = function(className, tooltip, backColor, foreColor) {
+                return ui.buttonGroup({
+                    className: 'note-color ' + className,
+                    children: [
+                        ui.button({
+                            className: 'note-current-color-button',
+                            contents: ui.icon(options.icons.font + ' note-recent-color'), 
+                            tooltip: tooltip,
+                            click: (e) => {
+                                const $button = $(e.currentTarget);
+                                if (backColor && foreColor) {
+                                    context.invoke('customStyle.foreColor', $button.attr('data-foreColor'));
+                                    context.invoke('customStyle.backColor', $button.attr('data-backColor'));
+                                } else if (backColor) {
+                                    context.invoke('customStyle.backColor', $button.attr('data-backColor'));
+                                } else if (foreColor) {
+                                    context.invoke('customStyle.foreColor', $button.attr('data-foreColor'));
+                                }
+                            },
+                            callback: ($button) => {
+                                const $recentColor = $button.find('.note-recent-color');
+                                if (backColor) {
+                                $recentColor.css('background-color', options.colorButton.backColor);
+                                $button.attr('data-backColor', options.colorButton.backColor);
+                                }
+                                if (foreColor) {
+                                $recentColor.css('color', options.colorButton.foreColor);
+                                $button.attr('data-foreColor', options.colorButton.foreColor);
+                                } else {
+                                $recentColor.css('color', 'transparent');
+                                }
+                            },
+                        }),
+                        ui.button({
+                            className: 'dropdown-toggle',
+                            contents: ui.dropdownButtonContents('', options),
+                            tooltip: lang.customStyle.more,
+                            data: {
+                                toggle: 'dropdown',
+                            },
+                        }),
+                        ui.dropdown({
+                            items: (backColor ? [
+                                '<div class="note-palette">',
+                                '<div class="note-palette-title">' + lang.customStyle.background + '</div>',
+                                '<div>',
+                                    '<button type="button" class="note-color-reset btn btn-light btn-default" data-event="backColor" data-value="transparent">',
+                                    lang.customStyle.transparent,
+                                    '</button>',
+                                '</div>',
+                                '<div class="note-holder" data-event="backColor"><!-- back colors --></div>',
+                                '<div>',
+                                    '<button type="button" class="note-color-select btn btn-light btn-default" data-event="openPalette" data-value="backColorPicker-' + options.id + '">',
+                                    lang.customStyle.cpSelect,
+                                    '</button>',
+                                '<input type="color" id="backColorPicker-' + options.id + '" class="note-btn note-color-select-btn" value="' + options.colorButton.backColor + '" data-event="backColorPalette-' + options.id + '">',
+                                '</div>',
+                                '<div class="note-holder-custom" id="backColorPalette-' + options.id + '" data-event="backColor"></div>',
+                                '</div>',
+                                ].join('') : '') +
+                                (foreColor ? [
+                                '<div class="note-palette">',
+                                '<div class="note-palette-title">' + lang.customStyle.foreground + '</div>',
+                                '<div>',
+                                    '<button type="button" class="note-color-reset btn btn-light btn-default" data-event="removeFormat" data-value="foreColorPicker-' + options.id + '">',
+                                    lang.customStyle.resetToDefault,
+                                    '</button>',
+                                '</div>',
+                                '<div class="note-holder" data-event="foreColor"><!-- fore colors --></div>',
+                                '<div>',
+                                    '<button type="button" class="note-color-select btn btn-light btn-default" data-event="openPalette" data-value="foreColorPicker-' + options.id + '">',
+                                    lang.customStyle.cpSelect,
+                                    '</button>',
+                                    '<input type="color" id="foreColorPicker-' + options.id + '" class="note-btn note-color-select-btn" value="' + options.colorButton.foreColor + '" data-event="foreColorPalette-' + options.id + '">',
+                                '</div>',
+                                '<div class="note-holder-custom" id="foreColorPalette-' + options.id + '" data-event="foreColor"></div>',
+                                '</div>',
+                                ].join('') : ''),
+                            callback: ($dropdown) => {
+                                $dropdown.find('.note-holder').each((idx, item) => {
+                                    const $holder = $(item);
+                                    $holder.append(ui.palette({
+                                        colors: options.colors,
+                                        colorsName: options.colorsName,
+                                        eventName: $holder.data('event'),
+                                        container: options.container,
+                                        tooltip: options.tooltip,
+                                    }).render());
+                                });
+                                var customColors = [['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']];
+                                $dropdown.find('.note-holder-custom').each((idx, item) => {
+                                    const $holder = $(item);
+                                    $holder.append(ui.palette({
+                                        colors: customColors,
+                                        colorsName: customColors,
+                                        eventName: $holder.data('event'),
+                                        container: options.container,
+                                        tooltip: options.tooltip,
+                                    }).render());
+                                });
+                                $dropdown.find('input[type=color]').each((idx, item) => {
+                                    $(item).on('input', function() {
+                                        const $chip = $dropdown.find('#' + $(this).data('event')).find('.note-color-btn').first();
+                                        const color = this.value.toUpperCase();
+                                        $chip.css('background-color', color)
+                                        .attr('aria-label', color)
+                                        .attr('data-value', color)
+                                        .attr('data-original-title', color);
+                                    });
+                                    $(item).on('change', function () {
+                                        const $chip = $dropdown.find('#' + $(this).data('event')).find('.note-color-btn').first();
+                                        $chip.click();
+                                    });
+                                });
+                            },
+                            click: (event) => {
+                                event.stopPropagation();
+
+                                const $menu = $(event.currentTarget);
+                                const $button = $(event.target);
+                                const eventName = $button.data('event');
+                                const value = $button.attr('data-value');
+                    
+                                if (eventName === 'openPalette') { 
+                                    console.log(value)
+                                    const $picker = $menu.find('#' + value);
+                                    const $palette = $($menu.find('#' + $picker.data('event')).find('.note-color-row')[0]);
+                                    // Shift palette chips
+                                    const $chip = $palette.find('.note-color-btn').last().detach();
+
+                                    // Set chip attributes
+                                    const color = $picker.val();
+                                    $chip.css('background-color', color)
+                                        .attr('aria-label', color)
+                                        .attr('data-value', color)
+                                        .attr('data-original-title', color);
+                                    $palette.prepend($chip);
+                                    $picker.click();
+                                } else {
+                                    if (lists.contains(['backColor', 'foreColor'], eventName)) {
+                                        const key = eventName === 'backColor' ? 'background-color' : 'color';
+                                        const $color = $button.closest('.note-color').find('.note-recent-color');
+                                        const $currentButton = $button.closest('.note-color').find('.note-current-color-button');
+                                        $color.css(key, value);
+                                        $currentButton.attr('data-' + eventName, value);
+                                    }
+                                    context.invoke('customStyle.' + eventName, value);
+                                }
+                            },
+                        })
+                    ]
+                }).render();
+            }
+
             this.initEditor = function () {
                 let $customStyleEditor = this.$dialog.find('.summernote-customStyle-editor')
                 let $customStyleToolbar = $customStyleEditor.find('.summernote-customStyle-toolbar')
@@ -339,64 +497,8 @@
                     return $btn
                 })
 
-                // foreColor and backColor button color palette
-                let currentColorEvent = (backColor, foreColor) =>
-                    (e) => {
-                        const $button = $(e.currentTarget);
-                        if (backColor && foreColor) {
-                            context.invoke('customStyle.foreColor', $button.attr('data-foreColor'));
-                            context.invoke('customStyle.backColor', $button.attr('data-backColor'));
-                        } else if (backColor) {
-                            context.invoke('customStyle.backColor', $button.attr('data-backColor'));
-                        } else if (foreColor) {
-                            context.invoke('customStyle.foreColor', $button.attr('data-foreColor'));
-                        }
-                    }
-                let colorEvent = (event) => {
-                    event.stopPropagation();
-
-                    const $menu = $(event.currentTarget);
-                    const $button = $(event.target);
-                    const eventName = $button.data('event');
-                    const value = $button.attr('data-value');
-
-                    if (eventName === 'openPalette') {
-                        const $picker = $menu.find('#' + value);
-                        const $palette = $($menu.find('#' + $picker.data('event')).find('.note-color-row')[0]);
-
-                        // Shift palette chips
-                        const $chip = $palette.find('.note-color-btn').last().detach();
-
-                        // Set chip attributes
-                        const color = $picker.val();
-                        $chip.css('background-color', color)
-                            .attr('aria-label', color)
-                            .attr('data-value', color)
-                            .attr('data-original-title', color);
-                        $palette.prepend($chip);
-                        $picker.click();
-                    } else {
-                        if (lists.contains(['backColor', 'foreColor'], eventName)) {
-                            const key = eventName === 'backColor' ? 'background-color' : 'color';
-                            const $color = $button.closest('.note-color').find('.note-recent-color');
-                            const $currentButton = $button.closest('.note-color').find('.note-current-color-button');
-
-                            $color.css(key, value);
-                            $currentButton.attr('data-' + eventName, value);
-                            $menu.dropdown('hide')
-                        }
-                        context.invoke('customStyle.' + eventName, value);
-                    }
-                }
-                let $forecolorBtn = context.memo('button.forecolor')()
-                $forecolorBtn.find('.note-current-color-button').addClass('note-color-forecolor')
-                    .off('click').on('click', currentColorEvent(false, true))
-                $forecolorBtn.find('.dropdown-menu').off('click').on('click', colorEvent)
-                let $backcolorBtn = context.memo('button.backcolor')()
-                $backcolorBtn.find('.note-current-color-button').addClass('note-color-backcolor')
-                    .off('click').on('click', currentColorEvent(true, false))
-                $backcolorBtn.find('.dropdown-menu').off('click').on('click', colorEvent)
-
+                let $forecolorBtn = this.colorPalette('note-color-fore-btn', lang.customStyle.foreground, false, true)
+                let $backcolorBtn = this.colorPalette('note-color-back-btn', lang.customStyle.background, true, false)
 
                 // add buttons to toolbar
                 $('<div class="note-btn-group btn-group">').append($fontNameBtn).appendTo($customStyleToolbar)
@@ -791,6 +893,12 @@
                 hint: '關閉對話框自動儲存樣式設定',
                 stylePreview: '樣式預覽',
                 noStyleSelected: '請選擇樣式',
+                foreground: '字型顏色',
+                resetToDefault: '預設',
+                cpSelect: 'Select',
+                background: '字型背景',
+                transparent: '透明',
+                more: '更多'
             }
         },
         'en-US': {
@@ -804,6 +912,12 @@
                 hint: 'Close dialog will automatically save style settings',
                 stylePreview: 'Style Preview',
                 noStyleSelected: 'Please Select One Style',
+                foreground: 'Text Color',
+                resetToDefault: 'Reset to default',
+                cpSelect: 'Select',
+                background: 'Background Color',
+                transparent: 'Transparent',
+                more: 'More Color'
             }
         },
     });

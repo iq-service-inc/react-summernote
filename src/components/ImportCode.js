@@ -13,6 +13,7 @@ module.exports = function () {
     // require('summernote/dist/lang/summernote-zh-TW')
     require('../plugin/lang/summernote-zh-TW')
 
+    require('../plugin/custom/summernote-patch-buttons')
     require('../plugin/custom/summernote-patch-dom')
     require('../plugin/custom/summernote-patch-handle')
 

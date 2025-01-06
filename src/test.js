@@ -1,10 +1,9 @@
 import React from 'react'
 import { render } from 'react-dom'
 import SummerNote from '../dist/main'
+import '../dist/main.css'
 
 SummerNote.ImportCode()
-import 'summernote/dist/lang/summernote-zh-TW'
-import 'summernote/dist/lang/summernote-ko-KR'
 
 render(
     <SummerNote value="Default value"
@@ -13,13 +12,19 @@ render(
             height: 350,
             dialogsInBody: true,
             toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'underline', 'clear']],
-                ['fontname', ['fontname']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview']]
+                ["style", ["style", "customStyle", "copyFormatting"]],
+                ["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear", "customCleaner"]],
+                ["fontname", ["fontname", "customFont"]],
+                ["fontsize", ["fontsizeInput"]],
+                ['color', ['forecolor', 'backcolor']],
+                ["para", ["ul", "ol", "listStyles", "paragraph"]],
+                ["table", ["jTable"]],
+                ["tableRow", ["jRowHeight"]],
+                ["tableCol", ["jColWidth"]],
+                ["insert", ["pasteHTML", "link", "unlink", "picture", "imageMap", "video", "customSpecialChar"]],
+                ["anchor",["anchor", "toc", "markAnchor", "editAnchor"]],
+                ["comment", ["editPopover", "removePopover"]],
+                ["view", ["fullscreen", "codeview", "help"]],
             ]
         }}
         onChange={e => console.log(e)}
