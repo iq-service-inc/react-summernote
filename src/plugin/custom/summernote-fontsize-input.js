@@ -131,7 +131,40 @@
                             return `${item}px (${item * 0.75}pt)`
                         },
                         title: lang.font.size,
-                        click: context.createInvokeHandlerAndUpdateState('editor.fontSize')
+                        click: function (e) {
+                            const fontSize = $(e.target).data('value');
+                            const selection = window.getSelection();
+
+                            if (selection.rangeCount > 0) {
+                                // Get selection range
+                                const range = selection.getRangeAt(0);
+                                const span = document.createElement('span');
+                                span.style.fontSize = `${fontSize}px`;
+
+                                // Extract selected content
+                                const selectedContent = range.extractContents();
+
+                                // Traverse the child nodes and modify the font size uniformly
+                                function applyFontSizeToChildren(element) {
+                                    Array.from(element.children).forEach(child => {
+                                        child.style.fontSize = `${fontSize}px`;
+                                        applyFontSizeToChildren(child);  // 遞迴處理子層
+                                    });
+                                }
+
+                                // Add selected text to new span tag
+                                span.appendChild(selectedContent);
+
+                                // Recursively process child nodes within span tag
+                                applyFontSizeToChildren(span);
+
+                                // Insert modified content
+                                range.insertNode(span);
+                            } else {
+                                // Modify the entire line when no selection is made
+                                context.invoke('editor.fontSize', fontSize);
+                            }
+                        }
                     }),
                 ]).render();
                 $fontSizeDropdown.addClass('input-group-append')
@@ -154,16 +187,27 @@
                 // get current font size
                 const styleInfo = context.invoke('editor.currentStyle');
                 const fontSize = styleInfo['font-size'];
-                
+                const fontUnit = styleInfo['font-size-unit'][0]
+
                 // find button
                 var $customFontSize = $toolbar.find('.custom-fontsize-input-group')
-                
+
                 // update input value
                 var $fontsizeInput = $customFontSize.find('.note-fontsize-input')
-                $fontsizeInput.val(fontSize)
+                $fontsizeInput.val(fontUnit == 'px' ? fontSize : Math.round(fontSize / 0.75))
                 // update unit value
                 var $fontSizeUnit = $customFontSize.find('.note-fontsize-unit')
-                $fontSizeUnit.text(`px (${fontSize * 0.75}pt)`)
+                $fontSizeUnit.text(fontUnit == 'px' ? `px (${fontSize * 0.75}pt)` : `px (${fontSize}pt)`)
+
+                // remove dropdown checked
+                $customFontSize.find('.dropdown-item.checked').removeClass('checked');
+
+                const matchedItem = fontUnit == 'px' ? $customFontSize.find(`.dropdown-item[data-value="${fontSize}"]`) : $customFontSize.find(`.dropdown-item[data-value="${Math.round(fontSize / 0.75)}"]`);
+
+                // if current fronSize matching fontsizeInput.size list, add checked class
+                if (matchedItem.length > 0) {
+                    matchedItem.addClass('checked');
+                }
             }
 
             this.events = {
