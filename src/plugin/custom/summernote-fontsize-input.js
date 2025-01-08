@@ -17,6 +17,17 @@
         factory(window.jQuery);
     }
 }(function ($) {
+    if ($.summernote && $.summernote.options.modules.editor && $.summernote.options.modules.editor.prototype) {
+        $.extend($.summernote.options.modules.editor.prototype, {
+            customFontSize: function (value) {
+                this.customFontSize = this.wrapCommand((value) => {
+                    const unit = 'px';
+                    return this.fontStyling('font-size', value + unit);
+                });
+                this.customFontSize(value);
+            }
+        });
+    }
     $.extend($.summernote.options, {
         fontsizeInput: {
             max: 200,
@@ -90,13 +101,13 @@
                         let value = parseFloat($target.val())
                         // update selection text fontsize
                         if (value < minFontSize) {  // lower than minFontSize
-                            context.invoke("editor.fontSize", minFontSize)
+                            context.invoke("editor.customFontSize", minFontSize)
                         }
                         else if (value > maxFontSize) { // higher than maxFontSize
-                            context.invoke("editor.fontSize", maxFontSize)
+                            context.invoke("editor.customFontSize", maxFontSize)
                         }
                         else {
-                            context.invoke("editor.fontSize", value)
+                            context.invoke("editor.customFontSize", value)
                         }
                         context.invoke("afterCommand")
                     }
