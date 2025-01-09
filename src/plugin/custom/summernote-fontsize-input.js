@@ -171,9 +171,10 @@
 
                                 // Insert modified content
                                 range.insertNode(span);
+                                context.invoke('editor.customFontSize', fontSize);
                             } else {
                                 // Modify the entire line when no selection is made
-                                context.invoke('editor.fontSize', fontSize);
+                                context.invoke('editor.customFontSize', fontSize);
                             }
                         }
                     }),
@@ -208,7 +209,7 @@
                 $fontsizeInput.val(fontUnit == 'px' ? fontSize : Math.round(fontSize / 0.75))
                 // update unit value
                 var $fontSizeUnit = $customFontSize.find('.note-fontsize-unit')
-                $fontSizeUnit.text(fontUnit == 'px' ? `px (${fontSize * 0.75}pt)` : `px (${fontSize}pt)`)
+                $fontSizeUnit.text(fontUnit == 'px' ? `px (${this.customConversion(fontSize)}pt)` : `px (${fontSize}pt)`)
 
                 // remove dropdown checked
                 $customFontSize.find('.dropdown-item.checked').removeClass('checked');
@@ -219,6 +220,17 @@
                 if (matchedItem.length > 0) {
                     matchedItem.addClass('checked');
                 }
+            }
+
+            // px to pt, unit value conversion
+            this.customConversion = function (value) {
+                const conversionValue = value * 0.75 * 10;
+                // Get the first digit of the decimal point
+                const firstDecimalDigit = Math.floor(conversionValue) % 10;
+                if (firstDecimalDigit === 5) {
+                    return Math.floor(conversionValue) / 10;
+                }
+                return Math.round(conversionValue / 10);
             }
 
             this.events = {
