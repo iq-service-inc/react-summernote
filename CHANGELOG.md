@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.14](https://github.com/iq-service-inc/react-summernote/compare/v2.3.12...v2.3.14) (2025-01-09)
+
+
+### fix
+
+* 修復 summernote-fontsize-input 字體大小修改與判斷的bug ([a29ce8](https://github.com/iq-service-inc/react-summernote/commit/a29ce820155b58e1607f4052ae046372a453ba62))
+* 修復 summernote-fontsize-input 輸入修改文字大小修改bug ([ee0f1c](https://github.com/iq-service-inc/react-summernote/commit/ee0f1cc7c98b09071c9589f914e061e10b2de244))
+
 ## [2.3.13](https://github.com/iq-service-inc/react-summernote/compare/v2.3.12...v2.3.13) (2024-08-05)
 
 
