@@ -49,6 +49,7 @@ module.exports = function () {
     require('../plugin/misc/summernote-text-findnreplace')
     require('../plugin/misc/summernote-ext-table')
     require('../plugin/misc/summernote-ext-table.css')
+    require('../plugin/custom/summernote-custom-paste')
     // require('../plugin/special_characters/summernote-ext-specialchars')
 
     //require('react-summernote/plugin/syntax/summernote-ext-highlight')
