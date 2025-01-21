@@ -114,11 +114,6 @@
                     else if (event.keyCode === 27) {    // ESC
                         context.invoke("beforeCommand")
                         event.preventDefault()
-                        let $target = $(event.target)
-                        const styleInfo = context.invoke('editor.currentStyle')
-                        const fontSize = styleInfo['font-size']
-                        $target.val(fontSize)   // restore value
-                        context.invoke("afterCommand")
                     }
                 })
                 $customFontSize.append($fontsizeInput)
@@ -198,8 +193,8 @@
             this.updateFontsizeInput = function () {
                 // get current font size
                 const styleInfo = context.invoke('editor.currentStyle');
-                const fontSize = styleInfo['font-size'];
                 const fontUnit = styleInfo['font-size-unit'][0]
+                const fontSize = parseFloat(styleInfo['font-size-unit']['input'].replace(fontUnit, ''));
 
                 // find button
                 var $customFontSize = $toolbar.find('.custom-fontsize-input-group')
