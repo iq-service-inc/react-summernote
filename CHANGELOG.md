@@ -1,6 +1,18 @@
 # Changelog
 
-## [2.3.14](https://github.com/iq-service-inc/react-summernote/compare/v2.3.12...v2.3.14) (2025-01-09)
+## [2.3.15](https://github.com/iq-service-inc/react-summernote/compare/v2.3.14...v2.3.15) (2025-02-03)
+
+### feat
+
+* 新增 summernote-custom-paste 判斷編輯器內容改變後，調整連結內容([bd89d8a](https://github.com/iq-service-inc/react-summernote/commit/bd89d8a202454b3df7381fa82a1018388718b366))
+
+
+### fix
+
+* 修復 summernote-fontsize-input 輸入框數值資料數值([a4e76ec](https://github.com/iq-service-inc/react-summernote/commit/a4e76ec9e281164f545fbb59f8423a0c798101cf))
+* 修復 summernote-fontsize-input 輸入框數值 bug([11d668c](https://github.com/iq-service-inc/react-summernote/commit/11d668cc34714d6c694e8d43e85f0be6302584ba))
+
+## [2.3.14](https://github.com/iq-service-inc/react-summernote/compare/v2.3.13...v2.3.14) (2025-01-09)
 
 
 ### fix
