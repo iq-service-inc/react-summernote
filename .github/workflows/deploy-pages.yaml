@@ -40,7 +40,7 @@ jobs:
         destination: ./docs/_site
     
     - name: Upload Artifacts
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
       with:
         name: github-pages
         path: docs
