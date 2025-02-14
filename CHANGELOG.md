@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.16](https://github.com/iq-service-inc/react-summernote/compare/v2.3.15...v2.3.16) (2025-02-14)
+
+### feat
+
+* 新增：summerntoe-patch-createLink 針對已存在連結做編輯時的HTML屬性調整([d4c380e](https://github.com/iq-service-inc/react-summernote/commit/d4c380e27f3e8c61d64123ef045ca1415c0f8706))
+
+
 ## [2.3.15](https://github.com/iq-service-inc/react-summernote/compare/v2.3.14...v2.3.15) (2025-02-03)
 
 ### feat
