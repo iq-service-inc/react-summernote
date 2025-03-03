@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.17](https://github.com/iq-service-inc/react-summernote/compare/v2.3.16...v2.3.17-beta.1)(2025-03-03)
+
+### fix
+* 修復 summerntoe-patch-createLink 沒有觸發 onChange 情況([fe9eb47](https://github.com/iq-service-inc/react-summernote/commits/dylan/))
+* 修復 summernote-fontsize-input 輸入框 CSS 調整([154c756](https://github.com/iq-service-inc/react-summernote/commit/154c756d0c6d9fa2fadd34ca43cac7d428230977))
+
 ## [2.3.16](https://github.com/iq-service-inc/react-summernote/compare/v2.3.15...v2.3.16) (2025-02-14)
 
 ### feat
