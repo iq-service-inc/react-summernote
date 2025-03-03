@@ -88,6 +88,7 @@
                     }
                 });
 
+                context.triggerEvent('change', context.$editable.html())
                 context.invoke('editor.setLastRange', context.invoke('editor.createRangeFromList', anchors).select());
             };
 
