@@ -83,8 +83,7 @@
                         "text-align": "center",
                         "border": "1px solid #ced4da",
                         "border-radius": "0.2rem 0 0 0.2rem",
-                        "font-size": "13px",
-                        "step": "any"
+                        "font-size": "13px"
                     })
 
                 // input event
