@@ -88,8 +88,11 @@
                     }
                 });
 
-                context.triggerEvent('change', context.$editable.html())
                 context.invoke('editor.setLastRange', context.invoke('editor.createRangeFromList', anchors).select());
+                const $editable = context.layoutInfo.editable;
+                if ($editable && typeof $editable.html === "function") {
+                    context.triggerEvent('change', $editable.html());
+                }
             };
 
             modules.editor.createLink = this.createCustomLink.bind(modules.editor);
