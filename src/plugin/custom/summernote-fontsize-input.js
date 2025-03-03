@@ -77,6 +77,7 @@
                 // input
                 var $fontsizeInput = $(`<input max="${maxFontSize}" min="${minFontSize}" type=number />`)
                     .addClass("note-fontsize-input")
+                    .attr("step", "any")
                     .css({
                         "width": "3em",
                         "line-height": "1em",
