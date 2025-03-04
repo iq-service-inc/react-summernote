@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.17](https://github.com/iq-service-inc/react-summernote/compare/v2.3.17-beta.2...v2.3.17)(2025-03-03)
+
+### feat
+* 新增 summernote-fontsize-input 輸入框新增 step 屬性([e74100f](https://github.com/iq-service-inc/react-summernote/commit/e74100f3051216b27e77d5db4615ee4fb82087b9))
+
+### fix
+* 修復 summerntoe-patch-createLink 沒有觸發 $editorable 情況([bf8788e](https://github.com/iq-service-inc/react-summernote/commit/bf8788eb62702c539117d6fa7f83b90281a17623))([fe9eb47](https://github.com/iq-service-inc/react-summernote/commits/dylan/))
+
 ## [2.3.17-beta.2](https://github.com/iq-service-inc/react-summernote/compare/v2.3.17-beta.1...v2.3.17-beta.2)(2025-03-03)
 
 ### feat
