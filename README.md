@@ -538,4 +538,4 @@ Plugin 目錄架構由 [Awesome Summernote](https://github.com/summernote/awesom
 ## License
 
 The [MIT](LICENSE.md) License (MIT)  
-Copyright (c) 2023 Zap
+Copyright (c) 2025 Zap

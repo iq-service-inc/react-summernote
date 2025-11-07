@@ -841,6 +841,7 @@
             if (!cell) return self.afterCommand()
 
             var $cell = $(cell);
+            if(borderColor=='inherit') borderColor = 'transparent'
             $cell.closest('table').find('td, th').css('border', '1px solid ' + borderColor);
 
             // resetTableBlock($cell);
