@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.19](https://github.com/iq-service-inc/react-summernote/compare/v2.3.18...v2.3.19)(2026-01-12)
+
+### fix
+* 修復 ctrl+a 改樣式在 walkPoint 遍歷節點出現 null ([4b63e91](https://github.com/iq-service-inc/react-summernote/commit/4b63e9122ecd366c1246206ca2f2d072b799a56e))
+
+## [2.3.18](https://github.com/iq-service-inc/react-summernote/compare/v2.3.17...v2.3.18)(2025-11-07)
+
+### fix
+* 修改 table 修改 border(邊框) 顏色時，選擇透明顏色無效的問題([5696bd4](https://github.com/iq-service-inc/react-summernote/commit/5696bd40fe29774b9d5eb193e2a5ab8254e5abc1))
+
 ## [2.3.17](https://github.com/iq-service-inc/react-summernote/compare/v2.3.17-beta.2...v2.3.17)(2025-03-03)
 
 ### feat
