@@ -3,7 +3,7 @@
  * 
  * override the walkPoint and nextPointWithEmptyNode
  * fix walkPoint cannot walk entire DOM
- * source: https://github.com/summernote/summernote/issues/4471, https://github.com/summernote/summernote/pull/4472
+ * source: https://github.com/summernote/summernote/issues/4471, https://github.com/summernote/summernote/pull/4472, https://github.com/summernote/summernote/pull/4667
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -28,7 +28,7 @@
     function walkPoint(startPoint, endPoint, handler, isSkipInnerOffset) {
         let point = startPoint;
 
-        while (point) {
+        while (point && point.node) {
             handler(point);
 
             if ($.summernote.dom.isSamePoint(point, endPoint)) {
