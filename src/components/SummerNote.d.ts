@@ -22,7 +22,14 @@ export type SummerNoteRef = {
     insertText: (text: string) => void
 }
 
+export type BaseFontStyle = {
+    'font-size'?: string
+    'font-family'?: string
+    'color'?: string
+}
+
 export interface SummerNoteProps {
+    baseFontStyle?: BaseFontStyle
     options?: SummerNoteOptions
     codeview?: boolean
     destroy?: boolean

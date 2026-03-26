@@ -147,6 +147,55 @@ render(
 
 更詳細的設定方式，可以參閱上面的官方說明
 
+## `baseFontStyle`
+
+可透過 `baseFontStyle` props 設定編輯器預設文字樣式，會套用在使用者開始輸入的新內容上。
+
+目前可提供的設定如下：
+
+* `font-family`
+* `font-size`
+* `color`
+
+```jsx
+import React, { Component } from 'react'
+import SummerNote from './SummerNote'
+
+class App extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            baseFontStyle: {
+                'font-family': '微軟正黑體, sans-serif',
+                'font-size': '16px',
+                'color': '#333333'
+            }
+        }
+    }
+
+    render() {
+        return (
+            <SummerNote
+                value="Default value"
+                baseFontStyle={this.state.baseFontStyle}
+                options={{
+                    height: 350,
+                    toolbar: [
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['forecolor', 'backcolor']],
+                        ['view', ['codeview']]
+                    ]
+                }}
+            />
+        )
+    }
+}
+```
+
+若要在執行期間動態更新預設樣式，只要更新傳入的 `baseFontStyle` 物件即可。
+
 ## Control Editor
 
 下面簡單示範如何使用新版 API 控制編輯器 (version > `v2.0.0`)

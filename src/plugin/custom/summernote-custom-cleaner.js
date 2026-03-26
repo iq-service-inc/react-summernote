@@ -103,9 +103,21 @@
             }
             this.removeStyle = function () {
                 document.execCommand('removeFormat', false)
+                console.log(dom)
 
                 var rng = range.create()
-                rng = this.expandEdgePoint(rng)
+
+                if (rng.isCollapsed()) {
+                    // if collapsed, set range to current element
+                    ancestor = dom.lastAncestor(rng.sc, function (node) {
+                        return dom.nodeLength(node) == 1
+                    })
+                    rng = range.createFromNode(ancestor)
+                }
+                else {
+                    // if not collapsed, expand edge point to prevent remove style on non-selected text
+                    rng = this.expandEdgePoint(rng)
+                }
 
                 var nodes = rng.nodes(dom.isElement, { fullyContains: true })
                 nodes.forEach((node) => {

@@ -16,6 +16,7 @@ class InnerReactSummernote extends React.Component {
 		//this.uid = `react-summernote-${randomUid()}`;
 		this.editor = {};
 		this.noteEditable = null;
+        this.noteEditor = null;
 		this.notePlaceholder = null;
 		this.onInit = this.onInit.bind(this);
 		this.onImageUpload = this.onImageUpload.bind(this);
@@ -49,7 +50,7 @@ class InnerReactSummernote extends React.Component {
 	handleEditorRef = node => {
 		if (!node) return;
 		const options = this.props.options || {};
-		const { codeview, destroy, value, innerRef } = this.props;
+		const { codeview, destroy, value, innerRef, baseFontStyle } = this.props;
 		options.callbacks = {
 			...this.props.options.callbacks,
 			...this.callbacks
@@ -102,6 +103,9 @@ class InnerReactSummernote extends React.Component {
 			this.replace(value);
 			this.setState({ value });
 		}
+        if (baseFontStyle) {
+            this.updateBaseFontStyle(baseFontStyle)
+        }
 		if (codeview) {
 			this.editor.summernote("codeview.activate");
 		}
@@ -139,6 +143,12 @@ class InnerReactSummernote extends React.Component {
 			this.replace(nextProps.value);
 		}
 
+        // 如果 baseFontStyle 有變動，更新預設字體樣式
+        if (nextProps.baseFontStyle && 
+            JSON.stringify(props.baseFontStyle) !== JSON.stringify(nextProps.baseFontStyle)) {
+            this.updateBaseFontStyle(nextProps.baseFontStyle)
+        }
+
 		if (
 			typeof nextProps.disabled === "boolean" &&
 			props.disabled !== nextProps.disabled
@@ -168,6 +178,7 @@ class InnerReactSummernote extends React.Component {
 
 		const $container = this.editor.parent();
 		this.noteEditable = $container.find(".note-editable");
+        this.noteEditor = $container.find(".note-editor");
 		this.notePlaceholder = $container.find(".note-placeholder");
 
 		if (typeof disabled === "boolean") {
@@ -268,6 +279,39 @@ class InnerReactSummernote extends React.Component {
 		var range = this.editor.summernote("createRange")
 		return range
 	}
+    
+    // 更新預設字體樣式，於初始化和 baseFontStyle props 變動時呼叫
+    updateBaseFontStyle(baseFontStyle) {
+        // 設定預設字體樣式
+        this.noteEditable.css({
+            'font-size': baseFontStyle['font-size'] || '',
+            'font-family': baseFontStyle['font-family'] || '',
+            'color': baseFontStyle['color'] || ''
+        });
+
+        // 更新 toolbar 字體大小和字體名稱的顯示樣式
+        if (baseFontStyle['font-size']) this.editor.summernote('fontsizeInput.updateFontsizeInput');
+        if (baseFontStyle['font-family']) this.editor.summernote('customFont.updateCurrentStyle');
+
+        // 更新 toolbar 字體顏色的顯示樣式
+        if (baseFontStyle['color']) {
+            // 更新預設值
+            this.editor.constructor.summernote.options.colorButton.foreColor = baseFontStyle.color;
+
+            let $foreButton = this.noteEditor.find('.note-color-fore');
+            // 更新 data-foreColor 屬性 直接點選顏色按鈕會使用這個值
+            let $currentColorButton = $foreButton.find('.note-current-color-button');
+            $currentColorButton.attr('data-foreColor', baseFontStyle.color);
+
+            // 更新顯示顏色
+            let $recentColor = $currentColorButton.find('.note-recent-color');
+            $recentColor.css('color', baseFontStyle.color);
+
+            // 更新隱藏的顏色選擇器的值
+            let $input = $foreButton.find('input[type=color]');
+            $input.attr('value', baseFontStyle.color);
+        }
+    }
 
 	handleChange(txt) {
 

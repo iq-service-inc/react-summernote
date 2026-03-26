@@ -19,6 +19,31 @@ class App extends Component {
 		this.editor2 = React.createRef();
 		// console.log( 'constructor this.editor1 ',this.editor1 )
 		// console.log( 'constructor this.editor2 ',this.editor2 )
+        this.state = {
+			baseFontStyle: {},
+			fontFamily: 'Arial',
+			fontSize: '16px',
+			fontColor: '#333333'
+        }
+	}
+
+	handleBaseFontInputChange = (field) => (e) => {
+		this.setState({ [field]: e.target.value })
+	}
+
+	applyBaseFontStyle = () => {
+		const { fontFamily, fontSize, fontColor } = this.state
+		this.setState({
+			baseFontStyle: {
+				'font-family': fontFamily,
+				'font-size': fontSize,
+				color: fontColor
+			}
+		})
+	}
+
+	clearBaseFontStyle = () => {
+		this.setState({ baseFontStyle: {} })
 	}
 
     convertFileToBase64(file) {
@@ -61,10 +86,35 @@ class App extends Component {
 			<div className="demo">
 				<div className="rb" style={{textAlign:'right', height: '60px'}}><a href="https://github.com/iq-service-inc/react-summernote"><img loading="lazy" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" className="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"/></a></div>
 				<h1>React SummerNote App</h1>
+				<div style={{ marginBottom: '12px', padding: '12px', border: '1px solid #ddd', borderRadius: '6px' }}>
+					<strong>Demo: baseFontStyle</strong>
+					<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px', alignItems: 'center' }}>
+						<input
+							type="text"
+							placeholder="font-family"
+							value={this.state.fontFamily}
+							onChange={this.handleBaseFontInputChange('fontFamily')}
+						/>
+						<input
+							type="text"
+							placeholder="font-size (e.g. 16px)"
+							value={this.state.fontSize}
+							onChange={this.handleBaseFontInputChange('fontSize')}
+						/>
+						<input
+							type="color"
+							value={this.state.fontColor}
+							onChange={this.handleBaseFontInputChange('fontColor')}
+						/>
+						<button type="button" onClick={this.applyBaseFontStyle}>套用 baseFontStyle</button>
+						<button type="button" onClick={this.clearBaseFontStyle}>清除 baseFontStyle</button>
+					</div>
+				</div>
 				<SummerNote
 					id='editor1'
 					destroy={false}
 					value={htmldata}
+                    baseFontStyle={this.state.baseFontStyle}
 					options={{
 						lang: "zh-TW",
 						height: 350,
@@ -72,7 +122,7 @@ class App extends Component {
 						toolbar: [
 							["style", ["style", "customStyle", "copyFormatting"]],
 							["font", ["bold", "italic", "underline", "strikethrough", "superscript", "subscript", "clear", "customCleaner"]],
-							["fontname", ["fontname", "customFont"]],
+							["fontname", ["customFont"]],
                             ["fontsize", ["fontsizeInput"]],
                             ['color', ['forecolor', 'backcolor']],
 							["para", ["ul", "ol", "listStyles", "paragraph"]],
