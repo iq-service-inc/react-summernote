@@ -1,6 +1,8 @@
 # Changelog
 
-## [2.3.20](https://github.com/iq-service-inc/react-summernote/compare/v2.3.19...v2.3.20)(2026-03-26)
+## [2.3.21](https://github.com/iq-service-inc/react-summernote/compare/v2.3.19...v2.3.21)(2026-03-26)
+
+跳過 2.3.20 版本，發布 2.3.21 版本
 
 ### feat
 * 新增 baseFontStyle 支援，允許用戶自定義編輯器預設字體樣式 ([6ef649a3](https://github.com/iq-service-inc/react-summernote/commit/6ef649a36b25fb43d163354ae8099025807cf559))
