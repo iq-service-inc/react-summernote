@@ -1,0 +1,40 @@
+name: Test Publish Package to npmjs
+
+on:
+  push:
+    tags:
+      - "v*-test.*"
+  
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # 在 Node 16 環境下進行建置
+    - uses: actions/setup-node@v3
+      name: Setup Node.js 16.x
+      with:
+        node-version: '16.x'
+        registry-url: 'https://registry.npmjs.org'
+
+    - run: npm ci
+    - run: npm run build
+
+    # 在 Node 24 環境下進行發布
+    - uses: actions/setup-node@v3
+      name: Setup Node.js 24.x
+      with:
+        node-version: '24.x'
+        registry-url: 'https://registry.npmjs.org'
+    - name: trusted publish to npm
+      # --provenance: 產生來源證明，確保套件沒有被篡改
+      # --access public: 如果是 Scoped package (如 @yourname/pkg)，這能確保套件是公開的
+      # --ignore-scripts: 【重點】防止 npm publish 時在 Node 24 環境觸發舊專案的 prepublish 腳本而報錯
+      run: npm publish --provenance --access public --ignore-scripts --tag test
