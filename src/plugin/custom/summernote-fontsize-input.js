@@ -20,11 +20,30 @@
     if ($.summernote && $.summernote.options.modules.editor && $.summernote.options.modules.editor.prototype) {
         $.extend($.summernote.options.modules.editor.prototype, {
             customFontSize: function (value) {
-                this.customFontSize = this.wrapCommand((value) => {
-                    const unit = 'px';
-                    return this.fontStyling('font-size', value + unit);
-                });
-                this.customFontSize(value);
+                const unit = 'px';
+                const rng = this.getLastRange();
+                if (rng !== '') {
+                    const spans = this.style.styleNodes(rng);
+                    $(spans).css('font-size', value + unit);
+                    // merge adjacent sibling spans with identical attributes
+                    spans.forEach(function (span) {
+                        if (!span.parentNode) return;
+                        var next;
+                        while ((next = span.nextSibling) &&
+                               next.nodeType === 1 && next.tagName === 'SPAN' &&
+                               next.attributes.length === span.attributes.length &&
+                               Array.prototype.every.call(span.attributes, function (attr) {
+                                   return next.getAttribute(attr.name) === attr.value;
+                               })) {
+                            while (next.firstChild) span.appendChild(next.firstChild);
+                            next.parentNode.removeChild(next);
+                        }
+                    });
+                    var liveSpans = spans.filter(function (s) { return !!s.parentNode; });
+                    if (liveSpans.length) {
+                        this.setLastRange(this.createRangeFromList(liveSpans).select());
+                    }
+                }
             }
         });
     }
@@ -140,8 +159,10 @@
                         title: lang.font.size,
                         click: function (e) {
                             e.preventDefault();
+                            context.invoke("beforeCommand");
                             const fontSize = $(e.target).closest('[data-value]').data('value');
                             context.invoke('editor.customFontSize', fontSize);
+                            context.invoke("afterCommand");
                         }
                     }),
                 ]).render();
