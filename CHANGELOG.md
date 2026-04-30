@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.22](https://github.com/iq-service-inc/react-summernote/compare/v2.3.21...v2.3.22)(2026-04-30)
+
+### feat
+* summernote-fontsize-input 合併相鄰且屬性完全相同的 span 避免過多零碎 span ([1cffbcf](https://github.com/iq-service-inc/react-summernote/commit/1cffbcf21d85efe5a582eb83f99dc640482a7d0f))
+
+### fix
+* summernote-fontsize-input 修復下拉選單變更字體會產生多餘的 span，修改成與輸入框的行為一致 ([f577da9](https://github.com/iq-service-inc/react-summernote/commit/f577da940d19ad763dd3daea093ab4ac9919263e))
+
 ## [2.3.21](https://github.com/iq-service-inc/react-summernote/compare/v2.3.19...v2.3.21)(2026-03-26)
 
 跳過 2.3.20 版本，發布 2.3.21 版本
