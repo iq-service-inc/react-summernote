@@ -290,8 +290,8 @@ class InnerReactSummernote extends React.Component {
         });
 
         // 更新 toolbar 字體大小和字體名稱的顯示樣式
-        if (baseFontStyle['font-size']) this.editor.summernote('fontsizeInput.updateFontsizeInput');
-        if (baseFontStyle['font-family']) this.editor.summernote('customFont.updateCurrentStyle');
+        if (baseFontStyle['font-size']) this.editor.summernote('fontsizeInput.updateFontsizeInput', this.noteEditable);
+        if (baseFontStyle['font-family']) this.editor.summernote('customFont.updateCurrentStyle', false, this.noteEditable);
 
         // 更新 toolbar 字體顏色的顯示樣式
         if (baseFontStyle['color']) {

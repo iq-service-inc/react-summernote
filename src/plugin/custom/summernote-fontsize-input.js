@@ -70,11 +70,11 @@
                         if (!span.parentNode) return;
                         var next;
                         while ((next = span.nextSibling) &&
-                               next.nodeType === 1 && next.tagName === 'SPAN' &&
-                               next.attributes.length === span.attributes.length &&
-                               Array.prototype.every.call(span.attributes, function (attr) {
-                                   return next.getAttribute(attr.name) === attr.value;
-                               })) {
+                            next.nodeType === 1 && next.tagName === 'SPAN' &&
+                            next.attributes.length === span.attributes.length &&
+                            Array.prototype.every.call(span.attributes, function (attr) {
+                                return next.getAttribute(attr.name) === attr.value;
+                            })) {
                             while (next.firstChild) span.appendChild(next.firstChild);
                             next.parentNode.removeChild(next);
                         }
@@ -245,9 +245,15 @@
             }
 
             // update toolbar px/pt value
-            this.updateFontsizeInput = function () {
+            this.updateFontsizeInput = function (target) {
+                let styleInfo = {}
+                if (target) {
+                    styleInfo = context.invoke("editor.styleFromNode", target)
+                }
+                else {
+                    styleInfo = context.invoke('editor.currentStyle');
+                }
                 // get current font size
-                const styleInfo = context.invoke('editor.currentStyle');
                 const fontUnit = styleInfo['font-size-unit'][0]
                 const fontSize = parseFloat(styleInfo['font-size-unit']['input'].replace(fontUnit, ''));
 

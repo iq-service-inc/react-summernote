@@ -157,9 +157,15 @@
                 context.invoke("afterCommand");
             }
 
-            this.updateCurrentStyle = function($container){
+            this.updateCurrentStyle = function($container, target){
                 const $cont = $container || context.layoutInfo.toolbar;
-                const styleInfo = context.invoke('editor.currentStyle');
+                let styleInfo = {}
+                if (target) {
+                    styleInfo = context.invoke("editor.styleFromNode", target)
+                }
+                else {
+                    styleInfo = context.invoke('editor.currentStyle');
+                }
                 if (styleInfo['font-family']) {
                     const fontNames = styleInfo['font-family'].split(',').map((name) => {
                         return name.replace(/[\'\"]/g, '')
