@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.23](https://github.com/iq-service-inc/react-summernote/compare/v2.3.22...v2.3.23)(2026-06-25)
+
+### fix
+* 修復 summernot-fontsize-Input, summernot-custom-font 空白內容的游標定位 ([25716a6](https://github.com/iq-service-inc/react-summernote/commit/25716a646614b7c5d549d71daedc15eb79ff21a6))
+
 ## [2.3.22](https://github.com/iq-service-inc/react-summernote/compare/v2.3.21...v2.3.22)(2026-04-30)
 
 ### feat
