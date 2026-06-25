@@ -1,9 +1,14 @@
 # Changelog
 
+## [2.3.24](https://github.com/iq-service-inc/react-summernote/compare/v2.3.23...v2.3.24)(2026-06-25)
+
+### fix
+* fix: updateBaseFontStyle 更新字體和字號的顯示樣式指定從 noteEditable 取得 ([c8e1f65](https://github.com/iq-service-inc/react-summernote/commit/c8e1f6582aec9f142cd964bf2ceaae65da173c5a))
+
 ## [2.3.23](https://github.com/iq-service-inc/react-summernote/compare/v2.3.22...v2.3.23)(2026-06-25)
 
 ### fix
-* 修復 summernot-fontsize-Input, summernot-custom-font 空白內容的游標定位 ([25716a6](https://github.com/iq-service-inc/react-summernote/commit/25716a646614b7c5d549d71daedc15eb79ff21a6))
+* 修復 summernote-fontsize-Input, summernote-custom-font 空白內容的游標定位 ([25716a6](https://github.com/iq-service-inc/react-summernote/commit/25716a646614b7c5d549d71daedc15eb79ff21a6))
 
 ## [2.3.22](https://github.com/iq-service-inc/react-summernote/compare/v2.3.21...v2.3.22)(2026-04-30)
 
