@@ -51,6 +51,9 @@
             self.events = {
                 'summernote.keyup summernote.mouseup summernote.change': function () {
                     context.invoke('customFont.updateCurrentStyle')
+                },
+                'summernote.change': function () {
+                    context.invoke('editor.cleanupBogus', 'fontname')
                 }
             }
 
@@ -103,7 +106,54 @@
 
             this.setFontName = function (value) {
                 context.invoke("beforeCommand");
-                modules.editor.fontStyling.call(modules.editor, 'font-family', value)
+                const rng = context.invoke('editor.getLastRange');
+                context.invoke('editor.cleanupBogus', 'fontname', true);
+                if (rng !== '') {
+                    const spans = modules.editor.style.styleNodes(rng);
+                    $(spans).css('font-family', value);
+                    // merge adjacent sibling spans with identical attributes
+                    spans.forEach(function (span) {
+                        if (!span.parentNode) return;
+                        var next;
+                        while ((next = span.nextSibling) &&
+                               next.nodeType === 1 && next.tagName === 'SPAN' &&
+                               next.attributes.length === span.attributes.length &&
+                               Array.prototype.every.call(span.attributes, function (attr) {
+                                   return next.getAttribute(attr.name) === attr.value;
+                               })) {
+                            while (next.firstChild) span.appendChild(next.firstChild);
+                            next.parentNode.removeChild(next);
+                        }
+                    });
+                    var liveSpans = spans.filter(function (s) { return !!s.parentNode; });
+                    if (rng.isCollapsed()) {
+                        // 如果是 collapsed，則要在 span 裡面放入 zero-width 字元，才能讓 caret 顯示出來
+                        const firstSpan = $.summernote.lists.head(liveSpans);
+                        if (firstSpan && !$.summernote.dom.nodeLength(firstSpan)) {
+                            // 如果 span 裡面沒有任何文字，就插入 zero-width 字元，並更新 range
+                            // 後面監聽 summernote.change 觸發 cleanupBogus，會把 bogus span 的 zero-width 字元清掉
+                            firstSpan.innerHTML = $.summernote.dom.ZERO_WIDTH_NBSP_CHAR;
+                            const bogusTextNode = firstSpan.firstChild;
+                            const caretOffset = $.summernote.dom.nodeLength(bogusTextNode);
+                            // 顯示游標
+                            const caretRng = $.summernote.range.create(
+                                bogusTextNode,
+                                caretOffset,
+                                bogusTextNode,
+                                caretOffset
+                            );
+                            context.invoke('editor.setLastRange', caretRng);
+                            caretRng.select();
+                            $editable.data('fontname-bogus', firstSpan);
+                        }
+                        else {
+                            const liveSpansRng = context.invoke('editor.createRangeFromList', liveSpans);
+                            liveSpansRng.select();
+                            context.invoke('editor.setLastRange', liveSpansRng);
+                        }
+                    }
+                }
+
                 context.invoke("afterCommand");
             }
 

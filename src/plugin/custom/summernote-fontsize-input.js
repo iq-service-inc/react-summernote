@@ -19,9 +19,49 @@
 }(function ($) {
     if ($.summernote && $.summernote.options.modules.editor && $.summernote.options.modules.editor.prototype) {
         $.extend($.summernote.options.modules.editor.prototype, {
+            cleanupBogus: function (type, force) {
+                // 如果 bogus span 已不存在，就清掉 data 標記
+                const bogusSpan = this.$editable.data(type + '-bogus');
+                if (!bogusSpan || !bogusSpan.parentNode) {
+                    this.$editable.removeData(type + '-bogus');
+                    return;
+                }
+
+                // 如果已經沒有 zero-width 字元，也清掉 data 標記
+                const ZERO_WIDTH_NBSP_CHAR = $.summernote.dom.ZERO_WIDTH_NBSP_CHAR;
+                const text = bogusSpan.textContent || '';
+                if (text.indexOf(ZERO_WIDTH_NBSP_CHAR) === -1) {
+                    this.$editable.removeData(type + '-bogus');
+                    return;
+                }
+
+                // 只有在「目前還是同一個 collapsed caret，且內容只剩 zero-width 字元」時才保留
+                const rng = this.getLastRange();
+                const shouldKeepBogus = !force &&
+                    text === ZERO_WIDTH_NBSP_CHAR &&
+                    rng !== '' && rng.isCollapsed() &&
+                    bogusSpan.contains(rng.sc);
+
+                if (shouldKeepBogus) {
+                    return;
+                }
+
+                // 其他情況都清掉 bogus span
+                const offset = text.indexOf(ZERO_WIDTH_NBSP_CHAR);
+                const shouldUpateRange = (offset > -1 && rng.sc === bogusSpan.firstChild && rng.so > offset);
+                bogusSpan.textContent = text.replace(ZERO_WIDTH_NBSP_CHAR, '');
+                // 如果原本的 range 在 bogus span 裡面，需要更新 range 的位置
+                if (shouldUpateRange) {
+                    const caretRng = $.summernote.range.create(bogusSpan.firstChild, rng.eo, bogusSpan.firstChild, rng.eo);
+                    caretRng.select();
+                    this.setLastRange(caretRng);
+                }
+                this.$editable.removeData(type + '-bogus');
+            },
             customFontSize: function (value) {
                 const unit = 'px';
                 const rng = this.getLastRange();
+                this.cleanupBogus('fontsize', true);
                 if (rng !== '') {
                     const spans = this.style.styleNodes(rng);
                     $(spans).css('font-size', value + unit);
@@ -40,8 +80,31 @@
                         }
                     });
                     var liveSpans = spans.filter(function (s) { return !!s.parentNode; });
-                    if (liveSpans.length) {
-                        this.setLastRange(this.createRangeFromList(liveSpans).select());
+
+                    if (rng.isCollapsed()) {
+                        // 如果是 collapsed，則要在 span 裡面放入 zero-width 字元，才能讓 caret 顯示出來
+                        const firstSpan = $.summernote.lists.head(liveSpans);
+                        if (firstSpan && !$.summernote.dom.nodeLength(firstSpan)) {
+                            // 如果 span 裡面沒有任何文字，就插入 zero-width 字元，並更新 range
+                            // 後面監聽 summernote.change 觸發 cleanupBogus，會把 bogus span 的 zero-width 字元清掉
+                            firstSpan.innerHTML = $.summernote.dom.ZERO_WIDTH_NBSP_CHAR;
+                            const bogusTextNode = firstSpan.firstChild;
+                            const caretOffset = $.summernote.dom.nodeLength(bogusTextNode);
+                            // 顯示游標
+                            const caretRng = $.summernote.range.create(
+                                bogusTextNode,
+                                caretOffset,
+                                bogusTextNode,
+                                caretOffset
+                            );
+                            this.setLastRange(caretRng.select());
+                            this.$editable.data('fontsize-bogus', firstSpan);
+                        }
+                        else {
+                            this.setLastRange(
+                                this.createRangeFromList(liveSpans).select()
+                            );
+                        }
                     }
                 }
             }
@@ -66,7 +129,7 @@
                 $editingArea = context.layoutInfo.editingArea,
                 $toolbar = context.layoutInfo.toolbar,
                 $statusbar = context.layoutInfo.statusbar,
-                modules = modules = context.modules,
+                modules = context.modules,
                 options = context.options,
                 lang = options.langInfo;
             this.$document = $(document);
@@ -224,6 +287,9 @@
                 'summernote.keyup summernote.mouseup summernote.change': function () {
                     context.invoke('fontsizeInput.updateFontsizeInput')
                 },
+                'summernote.change': function () {
+                    context.invoke('editor.cleanupBogus', 'fontsize')
+                }
             }
 
 
