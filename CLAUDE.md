@@ -8,6 +8,7 @@
 - [02-plugins.md](dev-docs/02-plugins.md) — Plugin 系統、patch 對應上游 issue、新增 plugin checklist
 - [03-build-release.md](dev-docs/03-build-release.md) — 建置設定、CI、DEMO 上版與 npm 發佈 SOP
 - [04-known-issues.md](dev-docs/04-known-issues.md) — 已知問題、技術債、行為陷阱
+- [05-supportweb-usage.md](dev-docs/05-supportweb-usage.md) — 下游主要使用者 SupportWeb 的實際使用面與影響評估 checklist
 
 使用者文件在 [README.md](README.md),plugin 使用說明在 [src/plugin/README.md](src/plugin/README.md)。
 
@@ -47,6 +48,9 @@
    若上游發佈涵蓋修復的新版本,才可移除(見 [02-plugins.md](dev-docs/02-plugins.md))。
 5. Commit message 遵循 [Conventional Commits](https://www.conventionalcommits.org/zh-hant/v1.0.0/)。
 6. 修改元件行為後,用 `npm start` 開 demo 手動驗證(本專案沒有自動化測試)。
+7. **主要下游是 SupportWeb**(`D:\Support6\SupportWeb`,25+ 處使用):改 CSS class、
+   toolbar/popover DOM、ref API、ImportCode 順序前,先對照
+   [05-supportweb-usage.md](dev-docs/05-supportweb-usage.md) 的契約清單評估影響。
 
 ## 發佈 SOP(摘要,詳見 [03-build-release.md](dev-docs/03-build-release.md))
 
