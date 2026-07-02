@@ -1,14 +1,20 @@
-# 05 — 下游主要使用者:SupportWeb
+# SupportWeb 使用 react-summernote 現況與升級須知
 
-react-summernote 主要服務的專案是 **SupportWeb**(IQ-Support 6 前端,本機位置
-`D:\Support6\SupportWeb`,私有 git)。評估任何修改的影響時,以本檔的實際使用面為準,
-而不是猜測「可能有人這樣用」。調查基準:SupportWeb @ 2026-07、react-summernote v2.3.24。
+本文記錄 **SupportWeb**(IQ-Support 6 前端)對 `@iqs/react-summernote` 的實際使用面。
+兩個用途:(1) react-summernote 維護者評估修改影響時的契約清單;
+(2) 可獨立交給 SupportWeb 維護工程師,作為升級套件版本時的參考。
+調查基準:SupportWeb @ 2026-07、react-summernote v2.3.24。
 
 ## 依賴狀態
 
 - `@iqs/react-summernote": "^2.3.19"`,**實際安裝 2.3.19**——尚未吃到
   2.3.21 的 `baseFontStyle`、2.3.22/2.3.23 的 fontsize-input 修復、2.3.24 的 baseFontStyle 修正。
   升級 SupportWeb 依賴版本時,這幾版的變更要一併驗證。
+- **2.3.25 起 baseFontStyle 語意變更**:預設樣式以 inline style 寫入空段落
+  (`<p style="..."><br></p>`)並隨 HTML 內容保存,不再套容器 CSS。
+  SupportWeb 目前**沒有使用** baseFontStyle prop,升級不受影響;
+  若日後要用,請注意「空編輯器的 value 是帶樣式空段落」與
+  「動態更新不改寫既有內容」兩點(詳見套件 README 的 baseFontStyle 節)。
 - 技術棧:React 16.9、**webpack 5**(注意:與 react-summernote 自身的 webpack 4 不同,
   但消費的是打包後的 `dist/main.js` 與 `src/plugin/` 原始碼,無建置相容問題)、
   bootstrap 4.3、jquery 3.6.1、summernote 0.8.18、store;
