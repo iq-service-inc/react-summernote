@@ -96,7 +96,7 @@ PropTypes 定義在 [SummerNote.jsx:456–474](../src/components/SummerNote.jsx)
 | `codeview` | bool | 切換 HTML 原始碼模式 |
 | `disabled` | bool | 禁用編輯 |
 | `destroy` | bool | truthy 時銷毀編輯器 |
-| `baseFontStyle` | object | 預設文字樣式,支援 `font-family` / `font-size` / `color`(v2.3.21+) |
+| `baseFontStyle` | object | 預設文字樣式,支援 `font-family` / `font-size` / `color`(v2.3.21+;2.3.25 起以 inline style 寫入空段落隨內容保存,見下方機制節) |
 | `onInit` | func | 初始化完成,參數是一包舊版 API 物件 |
 | `onChange` | func | 內容變更,參數是 HTML 字串 |
 | `onImageUpload` | func | `(files, insertImage) =>`;插入/貼上圖片檔案時觸發 |
@@ -175,19 +175,42 @@ paste 事件
 - [src/lib/ExcelTable.js](../src/lib/ExcelTable.js):`getTable` / `createStylesheet` /
   `applyStyleInline` / `removeImage` 四個靜態工具。
 
-## baseFontStyle 機制(284–314)
+## baseFontStyle 機制(2.3.25 重寫為空段落 inline style)
 
-`updateBaseFontStyle(baseFontStyle)` 做三件事:
+> 歷史:v2.3.21 的原始實作把樣式套在 `.note-editable` 容器 CSS 上,導致儲存的 HTML
+> 沒有記錄預設樣式(編輯器外顯示不一致)。2.3.25 起改為下述機制。
 
-1. 直接設定 `.note-editable` 的 `font-size` / `font-family` / `color`(未指定的清空)
-2. 同步 toolbar 顯示——**依賴兩個自家 plugin 已載入**:
-   - `summernote('fontsizeInput.updateFontsizeInput', noteEditable)`
-   - `summernote('customFont.updateCurrentStyle', false, noteEditable)`
-3. 同步前景色按鈕:
-   - ⚠️ 改寫 `$.summernote.options.colorButton.foreColor`——這是 **jQuery 全域設定**,
-     會影響同頁其他編輯器
-   - 更新 DOM:`.note-current-color-button` 的 `data-foreColor`、`.note-recent-color` 的
-     顯示色、隱藏的 `input[type=color]` 值
+**不變式**:`baseFontStyle` 有效(至少一個屬性)且編輯器「視覺為空」時,空段落必為
+`<p style="font-family:…;font-size:…;color:…"><br></p>`。打字內容繼承段落樣式、
+Enter 分段時 Summernote 的 `splitNode` 用 `cloneNode(false)` 複製屬性——樣式自然延續、
+隨 HTML 值忠實保存。
+
+相關方法(SummerNote.jsx,全部 gate 在 `isActiveBaseFontStyle()`,
+**未提供 prop 時零路徑執行、零 hook 安裝**):
+
+- `applyBaseFontStyleToEmptyPara(s)`:視覺為空偵測(純 DOM,不用字串比對)——
+  (1) editable 完全空(Ctrl+A 刪除後)→ 重建帶樣式 emptyPara、必要時回復游標;
+  (2) 單一空 `<p>` 子節點 → 就地覆寫三屬性(全清時移除空 style 屬性);
+  (3) 有內容 → 不碰(init 有 value 也不碰)
+- `syncBaseFontStyleToolbar(s, $para)`:字體/字號 target 傳帶樣式的 `$para`
+  (容器已無樣式,`styleFromNode` 讀 computed style);前景色按鈕區塊照舊
+  (⚠️ 仍改寫 `$.summernote.options.colorButton.foreColor` 全域設定,既有 quirk,
+  會影響同頁其他編輯器)
+- `installBaseFontStyleHooks(s)`(冪等):
+  - 覆寫 `context.modules.editor.isEmpty`——上游用 `dom.emptyPara === $editable.html()`
+    字串判空(dist L6245),帶 style 屬性的空段落會誤判非空(placeholder 不顯示、
+    isEmpty API 錯誤);覆寫加上「單一空 `<p>` 子節點」判斷
+  - 攔截 `context.reset`(instance-level wrapper,`invoke` 先查實例屬性)——
+    reset 會重建 modules(isEmpty 覆寫丟失)且結束於無樣式空段落又不觸發 change,
+    wrapper 在 origReset 後重跑 `updateBaseFontStyle`
+
+**強制點**(五處):init(handleEditorRef)、handleChange(涵蓋打字刪光、undo/redo、
+`empty()`/`code()`、codeview 關閉;**codeview 開啟期間跳過**,editable 未同步)、
+`replace()` 空內容路徑(replace 不觸發 change)、reset wrapper、
+componentWillReceiveProps(baseFontStyle 變更;只影響空編輯器,既有內容不動)。
+
+handleChange 內若有補樣式動作,會以 `noteEditable.html()` 重算傳給 onChange 的值,
+確保下游存到含樣式的 HTML。
 
 ## SummernotePlugin API
 

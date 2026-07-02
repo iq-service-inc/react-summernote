@@ -157,6 +157,18 @@ render(
 * `font-size`
 * `color`
 
+預設樣式會以 **inline style** 寫在編輯器的初始空段落上（`<p style="..."><br></p>`），
+使用者輸入的文字與 Enter 產生的新段落都會繼承這些樣式，因此 **`onChange` 取得並儲存的
+HTML 會忠實包含預設樣式**，在編輯器以外的網頁顯示時樣式一致。
+
+注意事項：
+
+* 編輯器為空時，內容值是 `<p style="..."><br></p>`（帶樣式的空段落），
+  不是 `<p><br></p>`；若您的程式以字串比對判斷「空內容」需留意
+  （`isEmpty()` API 不受影響，照常回傳 `true`）
+* 動態更新 `baseFontStyle` 只影響「目前為空的編輯器」與之後清空的狀態，
+  **不會改寫既有內容**（既有內容的樣式以其自身 inline style 為準）
+
 ```jsx
 import React, { Component } from 'react'
 import SummerNote from './SummerNote'

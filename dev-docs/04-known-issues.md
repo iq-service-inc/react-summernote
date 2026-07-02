@@ -52,6 +52,16 @@
   但動貼上邏輯時要保住這個順序假設。
 - **`baseFontStyle.color` 會改 `$.summernote.options.colorButton.foreColor` 全域預設**,
   同頁多編輯器會互相影響(單一編輯器情境下無感)。
+- **baseFontStyle 啟用時(2.3.25+),「空編輯器」的 value 是 `<p style="..."><br></p>`**
+  而非 `<p><br></p>`——下游若以字串比對判斷空內容要留意;`isEmpty()` API 已修正照常回傳 true。
+- **baseFontStyle 啟用時會在該編輯器實例上 wrap 兩個方法**(不碰全域、不碰其他實例):
+  `modules.editor.isEmpty`(上游以 `dom.emptyPara === $editable.html()` 字串判空,
+  帶 style 屬性的空段落會誤判非空)與 `context.reset`(reset 重建 modules 會丟失覆寫、
+  且結束於無樣式空段落又不觸發 change,需事後補)。清除 baseFontStyle(`{}`)後
+  wrapper 保留(無害)。未提供 baseFontStyle 的編輯器完全不安裝。
+- **baseFontStyle 啟用時 `replace('')` 會塞入帶樣式空段落**而非留下空的 editable。
+- **baseFontStyle 動態變更不改寫既有內容**(2.3.25 起的刻意語意):只影響空編輯器
+  與後續清空狀態;既有內容樣式以自身 inline style 為準。
 - **`options.callbacks` 同名時內建 callback 蓋掉使用者的**(`handleEditorRef` 的 merge 順序),
   使用者要用 `onChange`/`onPaste` 等 props 而非 `options.callbacks`。
 - **預設 popover 引用自家 plugin 按鈕**:不呼叫 `ImportCode()` 又沒覆寫 `options.popover`
