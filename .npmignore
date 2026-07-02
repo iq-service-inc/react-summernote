@@ -1,6 +1,8 @@
 .github
 docs
+dev-docs
 www
+CLAUDE.md
 .babelrc
 postcss*
 react-summernote.png
