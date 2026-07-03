@@ -234,6 +234,10 @@ class InnerReactSummernote extends React.Component {
 				notePlaceholder.show();
 			}
 			noteEditable.html(content);
+			// replace 不觸發 summernote change,清空時需在此補回帶樣式空段落
+			if (contentLength === 0 && this.hasActiveBaseFontStyle()) {
+				this.applyBaseFontStyleToEmptyPara(this.props.baseFontStyle);
+			}
 		}
 	}
 
@@ -280,18 +284,69 @@ class InnerReactSummernote extends React.Component {
 		return range
 	}
     
-    // 更新預設字體樣式，於初始化和 baseFontStyle props 變動時呼叫
-    updateBaseFontStyle(baseFontStyle) {
-        // 設定預設字體樣式
-        this.noteEditable.css({
+    // baseFontStyle 是否有有效設定(未提供或三屬性皆空時,相關邏輯一律不執行)
+    isActiveBaseFontStyle(baseFontStyle) {
+        return !!baseFontStyle && !!(baseFontStyle['font-family'] || baseFontStyle['font-size'] || baseFontStyle['color']);
+    }
+
+    hasActiveBaseFontStyle() {
+        return this.isActiveBaseFontStyle(this.props.baseFontStyle);
+    }
+
+    // 組出受管理的三個樣式屬性(值為 '' 時 jQuery.css 會移除該屬性)
+    buildBaseFontStyleCss(baseFontStyle) {
+        return {
             'font-size': baseFontStyle['font-size'] || '',
             'font-family': baseFontStyle['font-family'] || '',
             'color': baseFontStyle['color'] || ''
-        });
+        };
+    }
 
+    // 編輯器視覺為空時,維護帶 inline style 的空段落,使預設樣式隨 HTML 內容保存
+    // 回傳 $para(有套用)或 null(編輯器有內容,不碰)
+    applyBaseFontStyleToEmptyPara(baseFontStyle) {
+        if (!this.noteEditable || !this.noteEditable.length) return null;
+        const dom = $.summernote.dom;
+        const editable = this.noteEditable[0];
+        const css = this.buildBaseFontStyleCss(baseFontStyle);
+
+        const child = editable.childNodes.length === 1 ? editable.firstChild : null;
+
+        // 單一空 <p>(<p><br></p> 或已帶樣式者)→ 就地覆寫三個屬性
+        // 僅限 <p>:H1-H6/PRE 等是使用者套用的區塊樣式,重新蓋章會壓掉標籤原生樣式;
+        // DIV 交給下方重建,正規化為 <p>(Chrome 刪除內容常以 DIV 當段落)
+        if (child && child.nodeName === 'P' && dom.isEmpty(child)) {
+            const $para = $(child).css(css);
+            // 三屬性皆清除時移除空的 style 屬性,維持與上游 <p><br></p> 一致
+            if (!$para.attr('style')) $para.removeAttr('style');
+            return $para;
+        }
+        // 需整個重建帶樣式空段落的兩種「視覺為空」:
+        // (a) 完全空(如 Ctrl+A 刪除後)
+        // (b) 單一深層為空的 <p>/<div> 殘殼——Chrome 解散清單、刪除帶樣式內容時
+        //     會留下 <div><br></div> 或 <div><font><span><br></span></font></div>
+        //     (清單殼 <ul><li><br></li></ul> 仍有可見 bullet,非視覺為空,不在此列)
+        const isDeepEmptyShell = child && /^(P|DIV)$/.test(child.nodeName) &&
+            dom.deepestChildIsEmpty(child);
+        if ((dom.isEmpty(editable) || isDeepEmptyShell) && this.isActiveBaseFontStyle(baseFontStyle)) {
+            const $para = $(dom.emptyPara).css(css);
+            this.noteEditable.empty().append($para);
+            // 焦點在編輯器內才回復游標,避免 API 呼叫造成的變更搶走焦點
+            if (editable === document.activeElement || $.contains(editable, document.activeElement)) {
+                const rng = $.summernote.range.create($para[0], 0, $para[0], 0);
+                rng.select();
+                this.editor.summernote('editor.setLastRange', rng);
+            }
+            return $para;
+        }
+        return null;
+    }
+
+    // 更新 toolbar 顯示:字體/字號從帶樣式的空段落讀取(容器已無樣式),顏色按鈕更新預設值
+    syncBaseFontStyleToolbar(baseFontStyle, $para) {
         // 更新 toolbar 字體大小和字體名稱的顯示樣式
-        if (baseFontStyle['font-size']) this.editor.summernote('fontsizeInput.updateFontsizeInput', this.noteEditable);
-        if (baseFontStyle['font-family']) this.editor.summernote('customFont.updateCurrentStyle', false, this.noteEditable);
+        if ($para && baseFontStyle['font-size']) this.editor.summernote('fontsizeInput.updateFontsizeInput', $para);
+        if ($para && baseFontStyle['font-family']) this.editor.summernote('customFont.updateCurrentStyle', false, $para);
 
         // 更新 toolbar 字體顏色的顯示樣式
         if (baseFontStyle['color']) {
@@ -311,6 +366,80 @@ class InnerReactSummernote extends React.Component {
             let $input = $foreButton.find('input[type=color]');
             $input.attr('value', baseFontStyle.color);
         }
+    }
+
+    // 每實例 hook,僅 baseFontStyle 啟用時安裝:
+    // (a) 修正 Editor.isEmpty——上游以 dom.emptyPara === $editable.html() 字串判空,
+    //     帶 style 屬性的空段落會被誤判非空(placeholder 不顯示、isEmpty API 錯誤)
+    // (b) 攔截 context.reset——reset 會重建 modules(isEmpty 覆寫丟失)且結束時
+    //     editable 為無樣式空段落又不觸發 change,需事後重掛與補樣式
+    // (c) 攔截 Editor.onFormatBlock——execCommand('FormatBlock') 會把 style 屬性
+    //     原封搬到新標籤,inline 字體屬性壓掉 H1-H6/PRE/BLOCKQUOTE 的原生樣式;
+    //     套非 P 標籤時剝除三個受管理屬性,切回 Normal(P)時補回 baseFontStyle
+    installBaseFontStyleHooks(baseFontStyle) {
+        if (!this.isActiveBaseFontStyle(baseFontStyle)) return;
+        const context = this.editor.data('summernote');
+        if (!context || !context.modules || !context.modules.editor) return;
+        const self = this;
+        const dom = $.summernote.dom;
+
+        const editorModule = context.modules.editor;
+        if (!editorModule.isEmpty._baseFontStylePatched) {
+            const origIsEmpty = editorModule.isEmpty.bind(editorModule);
+            const patchedIsEmpty = function () {
+                if (origIsEmpty()) return true;
+                const editable = editorModule.$editable[0];
+                return editable.childNodes.length === 1 &&
+                    dom.isPara(editable.firstChild) && dom.isEmpty(editable.firstChild);
+            };
+            patchedIsEmpty._baseFontStylePatched = true;
+            editorModule.isEmpty = patchedIsEmpty;
+        }
+
+        if (!editorModule.onFormatBlock._baseFontStylePatched) {
+            const origOnFormatBlock = editorModule.onFormatBlock.bind(editorModule);
+            const patchedOnFormatBlock = function (tagName, $target) {
+                origOnFormatBlock(tagName, $target);
+                const style = self.props.baseFontStyle;
+                if (!self.isActiveBaseFontStyle(style)) return;
+                const upper = String(tagName).toUpperCase();
+                const rng = editorModule.createRange();
+                if (!rng) return;
+                const blocks = rng.nodes(function (n) { return n && n.nodeName === upper; }, { includeAncestor: true });
+                $(blocks).each(function () {
+                    const $block = $(this);
+                    if (upper === 'P') {
+                        // Normal 的視覺 = 預設樣式;未自帶任何受管理屬性才補,
+                        // 避免蓋掉既有內容自己的段落樣式
+                        if (!this.style.fontSize && !this.style.fontFamily && !this.style.color) {
+                            $block.css(self.buildBaseFontStyleCss(style));
+                        }
+                    } else {
+                        $block.css({ 'font-size': '', 'font-family': '', 'color': '' });
+                        if (!$block.attr('style')) $block.removeAttr('style');
+                    }
+                });
+            };
+            patchedOnFormatBlock._baseFontStylePatched = true;
+            editorModule.onFormatBlock = patchedOnFormatBlock;
+        }
+
+        // invoke('reset') 會先查 context 實例屬性,包在實例上即可攔截所有 reset 呼叫
+        if (!context._baseFontStyleResetWrapped) {
+            const origReset = context.reset.bind(context);
+            context.reset = function () {
+                origReset();
+                self.updateBaseFontStyle(self.props.baseFontStyle || {});
+            };
+            context._baseFontStyleResetWrapped = true;
+        }
+    }
+
+    // 更新預設字體樣式,於初始化、baseFontStyle props 變動與內容變空時呼叫
+    updateBaseFontStyle(baseFontStyle) {
+        this.installBaseFontStyleHooks(baseFontStyle);
+        const $para = this.applyBaseFontStyleToEmptyPara(baseFontStyle);
+        this.syncBaseFontStyleToolbar(baseFontStyle, $para);
     }
 
 	handleChange(txt) {
@@ -341,6 +470,14 @@ class InnerReactSummernote extends React.Component {
 		if (typeof onImagePasteFromWord === "function" && this.isPasteFromWord) {
 			this.isPasteFromWord = false
 			onImagePasteFromWord($pastedImgs);
+		}
+
+		// 內容變空時(打字刪光、undo/redo、empty()、codeview 關閉等)重套 baseFontStyle
+		// codeview 開啟期間 editable 尚未同步,不可在此維護也不可重算 txt
+		if (this.hasActiveBaseFontStyle() && !this.editor.summernote('codeview.isActivated')) {
+			this.installBaseFontStyleHooks(this.props.baseFontStyle)
+			const $styledPara = this.applyBaseFontStyleToEmptyPara(this.props.baseFontStyle)
+			if ($styledPara) txt = this.noteEditable.html()
 		}
 
 		if (typeof onChange === "function") onChange(txt);
@@ -460,6 +597,7 @@ InnerReactSummernote.propTypes = {
 	className: PropTypes.string,
 	options: PropTypes.object,
 	disabled: PropTypes.bool,
+	baseFontStyle: PropTypes.object,
 	onInit: PropTypes.func,
 	onEnter: PropTypes.func,
 	onFocus: PropTypes.func,

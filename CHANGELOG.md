@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.25](https://github.com/iq-service-inc/react-summernote/compare/v2.3.24...v2.3.25)(未發佈)
+
+### fix
+* baseFontStyle 改以 inline style 寫入空段落（`<p style="..."><br></p>`），預設樣式隨 HTML 內容保存，修正儲存後內容在編輯器外顯示不一致；移除 .note-editable 容器 CSS 套用方式 ([92fd389](https://github.com/iq-service-inc/react-summernote/commit/92fd389))
+  * 行為變更：空編輯器的 value 為帶樣式空段落；動態更新 baseFontStyle 不再改寫既有內容；未使用 baseFontStyle 者行為不變
+* baseFontStyle 啟用時，全選刪除清單/帶樣式內容後 Chrome 殘留的空殼（`<div><br></div>`、`<div><font><span><br></span></font></div>`）正規化為帶樣式空段落；清單殼 `<ul><li><br></li></ul>` 仍有可見 bullet 屬上游原生行為，不介入 ([8be6753](https://github.com/iq-service-inc/react-summernote/commit/8be6753))
+* baseFontStyle 啟用時，Style 下拉套用 Header/Code 等區塊樣式不生效（inline 字體屬性壓掉標籤原生樣式）；改為套非 P 標籤時剝除受管理屬性、切回 Normal 時補回 baseFontStyle（不蓋既有內容自己的段落樣式） ([e2bb1bf](https://github.com/iq-service-inc/react-summernote/commit/e2bb1bf))
+
 ## [2.3.24](https://github.com/iq-service-inc/react-summernote/compare/v2.3.23...v2.3.24)(2026-06-25)
 
 ### fix
