@@ -310,16 +310,24 @@ class InnerReactSummernote extends React.Component {
         const editable = this.noteEditable[0];
         const css = this.buildBaseFontStyleCss(baseFontStyle);
 
-        // 單一空 <p>(<p><br></p> 或已帶樣式者)→ 就地覆寫三個屬性
-        if (editable.childNodes.length === 1 &&
-            dom.isPara(editable.firstChild) && dom.isEmpty(editable.firstChild)) {
-            const $para = $(editable.firstChild).css(css);
+        const child = editable.childNodes.length === 1 ? editable.firstChild : null;
+
+        // 單一空段落(<p><br></p> 或已帶樣式者)→ 就地覆寫三個屬性
+        // DIV 除外:交給下方重建,正規化為 <p>(Chrome 刪除內容常以 DIV 當段落)
+        if (child && dom.isPara(child) && child.nodeName !== 'DIV' && dom.isEmpty(child)) {
+            const $para = $(child).css(css);
             // 三屬性皆清除時移除空的 style 屬性,維持與上游 <p><br></p> 一致
             if (!$para.attr('style')) $para.removeAttr('style');
             return $para;
         }
-        // 完全空(如 Ctrl+A 刪除後)→ 重建帶樣式空段落
-        if (dom.isEmpty(editable) && this.isActiveBaseFontStyle(baseFontStyle)) {
+        // 需整個重建帶樣式空段落的兩種「視覺為空」:
+        // (a) 完全空(如 Ctrl+A 刪除後)
+        // (b) 單一深層為空的 <p>/<div> 殘殼——Chrome 解散清單、刪除帶樣式內容時
+        //     會留下 <div><br></div> 或 <div><font><span><br></span></font></div>
+        //     (清單殼 <ul><li><br></li></ul> 仍有可見 bullet,非視覺為空,不在此列)
+        const isDeepEmptyShell = child && /^(P|DIV)$/.test(child.nodeName) &&
+            dom.deepestChildIsEmpty(child);
+        if ((dom.isEmpty(editable) || isDeepEmptyShell) && this.isActiveBaseFontStyle(baseFontStyle)) {
             const $para = $(dom.emptyPara).css(css);
             this.noteEditable.empty().append($para);
             // 焦點在編輯器內才回復游標,避免 API 呼叫造成的變更搶走焦點
