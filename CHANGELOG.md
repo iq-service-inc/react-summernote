@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.3.25](https://github.com/iq-service-inc/react-summernote/compare/v2.3.24...v2.3.25)(未發佈)
+## [2.3.25](https://github.com/iq-service-inc/react-summernote/compare/v2.3.24...v2.3.25)(2026-07-03)
 
 ### fix
 * baseFontStyle 改以 inline style 寫入空段落（`<p style="..."><br></p>`），預設樣式隨 HTML 內容保存，修正儲存後內容在編輯器外顯示不一致；移除 .note-editable 容器 CSS 套用方式 ([92fd389](https://github.com/iq-service-inc/react-summernote/commit/92fd389))
