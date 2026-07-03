@@ -312,9 +312,10 @@ class InnerReactSummernote extends React.Component {
 
         const child = editable.childNodes.length === 1 ? editable.firstChild : null;
 
-        // 單一空段落(<p><br></p> 或已帶樣式者)→ 就地覆寫三個屬性
-        // DIV 除外:交給下方重建,正規化為 <p>(Chrome 刪除內容常以 DIV 當段落)
-        if (child && dom.isPara(child) && child.nodeName !== 'DIV' && dom.isEmpty(child)) {
+        // 單一空 <p>(<p><br></p> 或已帶樣式者)→ 就地覆寫三個屬性
+        // 僅限 <p>:H1-H6/PRE 等是使用者套用的區塊樣式,重新蓋章會壓掉標籤原生樣式;
+        // DIV 交給下方重建,正規化為 <p>(Chrome 刪除內容常以 DIV 當段落)
+        if (child && child.nodeName === 'P' && dom.isEmpty(child)) {
             const $para = $(child).css(css);
             // 三屬性皆清除時移除空的 style 屬性,維持與上游 <p><br></p> 一致
             if (!$para.attr('style')) $para.removeAttr('style');
@@ -372,6 +373,9 @@ class InnerReactSummernote extends React.Component {
     //     帶 style 屬性的空段落會被誤判非空(placeholder 不顯示、isEmpty API 錯誤)
     // (b) 攔截 context.reset——reset 會重建 modules(isEmpty 覆寫丟失)且結束時
     //     editable 為無樣式空段落又不觸發 change,需事後重掛與補樣式
+    // (c) 攔截 Editor.onFormatBlock——execCommand('FormatBlock') 會把 style 屬性
+    //     原封搬到新標籤,inline 字體屬性壓掉 H1-H6/PRE/BLOCKQUOTE 的原生樣式;
+    //     套非 P 標籤時剝除三個受管理屬性,切回 Normal(P)時補回 baseFontStyle
     installBaseFontStyleHooks(baseFontStyle) {
         if (!this.isActiveBaseFontStyle(baseFontStyle)) return;
         const context = this.editor.data('summernote');
@@ -390,6 +394,34 @@ class InnerReactSummernote extends React.Component {
             };
             patchedIsEmpty._baseFontStylePatched = true;
             editorModule.isEmpty = patchedIsEmpty;
+        }
+
+        if (!editorModule.onFormatBlock._baseFontStylePatched) {
+            const origOnFormatBlock = editorModule.onFormatBlock.bind(editorModule);
+            const patchedOnFormatBlock = function (tagName, $target) {
+                origOnFormatBlock(tagName, $target);
+                const style = self.props.baseFontStyle;
+                if (!self.isActiveBaseFontStyle(style)) return;
+                const upper = String(tagName).toUpperCase();
+                const rng = editorModule.createRange();
+                if (!rng) return;
+                const blocks = rng.nodes(function (n) { return n && n.nodeName === upper; }, { includeAncestor: true });
+                $(blocks).each(function () {
+                    const $block = $(this);
+                    if (upper === 'P') {
+                        // Normal 的視覺 = 預設樣式;未自帶任何受管理屬性才補,
+                        // 避免蓋掉既有內容自己的段落樣式
+                        if (!this.style.fontSize && !this.style.fontFamily && !this.style.color) {
+                            $block.css(self.buildBaseFontStyleCss(style));
+                        }
+                    } else {
+                        $block.css({ 'font-size': '', 'font-family': '', 'color': '' });
+                        if (!$block.attr('style')) $block.removeAttr('style');
+                    }
+                });
+            };
+            patchedOnFormatBlock._baseFontStylePatched = true;
+            editorModule.onFormatBlock = patchedOnFormatBlock;
         }
 
         // invoke('reset') 會先查 context 實例屬性,包在實例上即可攔截所有 reset 呼叫
