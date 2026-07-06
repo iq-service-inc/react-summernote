@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.26](https://github.com/iq-service-inc/react-summernote/compare/v2.3.25...v2.3.26)(未發佈)
+
+### fix
+* baseFontStyle 啟用時，圈選文字套用新字體後全選刪除，Chrome typing style 記住刪除前樣式，下次輸入時舊字體復活（`<font face="...">`）並壓掉空段落預設樣式、toolbar 字體顯示殘留；改為空段落就地正規化時一併重設 selection 清除 typing style（原僅重建分支有回復游標） ([bbaa36c](https://github.com/iq-service-inc/react-summernote/commit/bbaa36c))
+
 ## [2.3.25](https://github.com/iq-service-inc/react-summernote/compare/v2.3.24...v2.3.25)(2026-07-03)
 
 ### fix
