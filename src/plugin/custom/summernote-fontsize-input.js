@@ -258,20 +258,24 @@
                     return
                 }
 
+                // convert font size to px and pt
+                const fontSizeInPx = fontUnit == 'px' ? fontSize : this.convert2Px(target || $editable[0]);
+                const fontSizeInPt = fontUnit == 'pt' ? fontSize : this.convertPx2Pt(fontSizeInPx);
+                
                 // find button
                 var $customFontSize = $toolbar.find('.custom-fontsize-input-group')
 
                 // update input value
                 var $fontsizeInput = $customFontSize.find('.note-fontsize-input')
-                $fontsizeInput.val(fontUnit == 'px' ? fontSize : Math.round(fontSize / 0.75))
+                $fontsizeInput.val(fontSizeInPx)
                 // update unit value
                 var $fontSizeUnit = $customFontSize.find('.note-fontsize-unit')
-                $fontSizeUnit.text(fontUnit == 'px' ? `px (${this.customConversion(fontSize)}pt)` : `px (${fontSize}pt)`)
+                $fontSizeUnit.text(`px (${fontSizeInPt}pt)`)
 
                 // remove dropdown checked
                 $customFontSize.find('.dropdown-item.checked').removeClass('checked');
 
-                const matchedItem = fontUnit == 'px' ? $customFontSize.find(`.dropdown-item[data-value="${fontSize}"]`) : $customFontSize.find(`.dropdown-item[data-value="${Math.round(fontSize / 0.75)}"]`);
+                const matchedItem = $customFontSize.find(`.dropdown-item[data-value="${fontSizeInPx}"]`);
 
                 // if current fronSize matching fontsizeInput.size list, add checked class
                 if (matchedItem.length > 0) {
@@ -292,7 +296,7 @@
             }
 
             // px to pt, unit value conversion
-            this.customConversion = function (value) {
+            this.convertPx2Pt = function (value) {
                 const conversionValue = value * 0.75 * 10;
                 // Get the first digit of the decimal point
                 const firstDecimalDigit = Math.floor(conversionValue) % 10;
@@ -300,6 +304,14 @@
                     return Math.floor(conversionValue) / 10;
                 }
                 return Math.round(conversionValue / 10);
+            }
+
+            // convert font size to px unit
+            this.convert2Px = function (target) {
+                const size = window.getComputedStyle(target, null).fontSize;
+                const fontUnit = size.match(/[a-z%]+$/);
+                const fontSize = parseFloat(size.replace(fontUnit, ''));
+                return fontSize
             }
 
             this.events = {
