@@ -302,6 +302,19 @@ class InnerReactSummernote extends React.Component {
         };
     }
 
+    // 焦點在編輯器內才回復游標,避免 API 呼叫造成的變更搶走焦點
+    // 重設 selection 同時清除 WebKit 的 typing style——Chrome 全選刪除後會記住
+    // 刪除前的 inline 樣式(如選字套用的 font-family),下次輸入時原樣復活
+    // 並壓掉空段落上的預設樣式,必須在內容變空當下重設 selection 使其失效
+    restoreCaretToPara($para) {
+        const editable = this.noteEditable[0];
+        if (editable === document.activeElement || $.contains(editable, document.activeElement)) {
+            const rng = $.summernote.range.create($para[0], 0, $para[0], 0);
+            rng.select();
+            this.editor.summernote('editor.setLastRange', rng);
+        }
+    }
+
     // 編輯器視覺為空時,維護帶 inline style 的空段落,使預設樣式隨 HTML 內容保存
     // 回傳 $para(有套用)或 null(編輯器有內容,不碰)
     applyBaseFontStyleToEmptyPara(baseFontStyle) {
@@ -319,6 +332,7 @@ class InnerReactSummernote extends React.Component {
             const $para = $(child).css(css);
             // 三屬性皆清除時移除空的 style 屬性,維持與上游 <p><br></p> 一致
             if (!$para.attr('style')) $para.removeAttr('style');
+            this.restoreCaretToPara($para);
             return $para;
         }
         // 需整個重建帶樣式空段落的兩種「視覺為空」:
@@ -331,12 +345,7 @@ class InnerReactSummernote extends React.Component {
         if ((dom.isEmpty(editable) || isDeepEmptyShell) && this.isActiveBaseFontStyle(baseFontStyle)) {
             const $para = $(dom.emptyPara).css(css);
             this.noteEditable.empty().append($para);
-            // 焦點在編輯器內才回復游標,避免 API 呼叫造成的變更搶走焦點
-            if (editable === document.activeElement || $.contains(editable, document.activeElement)) {
-                const rng = $.summernote.range.create($para[0], 0, $para[0], 0);
-                rng.select();
-                this.editor.summernote('editor.setLastRange', rng);
-            }
+            this.restoreCaretToPara($para);
             return $para;
         }
         return null;
