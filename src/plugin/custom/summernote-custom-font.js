@@ -157,17 +157,10 @@
                 context.invoke("afterCommand");
             }
 
-            this.updateCurrentStyle = function($container, target){
+            this.updateCurrentStyleByValue = function($container, value){
                 const $cont = $container || context.layoutInfo.toolbar;
-                let styleInfo = {}
-                if (target) {
-                    styleInfo = context.invoke("editor.styleFromNode", target)
-                }
-                else {
-                    styleInfo = context.invoke('editor.currentStyle');
-                }
-                if (styleInfo['font-family']) {
-                    const fontNames = styleInfo['font-family'].split(',').map((name) => {
+                if (value) {
+                    const fontNames = value.split(',').map((name) => {
                         return name.replace(/[\'\"]/g, '')
                         .replace(/\s+$/, '')
                         .replace(/^\s+/, '');
@@ -187,6 +180,20 @@
                         $item.toggleClass('checked', isChecked);
                     });
                     $cont.find('.note-current-fontname').text(updateFontName.name).css('font-family', updateFontName.value);
+                }
+            }
+
+            this.updateCurrentStyle = function($container, target){
+                const $cont = $container || context.layoutInfo.toolbar;
+                let styleInfo = {}
+                if (target) {
+                    styleInfo = context.invoke("editor.styleFromNode", target)
+                }
+                else {
+                    styleInfo = context.invoke('editor.currentStyle');
+                }
+                if (styleInfo['font-family']) {
+                    this.updateCurrentStyleByValue($cont, styleInfo['font-family'])
                 }
             }
         }

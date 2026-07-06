@@ -244,18 +244,19 @@
                 }
             }
 
-            // update toolbar px/pt value
-            this.updateFontsizeInput = function (target) {
-                let styleInfo = {}
-                if (target) {
-                    styleInfo = context.invoke("editor.styleFromNode", target)
+            this.updateFontsizeInputByValue = function (value) {
+                let fontSize, fontUnit
+                if (typeof value === 'string') {
+                    fontSize = parseFloat(value.replace(/[^0-9.]/g, ''))
+                    fontUnit = value.replace(/[^a-zA-Z]/g, '') || 'px'
+                }
+                else if (typeof value === 'number') {
+                    fontSize = value
+                    fontUnit = 'px'
                 }
                 else {
-                    styleInfo = context.invoke('editor.currentStyle');
+                    return
                 }
-                // get current font size
-                const fontUnit = styleInfo['font-size-unit'][0]
-                const fontSize = parseFloat(styleInfo['font-size-unit']['input'].replace(fontUnit, ''));
 
                 // find button
                 var $customFontSize = $toolbar.find('.custom-fontsize-input-group')
@@ -276,6 +277,18 @@
                 if (matchedItem.length > 0) {
                     matchedItem.addClass('checked');
                 }
+            }
+
+            this.updateFontsizeInput = function (target) {
+                let styleInfo = {}
+                if (target) {
+                    styleInfo = context.invoke("editor.styleFromNode", target)
+                }
+                else {
+                    styleInfo = context.invoke('editor.currentStyle');
+                }
+
+                this.updateFontsizeInputByValue(styleInfo['font-size-unit']['input'])
             }
 
             // px to pt, unit value conversion

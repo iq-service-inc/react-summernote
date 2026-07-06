@@ -356,8 +356,8 @@ class InnerReactSummernote extends React.Component {
     // 更新 toolbar 顯示:字體/字號從帶樣式的空段落讀取(容器已無樣式),顏色按鈕更新預設值
     syncBaseFontStyleToolbar(baseFontStyle, $para) {
         // 更新 toolbar 字體大小和字體名稱的顯示樣式
-        if ($para && baseFontStyle['font-size']) this.editor.summernote('fontsizeInput.updateFontsizeInput', $para);
-        if ($para && baseFontStyle['font-family']) this.editor.summernote('customFont.updateCurrentStyle', false, $para);
+		baseFontStyle['font-size'] && this.editor.summernote('fontsizeInput.updateFontsizeInputByValue', baseFontStyle['font-size']);
+		baseFontStyle['font-family'] && this.editor.summernote('customFont.updateCurrentStyleByValue', false, baseFontStyle['font-family'])
 
         // 更新 toolbar 字體顏色的顯示樣式
         if (baseFontStyle['color']) {
