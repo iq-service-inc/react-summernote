@@ -302,6 +302,19 @@ class InnerReactSummernote extends React.Component {
         };
     }
 
+    // 焦點在編輯器內才回復游標,避免 API 呼叫造成的變更搶走焦點
+    // 重設 selection 同時清除 WebKit 的 typing style——Chrome 全選刪除後會記住
+    // 刪除前的 inline 樣式(如選字套用的 font-family),下次輸入時原樣復活
+    // 並壓掉空段落上的預設樣式,必須在內容變空當下重設 selection 使其失效
+    restoreCaretToPara($para) {
+        const editable = this.noteEditable[0];
+        if (editable === document.activeElement || $.contains(editable, document.activeElement)) {
+            const rng = $.summernote.range.create($para[0], 0, $para[0], 0);
+            rng.select();
+            this.editor.summernote('editor.setLastRange', rng);
+        }
+    }
+
     // 編輯器視覺為空時,維護帶 inline style 的空段落,使預設樣式隨 HTML 內容保存
     // 回傳 $para(有套用)或 null(編輯器有內容,不碰)
     applyBaseFontStyleToEmptyPara(baseFontStyle) {
@@ -311,35 +324,33 @@ class InnerReactSummernote extends React.Component {
         const css = this.buildBaseFontStyleCss(baseFontStyle);
 
         const child = editable.childNodes.length === 1 ? editable.firstChild : null;
+        let $para = null;
 
         // 單一空 <p>(<p><br></p> 或已帶樣式者)→ 就地覆寫三個屬性
         // 僅限 <p>:H1-H6/PRE 等是使用者套用的區塊樣式,重新蓋章會壓掉標籤原生樣式;
         // DIV 交給下方重建,正規化為 <p>(Chrome 刪除內容常以 DIV 當段落)
         if (child && child.nodeName === 'P' && dom.isEmpty(child)) {
-            const $para = $(child).css(css);
+            $para = $(child).css(css);
             // 三屬性皆清除時移除空的 style 屬性,維持與上游 <p><br></p> 一致
             if (!$para.attr('style')) $para.removeAttr('style');
-            return $para;
-        }
-        // 需整個重建帶樣式空段落的兩種「視覺為空」:
-        // (a) 完全空(如 Ctrl+A 刪除後)
-        // (b) 單一深層為空的 <p>/<div> 殘殼——Chrome 解散清單、刪除帶樣式內容時
-        //     會留下 <div><br></div> 或 <div><font><span><br></span></font></div>
-        //     (清單殼 <ul><li><br></li></ul> 仍有可見 bullet,非視覺為空,不在此列)
-        const isDeepEmptyShell = child && /^(P|DIV)$/.test(child.nodeName) &&
-            dom.deepestChildIsEmpty(child);
-        if ((dom.isEmpty(editable) || isDeepEmptyShell) && this.isActiveBaseFontStyle(baseFontStyle)) {
-            const $para = $(dom.emptyPara).css(css);
-            this.noteEditable.empty().append($para);
-            // 焦點在編輯器內才回復游標,避免 API 呼叫造成的變更搶走焦點
-            if (editable === document.activeElement || $.contains(editable, document.activeElement)) {
-                const rng = $.summernote.range.create($para[0], 0, $para[0], 0);
-                rng.select();
-                this.editor.summernote('editor.setLastRange', rng);
+        } else {
+            // 需整個重建帶樣式空段落的兩種「視覺為空」:
+            // (a) 完全空(如 Ctrl+A 刪除後)
+            // (b) 單一深層為空的 <p>/<div> 殘殼——Chrome 解散清單、刪除帶樣式內容時
+            //     會留下 <div><br></div> 或 <div><font><span><br></span></font></div>
+            //     (清單殼 <ul><li><br></li></ul> 仍有可見 bullet,非視覺為空,不在此列)
+            const isDeepEmptyShell = child && /^(P|DIV)$/.test(child.nodeName) &&
+                dom.deepestChildIsEmpty(child);
+            if ((dom.isEmpty(editable) || isDeepEmptyShell) && this.isActiveBaseFontStyle(baseFontStyle)) {
+                $para = $(dom.emptyPara).css(css);
+                this.noteEditable.empty().append($para);
             }
-            return $para;
         }
-        return null;
+
+        // 收斂點:任一分支有維護空段落,一律在此回復游標(同時清除 typing style)
+        // 不交由各分支自行處理,避免新增分支時遺漏後置動作
+        if ($para) this.restoreCaretToPara($para);
+        return $para;
     }
 
     // 更新 toolbar 顯示:字體/字號從帶樣式的空段落讀取(容器已無樣式),顏色按鈕更新預設值
